@@ -81,7 +81,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
 
 <body onload="loadRadioState()">
     <form id="Form1" onsubmit="return confirm('Please restart the ESP32 board by pressing the Reboot button after saving your data!');" action='actionUpdateData' method='post' target="hidden-form"></form>
-    <form id="Form2" onsubmit="return confirm('Are you sure? All saved SPIFFS files will be deleted (Wifi and RTK config)');" action='actionWipeData' method='post' target="hidden-form"></form>
+    <form id="Form2" onsubmit="return confirm('Are you sure? All saved SPIFFS files will be deleted (Wifi and RTK config). The device will restart in AP mode.');" action='actionWipeData' method='post' target="hidden-form"></form>
     <form id="Form3" onsubmit="return confirm('Connection will be lost during reboot, please refresh this page after reconnecting!');" action='actionReboot' method='post' target="hidden-form"></form>
     <p>
         <table class=center>
@@ -126,7 +126,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 <td colspan=2></td>
             </tr>
             <tr>
-                <td colspan=2> <input form="Form1" type="hidden" id="radio_state" value=%location_method% placeholder=%location_method%</td>
+                <td colspan=2> <input form="Form1" type="hidden" id="radio_state" value=%location_method% </td>
             </tr>
             <tr>
                 <td style="text-align:right;"> <input form="Form1" type="radio" id="survey_enabled" value="survey_enabled" name="location_method" onclick="enableChoosenMethod()"></td>

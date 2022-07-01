@@ -37,7 +37,7 @@ const char* PARAM_WIFI_SSID = "ssid";
 const char* PARAM_WIFI_PASSWORD = "password";
 const char* PARAM_RTK_LOCATION_METHOD = "location_method";
 const char* PARAM_RTK_SURVEY_ENABLED = "survey_enabled";
-const char* PARAM_RTK_COORDS_ENABLED = "coords_enabled";
+// const char* PARAM_RTK_COORDS_ENABLED = "coords_enabled";
 const char* PARAM_RTK_LOCATION_SURVEY_ACCURACY = "survey_accuracy";
 const char* PARAM_RTK_LOCATION_LONGITUDE = "longitude";
 const char* PARAM_RTK_LOCATION_LATITUDE = "latitude";
@@ -45,8 +45,6 @@ const char* PARAM_RTK_LOCATION_HEIGHT = "height";
 const char PATH_WIFI_SSID[] = "/ssid.txt";
 const char PATH_WIFI_PASSWORD[] = "/password.txt";
 const char PATH_RTK_LOCATION_METHOD[] = "/location_method.txt";
-// const char PATH_RTK_SURVEY_ENABLED[] = "/survey_enabled.txt";
-// const char PATH_RTK_COORDS_ENABLED[] = "/coords_enabled.txt";
 const char PATH_RTK_LOCATION_SURVEY_ACCURACY[] = "/survey_accuracy.txt";
 const char PATH_RTK_LOCATION_LONGITUDE[] = "/longitude.txt";
 const char PATH_RTK_LOCATION_LATITUDE[] = "/latitude.txt";
@@ -264,8 +262,10 @@ void actionWipeData(AsyncWebServerRequest *request) {
      } 
     }
   }
-  Serial.println(F("Data in SPIFFS was wiped out!"));
-  request->send_P(200, "text/html", INDEX_HTML, processor);
+  Serial.println(F("Restart board in 3 seconds."));
+  delay(3000);
+  // request->send_P(200, "text/html", INDEX_HTML, processor);
+  ESP.restart();
 }
 
 void actionReboot(AsyncWebServerRequest *request) {
@@ -310,6 +310,12 @@ String processor(const String& var) {
     String savedHeight = readFile(SPIFFS, PATH_RTK_LOCATION_HEIGHT);
     return (savedHeight.isEmpty() ? String(PARAM_RTK_LOCATION_HEIGHT) : savedHeight);
   }
+  // else if (var == "DEVICE_NAME") {
+  //   return String(DEVICE_NAME);
+  // }
+  // else if (var == "IP_ADDR") {
+  //   return String(IP_ADDR);
+  // }
   return String();
 }
 
@@ -373,11 +379,9 @@ void wipeAllSpiffsFiles() {
 
   while (file) {
     Serial.print("FILE: ");
-    Serial.println(file.name());
-    SPIFFS.remove(file.name());
+    Serial.println(file.path());
+    SPIFFS.remove(file.path());
     file = root.openNextFile();
   }
-  //  file.close();
-  listAllFiles();
-
+  Serial.println(F("Wiping done."));
 }
