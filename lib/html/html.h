@@ -87,7 +87,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
         <table class=center>
             <tr>
                 <td colspan=2>
-                    <h2>RTK Base Station</h2>
+                    <h2>RTK base station</h2>
                 </td>
                 <td colspan=2></td>
             </tr>

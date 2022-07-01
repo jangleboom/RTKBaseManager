@@ -25,6 +25,7 @@ AsyncWebServer server(80);
 
 // #define TESTING
 // REPLACE WITH YOUR NETWORK CREDENTIALS
+String wifiMode = "";
 const char* ssid = "Loewenzahn";
 const char* password = "vollverschluesselt123!";
 const char* DEVICE_NAME = "rtkbase";
@@ -85,6 +86,7 @@ void setup() {
   #endif
   
   WiFi.setHostname(DEVICE_NAME);
+  wifiMode.reserve(4);
   if (!knownNetworkAvailable()) {
     int foundAPs = scanWiFiAPs();
     for (int i=0; i<foundAPs; i++) {
@@ -93,7 +95,7 @@ void setup() {
     delay(1000);
     Serial.print("Setting soft-AP ... ");
     WiFi.mode(WIFI_AP);
-    // WiFi.softAP(ssidAP, passwordAP);
+    wifiMode = "AP";
     Serial.println(WiFi.softAP(ssidAP, passwordAP) ? "Ready" : "Failed!");
     Serial.print("Access point started: ");
     Serial.println(ssidAP);
@@ -102,6 +104,7 @@ void setup() {
     delay(1000);
  } else {
   WiFi.mode(WIFI_STA);
+  wifiMode = "STA";
   WiFi.begin(ssid, password);
   if (WiFi.waitForConnectResult() != WL_CONNECTED) {
     // TODO:  - count reboots and stop after 3 times (save in SPIFFS)
@@ -309,6 +312,9 @@ String processor(const String& var) {
   else if (var == PARAM_RTK_LOCATION_HEIGHT) {
     String savedHeight = readFile(SPIFFS, PATH_RTK_LOCATION_HEIGHT);
     return (savedHeight.isEmpty() ? String(PARAM_RTK_LOCATION_HEIGHT) : savedHeight);
+  }
+  else if (var == "wifi_mode") {
+    return wifiMode;
   }
   // else if (var == "DEVICE_NAME") {
   //   return String(DEVICE_NAME);
