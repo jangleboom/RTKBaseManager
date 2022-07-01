@@ -6,7 +6,6 @@
   #include <WiFi.h>
   #include <AsyncTCP.h>
   #include <SPIFFS.h>
-  #include "FS.h"
 #else
   #include <ESP8266WiFi.h>
   #include <ESPAsyncTCP.h>
@@ -17,7 +16,7 @@
 #include <ESPAsyncWebServer.h>
 #include "html.h"
 
-/** TODO: - read wifi credentials from spiffs in client mode
+/** TODO: 
           - upload html and css to SPIFFS 
           - save success info after submit
 */
@@ -34,7 +33,6 @@ const char *ssidAP = "Rtkbase";
 const char *passwordAP = "12345678";
 
 // WiFi and RTKBase manager
-#define FORMAT_SPIFFS_IF_FAILED true
 const char* PARAM_WIFI_SSID = "ssid";
 const char* PARAM_WIFI_PASSWORD = "password";
 const char* PARAM_RTK_LOCATION_METHOD = "location_method";
@@ -47,6 +45,8 @@ const char* PARAM_RTK_LOCATION_HEIGHT = "height";
 const char PATH_WIFI_SSID[] = "/ssid.txt";
 const char PATH_WIFI_PASSWORD[] = "/password.txt";
 const char PATH_RTK_LOCATION_METHOD[] = "/location_method.txt";
+// const char PATH_RTK_SURVEY_ENABLED[] = "/survey_enabled.txt";
+// const char PATH_RTK_COORDS_ENABLED[] = "/coords_enabled.txt";
 const char PATH_RTK_LOCATION_SURVEY_ACCURACY[] = "/survey_accuracy.txt";
 const char PATH_RTK_LOCATION_LONGITUDE[] = "/longitude.txt";
 const char PATH_RTK_LOCATION_LATITUDE[] = "/latitude.txt";
@@ -66,7 +66,6 @@ void actionWipeData(AsyncWebServerRequest *request);
 void actionUpdateData(AsyncWebServerRequest *request);
 // SPIFFS
 void writeFile(fs::FS &fs, const char* path, const char* message);
-void deleteFile(fs::FS &fs, const char* path);
 String readFile(fs::FS &fs, const char* path);
 void listAllFiles(void);
 void wipeAllSpiffsFiles(void);
@@ -76,7 +75,7 @@ void setup() {
   Serial.begin(115200);
   // Initialize SPIFFS
   #ifdef ESP32
-    if (!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)) {
+    if (!SPIFFS.begin(true)) {
       Serial.println("An Error has occurred while mounting SPIFFS");
       return;
     }
@@ -155,7 +154,7 @@ bool knownNetworkAvailable() {
       return true;
     }
   }
-  Serial.printf("Known network with SSID %s \nnot found, starting AP to enter new credentials\n", savedSSID);
+  Serial.printf("Known network with SSID %s not found, starting AP to enter new credentials\n", savedSSID);
   return false;
 }
 
@@ -259,7 +258,7 @@ void actionWipeData(AsyncWebServerRequest *request) {
     Serial.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
     if (strcmp(p->name().c_str(), "wipe_button") == 0) {
       if (p->value().length() > 0) {
-        Serial.printf("wipe command received: %s\n",p->value().c_str());
+        Serial.printf("wipe command received: %s",p->value().c_str());
         // WIPE OUT ALL PATHS
         wipeAllSpiffsFiles();
      } 
@@ -366,28 +365,19 @@ void listAllFiles() {
   root.close();
 }
 
-void deleteFile(fs::FS &fs, const char* path) {
-    Serial.printf("Deleting file: %s\r\n", path);
-    if (fs.remove(path)) {
-        Serial.println("- file deleted");
-    } else {
-        Serial.println("- delete failed");
-    }
-}
-
 void wipeAllSpiffsFiles() {
-  String root_path = "/";
-  File root = SPIFFS.open(root_path.c_str());
+  File root = SPIFFS.open("/");
   File file = root.openNextFile();
 
   Serial.println(F("Wiping: "));
 
   while (file) {
     Serial.print("FILE: ");
-    String file_name = String(file.name());
-    Serial.println(file_name);
-    deleteFile(SPIFFS, (root_path+file_name).c_str());
-    SPIFFS.remove(file_name);
+    Serial.println(file.name());
+    SPIFFS.remove(file.name());
     file = root.openNextFile();
   }
+  //  file.close();
+  listAllFiles();
+
 }
