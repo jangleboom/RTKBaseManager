@@ -12,8 +12,8 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
     <style>
         body {
             background-color: #4180C8;
-            font-family: Arial, Helvetica, sans-serif;
-            Color: #ffffff;
+            font-family: Lato, Helvetica, Roboto, sans-serif;
+            color: GhostWhite;
             text-align: center;
             border: 1em;
         }
