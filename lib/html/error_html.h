@@ -50,7 +50,7 @@ const char ERROR_HTML[] PROGMEM = R"rawliteral(
 
 <body>
     <h2>RTK Base Station</h2>
-    <h3>an error occured - reload form</h3>
+    <p>an error occured - reload form</p>
     <span id="countdown">in 3 second(s)</span> <br>
     <progress value="0" max="3" id="progressBar"> </progress>
 
