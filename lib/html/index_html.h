@@ -1,5 +1,5 @@
-#ifndef HTML_H
-#define HTML_H
+#ifndef INDEX_HTML_H
+#define INDEX_HTML_H
 
 const char INDEX_HTML[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML>
@@ -61,10 +61,9 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
         } else {
             (document.getElementById("coords_enabled").checked = true);
         }
-        enableChoosenMethod();
     }
 
-    function enableChoosenMethod() {
+    function enableLocationMethod() {
         if (document.getElementById("survey_enabled").checked == false) {
             document.getElementById("survey_accuracy").disabled = true;
             document.getElementById("latitude").disabled = false;
@@ -79,15 +78,17 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
     }
 </script>
 
-<body onload="loadRadioState()">
-    <form id="Form1" onsubmit="return confirm('Please restart the ESP32 board by pressing the Reboot button after saving your data!');" action='actionUpdateData' method='post' target="hidden-form"></form>
-    <form id="Form2" onsubmit="return confirm('Are you sure? All saved SPIFFS files will be deleted (Wifi and RTK config). The device will restart in AP mode.');" action='actionWipeData' method='post' target="hidden-form"></form>
-    <form id="Form3" onsubmit="return confirm('Connection will be lost during reboot, please refresh this page after reconnecting!');" action='actionReboot' method='post' target="hidden-form"></form>
+<body onload="loadRadioState();enableLocationMethod();">
+
+    <form id="Form1" onsubmit="return confirm('Restart the ESP32 by pressing the Reboot button for your changes to take effect!');" action='actionUpdateData' method='post' target="hidden-form"></form>
+    <form id="Form2" onsubmit="return confirm('Are you sure? All saved SPIFFS files will be deleted (Wifi and RTK config)');" action='actionWipeData' method='post' target="hidden-form"></form>
+    <form id="Form3" onsubmit="return confirm('Connection will be lost during reboot, please refresh this page after reconnecting!');" action='actionRebootESP32' method='post' target="hidden-form"></form>
+     <input form="Form1" type="hidden" id="radio_state" value=%location_method%>
     <p>
         <table class=center>
             <tr>
                 <td colspan=2>
-                    <h2>RTK base station</h2>
+                    <h2>RTK Base Station</h2>
                 </td>
                 <td colspan=2></td>
             </tr>
@@ -96,6 +97,9 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                     <h3>WiFi credentials</h3>
                 </td>
                 <td colspan=2></td>
+            </tr>
+            <tr>
+                <td colspan=2>  </td>
             </tr>
             <tr>
                 <td style="text-align:left;">SSID:</td>
@@ -126,14 +130,11 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 <td colspan=2></td>
             </tr>
             <tr>
-                <td colspan=2> <input form="Form1" type="hidden" id="radio_state" value=%location_method% </td>
-            </tr>
-            <tr>
-                <td style="text-align:right;"> <input form="Form1" type="radio" id="survey_enabled" value="survey_enabled" name="location_method" onclick="enableChoosenMethod()"></td>
+                <td style="text-align:right;"> <input form="Form1" type="radio" id="survey_enabled" value="survey_enabled" name="location_method" onclick="enableLocationMethod()"></td>
                 <td style="text-align:left;" title="For an accuracy of 0.06 m this can take up to 24 hours."> <label for="survey_enabled"> Run a long survey </label></td>
             </tr>
             <tr>
-                <td style="text-align:right;"> <input form="Form1" type="radio" id="coords_enabled" value="coords_enabled" name="location_method" onclick="enableChoosenMethod()"></td>
+                <td style="text-align:right;"> <input form="Form1" type="radio" id="coords_enabled" value="coords_enabled" name="location_method" onclick="enableLocationMethod()"></td>
                 <td style="text-align:left;" title="Seven decimal places are required."> <label for="coords_enabled"> High precision coordinates </label></td>
             </tr>
             <td colspan=2></td>
@@ -143,27 +144,30 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             </tr>
             <tr>
                 <td style="text-align:left;"> Latitude: </td>
-                <td><input class="text_field" form="Form1" type="text" maxlength="30" id="latitude" name="latitude" placeholder=%latitude%></td>
+                <td><input class="text_field" form="Form1" type="text" maxlength="30" id="latitude" placeholder=%latitude%></td>
             </tr>
             <tr>
                 <td style="text-align:left;"> Longitude: </td>
-                <td><input class="text_field" form="Form1" type="text" maxlength="30" id="longitude" name="longitude" placeholder=%longitude%></td>
+                <td><input class="text_field" form="Form1" type="text" maxlength="30" id="longitude" placeholder=%longitude%></td>
             </tr>
             <tr>
                 <td style="text-align:left;"> Height in m: </td>
-                <td><input title="Height over sea-level of the antenna is required (float)." class="text_field" form="Form1" type="text" maxlength="30" id="height" name="height" placeholder=%height%></td>
+                <td><input title="Height over sea-level of the antenna is required (float)." class="text_field" form="Form1" type="text" maxlength="30" id="height" placeholder=%height%></td>
             </tr>
         </table>
     </p>
     <br>
     <div>
-        <input type="submit" form="Form1" formaction="/actionUpdateData" class="button" value="Save" id="save_button" name="save_button" />
-        <input type="submit" form="Form3" value="Reboot" class="button" />
-        <input type="reset" form="Form1" value="Cancel" class="button" />
-        <input type="submit" form="Form2" formaction="/actionWipeData" class="button" value="Wipe" id="wipe_button" name="wipe_button" />
+        <input type="submit" form="Form1" class="button" formaction="/actionUpdateData"value="Save" id="save_button" name="save_button"/>
+        <input type="submit" form="Form3" class="button" formaction="/actionRebootESP32"value="Reboot" id="reboot_button" name="reboot_button"/>
+        <input type="reset" form="Form1" class="button" value="Cancel"  />
+        <input type="submit" form="Form2" class="button" formaction="/actionWipeData" value="Wipe" id="wipe_button" name="wipe_button" />
     </div>
 </body>
 
 </html>
 )rawliteral";
-#endif /* HTML_H */
+
+#endif /* INDEX_HTML_H */
+
+
