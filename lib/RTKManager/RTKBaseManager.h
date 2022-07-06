@@ -36,30 +36,32 @@
 #endif
 
 namespace RTKBaseManager {
-
-const PROGMEM char DEVICE_NAME[] = "rtkbase";
+// DEVICE_NAME can be defined in separate config.h file, if not use this here
+#ifndef DEVICE_NAME
+#define DEVICE_NAME "rtkbase"
+#endif
 // WiFi credentials for AP mode
-const PROGMEM char SSID_AP[] = "RTK-Base";
-const PROGMEM char PASSWORD_AP[] = "12345678";
-const PROGMEM char IP_AP[] = "192.168.4.1";
+const char SSID_AP[] PROGMEM = "RTK-Base";
+const char PASSWORD_AP[] PROGMEM = "12345678";
+const char IP_AP[] PROGMEM = "192.168.4.1";
 // Parameters for SPIFFS file management
-const PROGMEM char PARAM_WIFI_SSID[] = "ssid"; 
-const PROGMEM char PARAM_WIFI_PASSWORD[] = "password";
-const PROGMEM char PARAM_RTK_LOCATION_METHOD[] = "location_method";
-const PROGMEM char PARAM_RTK_SURVEY_ENABLED[] = "survey_enabled";
-const PROGMEM char PARAM_RTK_COORDS_ENABLED[] = "coords_enabled";
-const PROGMEM char PARAM_RTK_LOCATION_SURVEY_ACCURACY[] = "survey_accuracy";
-const PROGMEM char PARAM_RTK_LOCATION_LONGITUDE[] = "longitude";
-const PROGMEM char PARAM_RTK_LOCATION_LATITUDE[] = "latitude";
-const PROGMEM char PARAM_RTK_LOCATION_HEIGHT[] = "height";
+const char PARAM_WIFI_SSID[] PROGMEM = "ssid"; 
+const char PARAM_WIFI_PASSWORD[] PROGMEM = "password";
+const char PARAM_RTK_LOCATION_METHOD[] PROGMEM = "location_method";
+const char PARAM_RTK_SURVEY_ENABLED[] PROGMEM = "survey_enabled";
+const char PARAM_RTK_COORDS_ENABLED[] PROGMEM = "coords_enabled";
+const char PARAM_RTK_LOCATION_SURVEY_ACCURACY[] PROGMEM = "survey_accuracy";
+const char PARAM_RTK_LOCATION_LONGITUDE[] PROGMEM = "longitude";
+const char PARAM_RTK_LOCATION_LATITUDE[] PROGMEM = "latitude";
+const char PARAM_RTK_LOCATION_HEIGHT[] PROGMEM = "height";
 // Paths for SPIFFS file management
-const PROGMEM char PATH_WIFI_SSID[] = "/ssid.txt";
-const PROGMEM char PATH_WIFI_PASSWORD[] = "/password.txt";
-const PROGMEM char PATH_RTK_LOCATION_METHOD[] = "/location_method.txt";
-const PROGMEM char PATH_RTK_LOCATION_SURVEY_ACCURACY[] = "/survey_accuracy.txt";
-const PROGMEM char PATH_RTK_LOCATION_LONGITUDE[] = "/longitude.txt";
-const PROGMEM char PATH_RTK_LOCATION_LATITUDE[] = "/latitude.txt";
-const PROGMEM char PATH_RTK_LOCATION_HEIGHT[] = "/height.txt";
+const char PATH_WIFI_SSID[] PROGMEM = "/ssid.txt";
+const char PATH_WIFI_PASSWORD[] PROGMEM = "/password.txt";
+const char PATH_RTK_LOCATION_METHOD[] PROGMEM = "/location_method.txt";
+const char PATH_RTK_LOCATION_SURVEY_ACCURACY[] PROGMEM = "/survey_accuracy.txt";
+const char PATH_RTK_LOCATION_LONGITUDE[] PROGMEM = "/longitude.txt";
+const char PATH_RTK_LOCATION_LATITUDE[] PROGMEM = "/latitude.txt";
+const char PATH_RTK_LOCATION_HEIGHT[] PROGMEM = "/height.txt";
 
 /*** Wifi ***/
 
