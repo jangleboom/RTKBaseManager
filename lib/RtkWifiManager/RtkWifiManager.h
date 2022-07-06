@@ -14,8 +14,7 @@
  * @note    
  */
 
-#ifndef RTK_WIFI_MANAGER_H
-#define RTK_WIFI_MANAGER_H
+#pragma once
 
 #ifdef ESP32
   #include <WiFi.h>
@@ -35,72 +34,49 @@
 #include <error_html.h>
 #include <reboot_html.h>
 
+#define MAX_SSIDS 10 // Space to scan and remember SSIDs
+
 class RtkWifiManager {
   private:
 
   public:
-  AsyncWebServer server(80);
+  static const char DEVICE_NAME[8];
+  // WiFi credentials for AP mode
+  static const char SSID_AP[9];
+  static const char PASSWORD_AP[9];
+  static const char IP_AP[12];
+  // WiFi and RTKBase manager
+  static const char PARAM_WIFI_SSID[5];
+  static const char PARAM_WIFI_PASSWORD[9];
+  static const char PARAM_RTK_LOCATION_METHOD[16];
+  static const char PARAM_RTK_SURVEY_ENABLED[15];
+  static const char PARAM_RTK_COORDS_ENABLED[15];
+  static const char PARAM_RTK_LOCATION_SURVEY_ACCURACY[16];
+  static const char PARAM_RTK_LOCATION_LONGITUDE[10];
+  static const char PARAM_RTK_LOCATION_LATITUDE[9];
+  static const char PARAM_RTK_LOCATION_HEIGHT[7];
+  static const char PATH_WIFI_SSID[10];
+  static const char PATH_WIFI_PASSWORD[14];
+  static const char PATH_RTK_LOCATION_METHOD[22];
+  static const char PATH_RTK_LOCATION_SURVEY_ACCURACY[21];
+  static const char PATH_RTK_LOCATION_LONGITUDE[15];
+  static const char PATH_RTK_LOCATION_LATITUDE[14];
+  static const char PATH_RTK_LOCATION_HEIGHT[12];
+  
+  static String seenSSIDs[MAX_SSIDS];
+  // Wifi
   RtkWifiManager();
-}
-
-const char* DEVICE_NAME = "rtkbase";
-// WiFi credentials for AP mode
-const char *SSID_AP = "RTK-Base";
-const char *PASSWORD_AP = "12345678";
-const char *IP_AP = "192.168.4.1";
-
-// WiFi and RTKBase SPIFFS parameters and paths 
-const char* PARAM_WIFI_SSID = "ssid";
-const char* PARAM_WIFI_PASSWORD = "password";
-const char* PARAM_RTK_LOCATION_METHOD = "location_method";
-const char* PARAM_RTK_SURVEY_ENABLED = "survey_enabled";
-const char* PARAM_RTK_COORDS_ENABLED = "coords_enabled";
-const char* PARAM_RTK_LOCATION_SURVEY_ACCURACY = "survey_accuracy";
-const char* PARAM_RTK_LOCATION_LONGITUDE = "longitude";
-const char* PARAM_RTK_LOCATION_LATITUDE = "latitude";
-const char* PARAM_RTK_LOCATION_HEIGHT = "height";
-const char PATH_WIFI_SSID[] = "/ssid.txt";
-const char PATH_WIFI_PASSWORD[] = "/password.txt";
-const char PATH_RTK_LOCATION_METHOD[] = "/location_method.txt";
-const char PATH_RTK_LOCATION_SURVEY_ACCURACY[] = "/survey_accuracy.txt";
-const char PATH_RTK_LOCATION_LONGITUDE[] = "/longitude.txt";
-const char PATH_RTK_LOCATION_LATITUDE[] = "/latitude.txt";
-const char PATH_RTK_LOCATION_HEIGHT[] = "/height.txt";
-
-// WiFi
-const uint8_t MAX_SSIDS;                      // Max wifi ssid scan 
-String seenSSIDs[MAX_SSIDS];                       // Holds the wifi ssids at your place
-
-/**
- * @brief Scan for Wifi SSIDs and collect MAX_SSIDS of them into the seenSSIDs array
- * 
- * @return int Number of found SSIDs
- */
-int scanWiFiAPs(void);
-
-/**
- * @brief           Check whether a known network can be reached with the 
- *                  saved access data (if they are saved).
- * 
- * @param ssid      SSID of the saved network
- * @return true     If credentials (incl. PW) are saved and the network is
- *                  reachable
- * @return false    If the access data is incomplete or the network 
- *                  cannot be reached with the specified Ssid 
- */
-bool knownNetworkAvailable(const String& ssid);
-
-// Web server
-String processor(const String& var);
-void notFound(AsyncWebServerRequest *request);
-void actionRebootESP32(AsyncWebServerRequest *request);
-void actionWipeData(AsyncWebServerRequest *request);
-void actionUpdateData(AsyncWebServerRequest *request);
-// SPIFFS
-void writeFile(fs::FS &fs, const char* path, const char* message);
-String readFile(fs::FS &fs, const char* path);
-void listAllFiles(void);
-void wipeAllSpiffsFiles(void);
-
-
-#endif /*** RTK_WIFI_MANAGER_H ***/
+  static int scanWiFiAPs(void);
+  static bool knownNetworkAvailable(const String& ssid);
+  // Web server
+  static String processor(const String& var);
+  static void notFound(AsyncWebServerRequest *request);
+  static void actionRebootESP32(AsyncWebServerRequest *request);
+  static void actionWipeData(AsyncWebServerRequest *request);
+  static void actionUpdateData(AsyncWebServerRequest *request);
+  // SPIFFS
+  static void listAllFiles(void);
+  static void wipeAllSpiffsFiles(void);
+  static String readFile(fs::FS &fs, const char* path);
+  static void writeFile(fs::FS &fs, const char* path, const char* message);
+};

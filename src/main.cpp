@@ -1,6 +1,12 @@
 #include <Arduino.h>
-#include <RtkWifiManager.h>
+#include <SPIFFS.h>
+#include <RTKBaseManager.h>
 
+using namespace RTKBaseManager;
+AsyncWebServer server(80);
+
+#define MAX_SSIDS 10 // Space to scan and remember SSIDs
+String seenSSIDs[MAX_SSIDS];
 
 void setup() {
   Serial.begin(115200);
@@ -17,14 +23,17 @@ void setup() {
     }
   #endif
   
+
+  listFiles();
+  Serial.print(readFile(SPIFFS, PATH_WIFI_SSID));
   WiFi.setHostname(DEVICE_NAME);
 
   // Check if we have credentials for a available network
   String clientSSID = readFile(SPIFFS, PATH_WIFI_SSID);
   String clientPassword = readFile(SPIFFS, PATH_WIFI_PASSWORD);
 
-  if (!knownNetworkAvailable(clientSSID) || clientPassword.isEmpty()) {
-    int foundAPs = scanWiFiAPs();
+  if (!knownNetworkAvailable(clientSSID, seenSSIDs, MAX_SSIDS) || clientPassword.isEmpty()) {
+    int foundAPs = scanWiFiAPs(seenSSIDs, MAX_SSIDS);
     for (int i=0; i<foundAPs; i++) {
       Serial.printf("%d %s\n", i+1, seenSSIDs[i].c_str());
     }
@@ -71,6 +80,7 @@ void setup() {
 
   server.onNotFound(notFound);
   server.begin();
+
 }
 
 void loop() {
