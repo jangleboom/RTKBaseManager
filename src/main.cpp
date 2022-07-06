@@ -6,7 +6,7 @@ using namespace RTKBaseManager;
 AsyncWebServer server(80);
 
 #define MAX_SSIDS 10 // Space to scan and remember SSIDs
-String seenSSIDs[MAX_SSIDS];
+String scannedSSIDs[MAX_SSIDS];
 
 void setup() {
   Serial.begin(115200);
@@ -29,13 +29,13 @@ void setup() {
   WiFi.setHostname(DEVICE_NAME);
 
   // Check if we have credentials for a available network
-  String clientSSID = readFile(SPIFFS, PATH_WIFI_SSID);
-  String clientPassword = readFile(SPIFFS, PATH_WIFI_PASSWORD);
+  String localNetworkSSID = readFile(SPIFFS, PATH_WIFI_SSID);
+  String localNetworkPassword = readFile(SPIFFS, PATH_WIFI_PASSWORD);
 
-  if (!knownNetworkAvailable(clientSSID, seenSSIDs, MAX_SSIDS) || clientPassword.isEmpty()) {
-    int foundAPs = scanWiFiAPs(seenSSIDs, MAX_SSIDS);
+  if (!knownNetworkAvailable(localNetworkSSID, scannedSSIDs, MAX_SSIDS) || localNetworkPassword.isEmpty()) {
+    int foundAPs = scanWiFiAPs(scannedSSIDs, MAX_SSIDS);
     for (int i=0; i<foundAPs; i++) {
-      Serial.printf("%d %s\n", i+1, seenSSIDs[i].c_str());
+      Serial.printf("%d %s\n", i+1, scannedSSIDs[i].c_str());
     }
     delay(1000);
     Serial.print("Setting soft-AP ... ");
@@ -48,7 +48,7 @@ void setup() {
     delay(1000);
  } else {
   WiFi.mode(WIFI_STA);
-  WiFi.begin(clientSSID.c_str(), clientPassword.c_str());
+  WiFi.begin( localNetworkSSID.c_str(), localNetworkPassword.c_str());
   if (WiFi.waitForConnectResult() != WL_CONNECTED) {
     // TODO:  - count reboots and stop after 3 times (save in SPIFFS)
     //        - display state
