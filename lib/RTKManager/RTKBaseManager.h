@@ -11,7 +11,9 @@
  *          - a check of the number of decimal places in the input of the geo-coordinates 
  *            with regard to a suitable level of accuracy
  *          - upload html and (separated css and js) to SPIFFS 
- * @note    
+ * 
+ * @note    FYI: A good tutorial about how to transfer input data from a from and save them to SPIFFS
+ *          https://medium.com/@adihendro/html-form-data-input-c942ba23224
  */
 
 #ifndef RTK_MANAGER_H
