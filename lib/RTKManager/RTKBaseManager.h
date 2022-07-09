@@ -43,8 +43,9 @@ namespace RTKBaseManager {
 #define DEVICE_NAME "rtkbase"
 #endif
 // WiFi credentials for AP mode
-const char SSID_AP[] PROGMEM = "RTK-Base";
-const char PASSWORD_AP[] PROGMEM = "12345678";
+ #define MAX_SSIDS 10 // Space to scan and remember SSIDs
+const char AP_SSID[] PROGMEM = "RTK-Base";
+const char AP_PASSWORD[] PROGMEM = "12345678";
 const char IP_AP[] PROGMEM = "192.168.4.1";
 // Parameters for SPIFFS file management
 const char PARAM_WIFI_SSID[] PROGMEM = "ssid"; 
@@ -68,27 +69,40 @@ const char PATH_RTK_LOCATION_HEIGHT[] PROGMEM = "/height.txt";
 /*** Wifi ***/
 
 /**
- * @brief Scan available Wifi SSIDs
+ * @brief Setup RTK base station in station mode to enter further settings
  * 
- * @param ssidBuff    String array holding scanned SSIDs
- * @param ssidBuffLen Max count of strings in array
- * @return int        Number of available Wifi networks
+ * @param ssid        SSID of the local network
+ * @param password    Password of the local network
+ * @param deviceName  MDNS name, connect via http://<deviceName>.local
  */
-int scanWiFiAPs(String* ssidBuff, int ssidBuffLen);
+void setupStationMode(const char* ssid, const char* password, const char* deviceName);
+
+/**
+ * @brief Setup RTK base station in access point mode to enter local network
+ *        credentials and other settings
+ * 
+ * @param apSsid      SSID of the access point
+ * @param apPassword  Password of the access point
+ */
+void setupAPMode(const char* apSsid, const char* apPassword);
 
 /**
  * @brief Check possibility of connecting with an availbale network.
  * 
  * @param ssid        SSID of saved network in SPIFFS
- * @param ssidBuff    Buffer with scanned SSIDs 
- * @param ssidBuffLen Buffer length
  * @return true       If the credentials are complete and the network is available.
  * @return false      If the credentials are incomplete or the network is not available.
  */
-bool knownNetworkAvailable(const String& ssid, String* ssidBuff, int ssidBuffLen);
-
+bool savedNetworkAvailable(const String& ssid);
 
 /*** Web server ***/
+
+/**
+ * @brief         Start web server 
+ * 
+ * @param server  Pointer to global web server object
+ */
+void startServer(AsyncWebServer *server);
 
 /**
  * @brief Relaces placeholders in HTML code

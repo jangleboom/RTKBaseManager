@@ -3,48 +3,56 @@
 /********************************************************************************
 *                             WiFi
 * ******************************************************************************/
-int RTKBaseManager::scanWiFiAPs(String* ssidBuff, int ssidBuffLen) {
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-    delay(100);
 
-    // Delete old entries
-    for (int i = 0; i < ssidBuffLen; i++) {
-        ssidBuff[i] = "";
-    }
+void RTKBaseManager::setupStationMode(const char* ssid, const char* password, const char* deviceName) {
+  WiFi.mode(WIFI_STA);
+  WiFi.begin( ssid, password);
+  if (WiFi.waitForConnectResult() != WL_CONNECTED) {
+    // TODO:  - count reboots and stop after 3 times (save in SPIFFS)
+    //        - display state
+    Serial.println("WiFi Failed! Reboot in 10 s as AP!");
+    delay(10000);
+    ESP.restart();
+  }
+  Serial.println();
 
-    // WiFi.scanNetworks will return the number of networks found
-    int n = WiFi.scanNetworks();
-  
-    Serial.println("scan done");
-    if (n == 0) {
-        Serial.println("no networks found");
-    } else {
-        Serial.print(n);
-        Serial.println(" network(s) found");
-        for (int i = 0; i < n; i++) {
-            // Print SSID and RSSI for each network found
-            ssidBuff[i] = String(WiFi.SSID(i));//+ " (" + String(WiFi.RSSI(i)) + ")";
-            Serial.println(ssidBuff[i]);
-            delay(10);
-            if (n == ssidBuffLen) break;
-        }
-    }
-    Serial.println();
-    return n;
+  if (!MDNS.begin(deviceName)) {
+      Serial.println("Error starting mDNS, use local IP instead!");
+  } else {
+    Serial.printf("Starting mDNS, find me under <http://www.%s.local>\n", DEVICE_NAME);
+  }
+
+  Serial.print("Wifi client started: ");
+  Serial.println(WiFi.getHostname());
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
 }
 
-bool RTKBaseManager::knownNetworkAvailable(const String& ssid, String* ssidBuff, int ssidBuffLen) {
+void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword) {
+    Serial.print("Setting soft-AP ... ");
+    WiFi.mode(WIFI_AP);
+    Serial.println(WiFi.softAP(apSsid, apPassword) ? "Ready" : "Failed!");
+    Serial.print("Access point started: ");
+    Serial.println(AP_SSID);
+    Serial.print("IP address: ");
+    Serial.println(WiFi.softAPIP());
+}
+
+bool RTKBaseManager::savedNetworkAvailable(const String& ssid) {
   if (ssid.isEmpty()) return false;
 
-  int nNetworks = scanWiFiAPs(ssidBuff, ssidBuffLen);
-  for (int i=0; i<nNetworks; i++) {
-    if (ssid.equals(ssidBuff[i])) {
-      Serial.printf("A known network with SSID %s found, connecting...", ssidBuff[i]);
+  uint8_t nNetworks = (uint8_t) WiFi.scanNetworks();
+  Serial.print(nNetworks);  Serial.println(F(" networks found."));
+    for (uint8_t i=0; i<nNetworks; i++) {
+    if (ssid.equals(String(WiFi.SSID(i)))) {
+      Serial.print(F("A known network with SSID found: ")); 
+      Serial.print(WiFi.SSID(i));
+      Serial.print(F(" (")); 
+      Serial.print(WiFi.RSSI(i)); 
+      Serial.println(F(" dB), connecting..."));
       return true;
     }
   }
-  Serial.printf("No known network with SSID %s found, starting AP to enter new credentials\n", ssid);
   return false;
 }
 
@@ -52,6 +60,19 @@ bool RTKBaseManager::knownNetworkAvailable(const String& ssid, String* ssidBuff,
 *                             Web server
 * ******************************************************************************/
 
+void RTKBaseManager::startServer(AsyncWebServer *server) {
+  server->on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send_P(200, "text/html", INDEX_HTML, processor);
+  });
+
+  server->on("/actionUpdateData", HTTP_POST, actionUpdateData);
+  server->on("/actionWipeData", HTTP_POST, actionWipeData);
+  server->on("/actionRebootESP32", HTTP_POST, actionRebootESP32);
+
+  server->onNotFound(notFound);
+  server->begin();
+}
+  
 void RTKBaseManager::notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Not found");
 }
@@ -180,7 +201,7 @@ String RTKBaseManager::processor(const String& var) {
   }
   else if (var == "next_ssid") {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
-    return (savedSSID.isEmpty() ? String(SSID_AP) : savedSSID);
+    return (savedSSID.isEmpty() ? String(AP_SSID) : savedSSID);
   }
   return String();
 }
