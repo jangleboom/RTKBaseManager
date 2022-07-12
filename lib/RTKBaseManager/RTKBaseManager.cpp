@@ -210,6 +210,20 @@ String RTKBaseManager::processor(const String& var) {
 *                             SPIFFS
 * ******************************************************************************/
 
+void RTKBaseManager::setupSPIFFS(void) {
+  #ifdef ESP32
+    if (!SPIFFS.begin(true)) {
+      Serial.println("An Error has occurred while mounting SPIFFS");
+      return;
+    }
+  #else
+    if (!SPIFFS.begin()) {
+      Serial.println("An Error has occurred while mounting SPIFFS");
+      return;
+    }
+  #endif
+}
+
 String RTKBaseManager::readFile(fs::FS &fs, const char* path) {
   Serial.printf("Reading file: %s\r\n", path);
   File file = fs.open(path, "r");
@@ -270,4 +284,37 @@ void RTKBaseManager::wipeSpiffsFiles() {
     SPIFFS.remove(file.path());
     file = root.openNextFile();
   }
+}
+
+uint8_t RTKBaseManager::getDecimalPlacesFromCoord(int32_t num) {
+  if ((num % 100) > 0) {
+    return 3;
+  } else if ((num % 10) > 0) {
+     return 2;
+  } else  {
+    return 1;
+  }
+}
+
+uint32_t RTKBaseManager::getIntegerFromDouble(double input) {
+ // We work with 7 + 2 post dot places, (max 0.11 mm accuracy)
+  double intp, fracp;
+  fracp = modf(input,&intp);
+  // Serial.printf("%.9f %.9f\n", intp,fracp);
+  String output = String((int)intp);
+  // Serial.print("(int)intp: "); Serial.println(output.c_str());
+  String fracpStr = String(abs(fracp),9);
+  // Serial.print("String(postDot): "); Serial.println(fracpStr.c_str());
+  output += fracpStr.substring(2,9);
+  // Serial.print("output: "); Serial.println(output);
+  return atol(output.c_str());
+}
+
+uint8_t RTKBaseManager::getPrecisionExtensionFromDouble(double input) {
+  // We work with 7 + 2 post dot places, (max 0.11 mm accuracy)
+  double intp, fracp;
+  fracp = abs(modf(input,&intp));
+  String fracpStr = String(fracp,9);
+  String output = fracpStr.substring(9,11);
+  return atol(output.c_str());
 }

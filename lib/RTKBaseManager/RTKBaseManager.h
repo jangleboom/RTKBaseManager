@@ -144,6 +144,12 @@ void actionUpdateData(AsyncWebServerRequest *request);
 /*** SPIFFS ***/
 
 /**
+ * @brief Just init SPIFFS for ESP32 or ESP8266
+ * 
+ */
+void setupSPIFFS(void);
+
+/**
  * @brief         Write data to SPIFFS
  * 
  * @param fs      Address of file system
@@ -174,6 +180,11 @@ void listFiles(void);
 void wipeSpiffsFiles(void);
 
 
+/*** Help funcs ***/
+
+uint32_t getIntegerFromDouble(double input);
+uint8_t getPrecisionExtensionFromDouble(double input);
+uint8_t getDecimalPlacesFromCoord(int32_t num);
 }
 
 

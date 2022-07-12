@@ -8,18 +8,14 @@ String scannedSSIDs[MAX_SSIDS];
 
 void setup() {
   Serial.begin(115200);
+  delay(500);
+  double latitude = 52.601311471;
+  Serial.print(F("Test Latitude: ")); Serial.println(latitude,9);
+  Serial.print(F("Test getIntegerFromDouble: "));Serial.println(getIntegerFromDouble(latitude));
+  Serial.print(F("Test getPrecisionExtensionFromDouble: "));Serial.println(getPrecisionExtensionFromDouble(latitude));
+  delay(10000);
   // Initialize SPIFFS
-  #ifdef ESP32
-    if (!SPIFFS.begin(true)) {
-      Serial.println("An Error has occurred while mounting SPIFFS");
-      return;
-    }
-  #else
-    if (!SPIFFS.begin()) {
-      Serial.println("An Error has occurred while mounting SPIFFS");
-      return;
-    }
-  #endif
+  setupSPIFFS();
   
   WiFi.setHostname(DEVICE_NAME);
   // Check if we have credentials for a available network
