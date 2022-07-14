@@ -65,6 +65,7 @@ namespace RTKBaseManager {
   const char PATH_RTK_LOCATION_LONGITUDE[] PROGMEM = "/longitude.txt";
   const char PATH_RTK_LOCATION_LATITUDE[] PROGMEM = "/latitude.txt";
   const char PATH_RTK_LOCATION_HEIGHT[] PROGMEM = "/height.txt";
+   const char PATH_RTK_BASE_LOCATION[] PROGMEM = "/location.txt";
 
   struct HighPrecisionLocation {
     const int32_t magic = 0xC0FFEE; // Magic keyword 0xC0FFEE, that tells us if we're reading garbage from SPIFFS

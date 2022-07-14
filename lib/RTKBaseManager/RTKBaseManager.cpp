@@ -317,13 +317,13 @@ void RTKBaseManager::convertDoubleCoordsToIntLocation(double lat, double lon, do
 }
 
 void RTKBaseManager::writeIntCoordsToSPIFFS(high_precision_location_t* location) {
-  File baseLocation = SPIFFS.open("/location.txt", FILE_WRITE);
+  File baseLocation = SPIFFS.open(PATH_RTK_BASE_LOCATION, FILE_WRITE);
   baseLocation.write((byte *)location, sizeof(*location));
   baseLocation.close();
 }
 
 void RTKBaseManager::readIntCoordsFromSPIFFS(high_precision_location_t* location) {
-  File baseLocation = SPIFFS.open("/location.txt", FILE_READ);
+  File baseLocation = SPIFFS.open(PATH_RTK_BASE_LOCATION, FILE_READ);
   baseLocation.read((byte *)location, sizeof(*location));
   baseLocation.close();
 }
