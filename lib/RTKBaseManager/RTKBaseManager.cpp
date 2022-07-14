@@ -337,6 +337,14 @@ void RTKBaseManager::readIntCoordsFromSPIFFS(high_precision_location_t* location
   baseLocation.close();
 }
 
+double RTKBaseManager::getDoubleFromIntegerParts(int32_t commonPrecisionInt, int8_t highPrecisionInt) {
+  double commonPrecisionDouble, highPrecisionDouble;
+  commonPrecisionDouble = (double)commonPrecisionInt * 10e-8;
+  highPrecisionDouble = (double)highPrecisionInt * 10e-10;
+
+  return (commonPrecisionDouble + highPrecisionDouble);
+}
+
 void RTKBaseManager::printLocation(high_precision_location_t* location) {
   Serial.printf("Read magic word: %06X\nLatitude: %d, %d\nLongitude: %d, %d\nAltitude: %d, %d\n", location->magic, location->lat, location->lat_hp,  location->lon, location->lon_hp, location->alt, location->alt_hp);
 }

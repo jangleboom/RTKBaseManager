@@ -213,6 +213,8 @@ namespace RTKBaseManager {
    */
   int8_t getHighPrecisionPartFromDouble(double input);
 
+  double getDoubleFromIntegerParts(int32_t commonPrecisionVal, int8_t highPrecisionExtension);
+
   /**
    * @brief Convert floating point coordinates into integer values
    * 

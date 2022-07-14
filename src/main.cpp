@@ -16,6 +16,8 @@ void setup() {
   delay(500);
   high_precision_location_t baseLocation;
   readIntCoordsFromSPIFFS(&baseLocation, PATH_RTK_BASE_LOCATION);
+  double height = getDoubleFromIntegerParts(baseLocation.alt, baseLocation.alt_hp);
+  Serial.print(F("Read Altitude from location struct: ")); Serial.println(height, 9);
   // printLocation(&baseLocation);
 
  
