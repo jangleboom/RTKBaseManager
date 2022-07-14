@@ -316,14 +316,14 @@ void RTKBaseManager::convertDoubleCoordsToIntLocation(double lat, double lon, do
   location->alt_hp = RTKBaseManager::getHighPrecisionPartFromDouble(alt);
 }
 
-void RTKBaseManager::writeIntCoordsToSPIFFS(high_precision_location_t* location) {
-  File baseLocation = SPIFFS.open(PATH_RTK_BASE_LOCATION, FILE_WRITE);
+void RTKBaseManager::writeIntCoordsToSPIFFS(high_precision_location_t* location, const char* path) {
+  File baseLocation = SPIFFS.open(path, FILE_WRITE);
   baseLocation.write((byte *)location, sizeof(*location));
   baseLocation.close();
 }
 
-void RTKBaseManager::readIntCoordsFromSPIFFS(high_precision_location_t* location) {
-  File baseLocation = SPIFFS.open(PATH_RTK_BASE_LOCATION, FILE_READ);
+void RTKBaseManager::readIntCoordsFromSPIFFS(high_precision_location_t* location,  const char* path) {
+  File baseLocation = SPIFFS.open(path, FILE_READ);
   baseLocation.read((byte *)location, sizeof(*location));
   baseLocation.close();
 }

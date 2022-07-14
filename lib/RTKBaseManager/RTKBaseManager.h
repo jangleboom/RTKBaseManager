@@ -223,8 +223,25 @@ namespace RTKBaseManager {
    */
   void convertDoubleCoordsToIntLocation(double lat, double lon, double alt, high_precision_location_t* location);
   
-  void writeIntCoordsToSPIFFS(high_precision_location_t* location);
-  void readIntCoordsFromSPIFFS(high_precision_location_t* location);
+  /**
+   * @brief Write integer location struct to SPIFFS
+   * 
+   * @param location Pointer to struct of type high_precision_location_t
+   */
+  void writeIntCoordsToSPIFFS(high_precision_location_t* location, const char* path);
+  
+  /**
+   * @brief Read integer location struct from SPIFFS
+   * 
+   * @param location Pointer to struct of type high_precision_location_t
+   */
+  void readIntCoordsFromSPIFFS(high_precision_location_t* location, const char* path);
+  
+  /**
+   * @brief Debugging func to print location members
+   * 
+   * @param location 
+   */
   void printLocation(high_precision_location_t* location);
 
 }

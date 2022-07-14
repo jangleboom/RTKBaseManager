@@ -17,14 +17,14 @@ void setup() {
   double altitude = 35.555;
   high_precision_location_t baseLocation;
   convertDoubleCoordsToIntLocation(latitude, longitude, altitude, &baseLocation);
-  writeIntCoordsToSPIFFS(&baseLocation);
+  writeIntCoordsToSPIFFS(&baseLocation, PATH_RTK_BASE_LOCATION);
   printLocation(&baseLocation);
   baseLocation.lat_hp = 66;
   baseLocation.lon_hp = 66;
   baseLocation.alt_hp = 66;
   printLocation(&baseLocation);
   delay(500);
-  readIntCoordsFromSPIFFS(&baseLocation);
+  readIntCoordsFromSPIFFS(&baseLocation, PATH_RTK_BASE_LOCATION);
   printLocation(&baseLocation);
 
   // Serial.print(F("Test Latitude: ")); Serial.println(latitude, 9);
