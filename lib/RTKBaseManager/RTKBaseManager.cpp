@@ -286,35 +286,21 @@ void RTKBaseManager::wipeSpiffsFiles() {
   }
 }
 
-uint8_t RTKBaseManager::getDecimalPlacesFromCoord(int32_t num) {
-  if ((num % 100) > 0) {
-    return 3;
-  } else if ((num % 10) > 0) {
-     return 2;
-  } else  {
-    return 1;
-  }
-}
-
-uint32_t RTKBaseManager::getIntegerFromDouble(double input) {
+int32_t RTKBaseManager::getIntegerFromDouble(double input) {
  // We work with 7 + 2 post dot places, (max 0.11 mm accuracy)
   double intp, fracp;
-  fracp = modf(input,&intp);
-  // Serial.printf("%.9f %.9f\n", intp,fracp);
+  fracp = modf(input, &intp);
   String output = String((int)intp);
-  // Serial.print("(int)intp: "); Serial.println(output.c_str());
-  String fracpStr = String(abs(fracp),9);
-  // Serial.print("String(postDot): "); Serial.println(fracpStr.c_str());
+  String fracpStr = (fracp < 0) ? String(abs(fracp), 9) : String(fracp, 9);
   output += fracpStr.substring(2,9);
-  // Serial.print("output: "); Serial.println(output);
-  return atol(output.c_str());
+  return atoi(output.c_str());
 }
 
-uint8_t RTKBaseManager::getPrecisionExtensionFromDouble(double input) {
+int8_t RTKBaseManager::getPrecisionExtensionFromDouble(double input) {
   // We work with 7 + 2 post dot places, (max 0.11 mm accuracy)
   double intp, fracp;
-  fracp = abs(modf(input,&intp));
-  String fracpStr = String(fracp,9);
-  String output = fracpStr.substring(9,11);
-  return atol(output.c_str());
+  fracp = abs(modf(input, &intp));
+  String fracpStr = String(fracp, 9);
+  String output = fracpStr.substring(9, 11);
+  return atoi(output.c_str());
 }

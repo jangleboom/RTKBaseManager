@@ -182,9 +182,8 @@ void wipeSpiffsFiles(void);
 
 /*** Help funcs ***/
 
-uint32_t getIntegerFromDouble(double input);
-uint8_t getPrecisionExtensionFromDouble(double input);
-uint8_t getDecimalPlacesFromCoord(int32_t num);
+int32_t getIntegerFromDouble(double input);
+int8_t getPrecisionExtensionFromDouble(double input);
 }
 
 

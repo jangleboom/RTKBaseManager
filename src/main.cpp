@@ -9,11 +9,11 @@ String scannedSSIDs[MAX_SSIDS];
 void setup() {
   Serial.begin(115200);
   delay(500);
-  double latitude = 52.601311471;
-  Serial.print(F("Test Latitude: ")); Serial.println(latitude,9);
-  Serial.print(F("Test getIntegerFromDouble: "));Serial.println(getIntegerFromDouble(latitude));
-  Serial.print(F("Test getPrecisionExtensionFromDouble: "));Serial.println(getPrecisionExtensionFromDouble(latitude));
-  delay(10000);
+  // double latitude = -152.601311471;
+  // Serial.print(F("Test Latitude: ")); Serial.println(latitude, 9);
+  // Serial.print(F("Test getIntegerFromDouble: "));Serial.println(getIntegerFromDouble(latitude));
+  // Serial.print(F("Test getPrecisionExtensionFromDouble: "));Serial.println(getPrecisionExtensionFromDouble(latitude));
+  // delay(10000);
   // Initialize SPIFFS
   setupSPIFFS();
   
