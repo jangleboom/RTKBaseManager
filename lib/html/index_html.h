@@ -68,12 +68,12 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             document.getElementById("survey_accuracy").disabled = true;
             document.getElementById("latitude").disabled = false;
             document.getElementById("longitude").disabled = false;
-            document.getElementById("height").disabled = false;
+            document.getElementById("altitude").disabled = false;
         } else {
             document.getElementById("survey_accuracy").disabled = false;
             document.getElementById("latitude").disabled = true;
             document.getElementById("longitude").disabled = true;
-            document.getElementById("height").disabled = true;
+            document.getElementById("altitude").disabled = true;
         }
     }
 </script>
@@ -144,15 +144,15 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             </tr>
             <tr>
                 <td style="text-align:left;"> Latitude: </td>
-                <td><input class="text_field" form="Form1" type="text" maxlength="30" id="latitude" placeholder=%latitude%></td>
+                <td><input class="text_field" form="Form1" type="text" maxlength="30" id="latitude" name="latitude" placeholder=%latitude%></td>
             </tr>
             <tr>
                 <td style="text-align:left;"> Longitude: </td>
-                <td><input class="text_field" form="Form1" type="text" maxlength="30" id="longitude" placeholder=%longitude%></td>
+                <td><input class="text_field" form="Form1" type="text" maxlength="30" id="longitude" name="longitude" placeholder=%longitude%></td>
             </tr>
             <tr>
-                <td style="text-align:left;"> Height in m: </td>
-                <td><input title="Height over sea-level of the antenna is required (float)." class="text_field" form="Form1" type="text" maxlength="30" id="height" placeholder=%height%></td>
+                <td style="text-align:left;"> Altitude in m: </td>
+                <td><input title="Height over sea-level of the antenna is required (float)." class="text_field" form="Form1" type="text" maxlength="30" id="altitude" name="altitude" placeholder=%altitude%></td>
             </tr>
         </table>
     </p>

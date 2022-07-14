@@ -56,7 +56,7 @@ namespace RTKBaseManager {
   const char PARAM_RTK_LOCATION_SURVEY_ACCURACY[] PROGMEM = "survey_accuracy";
   const char PARAM_RTK_LOCATION_LONGITUDE[] PROGMEM = "longitude";
   const char PARAM_RTK_LOCATION_LATITUDE[] PROGMEM = "latitude";
-  const char PARAM_RTK_LOCATION_HEIGHT[] PROGMEM = "height";
+  const char PARAM_RTK_LOCATION_ALTITUDE[] PROGMEM = "altitude";
   // Paths for SPIFFS file management
   const char PATH_WIFI_SSID[] PROGMEM = "/ssid.txt";
   const char PATH_WIFI_PASSWORD[] PROGMEM = "/password.txt";
@@ -64,8 +64,8 @@ namespace RTKBaseManager {
   const char PATH_RTK_LOCATION_SURVEY_ACCURACY[] PROGMEM = "/survey_accuracy.txt";
   const char PATH_RTK_LOCATION_LONGITUDE[] PROGMEM = "/longitude.txt";
   const char PATH_RTK_LOCATION_LATITUDE[] PROGMEM = "/latitude.txt";
-  const char PATH_RTK_LOCATION_HEIGHT[] PROGMEM = "/height.txt";
-   const char PATH_RTK_BASE_LOCATION[] PROGMEM = "/location.txt";
+  const char PATH_RTK_LOCATION_ALTITUDE[] PROGMEM = "/altitude.txt";
+  const char PATH_RTK_BASE_LOCATION[] PROGMEM = "/location.txt";
 
   struct HighPrecisionLocation {
     const int32_t magic = 0xC0FFEE; // Magic keyword 0xC0FFEE, that tells us if we're reading garbage from SPIFFS

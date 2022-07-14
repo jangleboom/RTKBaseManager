@@ -104,7 +104,7 @@ void RTKBaseManager::actionWipeData(AsyncWebServerRequest *request) {
 }
 
 void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
-  Serial.println("ACTION 1!");
+  Serial.println("ACTION: actionUpdateData!");
 
   int params = request->params();
   for (int i = 0; i < params; i++) {
@@ -147,13 +147,21 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_HEIGHT) == 0) {
+    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_ALTITUDE) == 0) {
       if (p->value().length() > 0) {
-        writeFile(SPIFFS, PATH_RTK_LOCATION_HEIGHT, p->value().c_str());
+        Serial.printf("Got altitude %s", p->value().c_str());
+        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, p->value().c_str());
      } 
     }
 
   }
+  high_precision_location_t baseLocation;
+  convertDoubleCoordsToIntLocation(atof(readFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE).c_str()), 
+                                  atof(readFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE).c_str()), 
+                                  atof(readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE).c_str()), 
+                                  &baseLocation);
+  writeIntCoordsToSPIFFS(&baseLocation, PATH_RTK_BASE_LOCATION);
+  printLocation(&baseLocation);
   Serial.println(F("Data saved to SPIFFS!"));
   request->send_P(200, "text/html", INDEX_HTML, RTKBaseManager::processor);
 }
@@ -186,9 +194,9 @@ String RTKBaseManager::processor(const String& var) {
     String savedLongitude = readFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE);
     return (savedLongitude.isEmpty() ? String(PARAM_RTK_LOCATION_LONGITUDE) : savedLongitude);
   }
-  else if (var == PARAM_RTK_LOCATION_HEIGHT) {
-    String savedHeight = readFile(SPIFFS, PATH_RTK_LOCATION_HEIGHT);
-    return (savedHeight.isEmpty() ? String(PARAM_RTK_LOCATION_HEIGHT) : savedHeight);
+  else if (var == PARAM_RTK_LOCATION_ALTITUDE) {
+    String savedHeight = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
+    return (savedHeight.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : savedHeight);
   }
   else if (var == "next_addr") {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
@@ -325,6 +333,7 @@ void RTKBaseManager::writeIntCoordsToSPIFFS(high_precision_location_t* location,
 void RTKBaseManager::readIntCoordsFromSPIFFS(high_precision_location_t* location,  const char* path) {
   File baseLocation = SPIFFS.open(path, FILE_READ);
   baseLocation.read((byte *)location, sizeof(*location));
+  printLocation(location);
   baseLocation.close();
 }
 

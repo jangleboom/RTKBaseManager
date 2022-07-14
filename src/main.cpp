@@ -12,21 +12,13 @@ void setup() {
   delay(500);
   // Initialize SPIFFS
   setupSPIFFS();
-  double latitude = 52.601311471;
-  double longitude = 12.601311471;
-  double altitude = 35.555;
-  high_precision_location_t baseLocation;
-  convertDoubleCoordsToIntLocation(latitude, longitude, altitude, &baseLocation);
-  writeIntCoordsToSPIFFS(&baseLocation, PATH_RTK_BASE_LOCATION);
-  printLocation(&baseLocation);
-  baseLocation.lat_hp = 66;
-  baseLocation.lon_hp = 66;
-  baseLocation.alt_hp = 66;
-  printLocation(&baseLocation);
-  delay(500);
-  readIntCoordsFromSPIFFS(&baseLocation, PATH_RTK_BASE_LOCATION);
-  printLocation(&baseLocation);
 
+  delay(500);
+  high_precision_location_t baseLocation;
+  readIntCoordsFromSPIFFS(&baseLocation, PATH_RTK_BASE_LOCATION);
+  // printLocation(&baseLocation);
+
+ 
   // Serial.print(F("Test Latitude: ")); Serial.println(latitude, 9);
   // Serial.print(F("Test getCommonPrecisionPartFromDouble: "));Serial.println(getCommonPrecisionPartFromDouble(latitude));
   // Serial.print(F("Test getHighPrecisionPartFromDouble: "));Serial.println(getHighPrecisionPartFromDouble(latitude));
