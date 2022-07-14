@@ -11,9 +11,10 @@ void setup() {
   delay(500);
   // double latitude = -152.601311471;
   // Serial.print(F("Test Latitude: ")); Serial.println(latitude, 9);
-  // Serial.print(F("Test getIntegerFromDouble: "));Serial.println(getIntegerFromDouble(latitude));
-  // Serial.print(F("Test getPrecisionExtensionFromDouble: "));Serial.println(getPrecisionExtensionFromDouble(latitude));
+  // Serial.print(F("Test getCommonPrecisionPartFromDouble: "));Serial.println(getCommonPrecisionPartFromDouble(latitude));
+  // Serial.print(F("Test getHighPrecisionPartFromDouble: "));Serial.println(getHighPrecisionPartFromDouble(latitude));
   // delay(10000);
+
   // Initialize SPIFFS
   setupSPIFFS();
   

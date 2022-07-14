@@ -182,8 +182,8 @@ void wipeSpiffsFiles(void);
 
 /*** Help funcs ***/
 
-int32_t getIntegerFromDouble(double input);
-int8_t getPrecisionExtensionFromDouble(double input);
+int32_t getCommonPrecisionPartFromDouble(double input);
+int8_t getHighPrecisionPartFromDouble(double input);
 }
 
 

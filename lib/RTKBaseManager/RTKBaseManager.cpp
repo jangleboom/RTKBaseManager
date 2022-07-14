@@ -286,7 +286,7 @@ void RTKBaseManager::wipeSpiffsFiles() {
   }
 }
 
-int32_t RTKBaseManager::getIntegerFromDouble(double input) {
+int32_t RTKBaseManager::getCommonPrecisionPartFromDouble(double input) {
  // We work with 7 + 2 post dot places, (max 0.11 mm accuracy)
   double intp, fracp;
   fracp = modf(input, &intp);
@@ -296,7 +296,7 @@ int32_t RTKBaseManager::getIntegerFromDouble(double input) {
   return atoi(output.c_str());
 }
 
-int8_t RTKBaseManager::getPrecisionExtensionFromDouble(double input) {
+int8_t RTKBaseManager::getHighPrecisionPartFromDouble(double input) {
   // We work with 7 + 2 post dot places, (max 0.11 mm accuracy)
   double intp, fracp;
   fracp = abs(modf(input, &intp));
