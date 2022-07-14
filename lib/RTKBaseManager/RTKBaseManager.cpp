@@ -158,6 +158,8 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
   request->send_P(200, "text/html", INDEX_HTML, RTKBaseManager::processor);
 }
 
+
+
 // Replaces placeholder with stored values
 String RTKBaseManager::processor(const String& var) {
   if (var == PARAM_WIFI_SSID) {
@@ -303,4 +305,29 @@ int8_t RTKBaseManager::getHighPrecisionPartFromDouble(double input) {
   String fracpStr = String(fracp, 9);
   String output = fracpStr.substring(9, 11);
   return atoi(output.c_str());
+}
+
+void RTKBaseManager::convertDoubleCoordsToIntLocation(double lat, double lon, double alt, high_precision_location_t* location) {
+  location->lat = RTKBaseManager::getCommonPrecisionPartFromDouble(lat);
+  location->lat_hp = RTKBaseManager::getHighPrecisionPartFromDouble(lat);
+  location->lon = RTKBaseManager::getCommonPrecisionPartFromDouble(lon);
+  location->lon_hp = RTKBaseManager::getHighPrecisionPartFromDouble(lon);
+  location->alt = RTKBaseManager::getCommonPrecisionPartFromDouble(alt);
+  location->alt_hp = RTKBaseManager::getHighPrecisionPartFromDouble(alt);
+}
+
+void RTKBaseManager::writeIntCoordsToSPIFFS(high_precision_location_t* location) {
+  File baseLocation = SPIFFS.open("/location.txt", FILE_WRITE);
+  baseLocation.write((byte *)location, sizeof(*location));
+  baseLocation.close();
+}
+
+void RTKBaseManager::readIntCoordsFromSPIFFS(high_precision_location_t* location) {
+  File baseLocation = SPIFFS.open("/location.txt", FILE_READ);
+  baseLocation.read((byte *)location, sizeof(*location));
+  baseLocation.close();
+}
+
+void RTKBaseManager::printLocation(high_precision_location_t* location) {
+  Serial.printf("Read magic word: %06X\nLatitude: %d, %d\nLongitude: %d, %d\nAltitude: %d, %d\n", location->magic, location->lat, location->lat_hp,  location->lon, location->lon_hp, location->alt, location->alt_hp);
 }
