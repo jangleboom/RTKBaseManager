@@ -445,7 +445,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60100",
+                "PLATFORMIO=60101",
                 "ARDUINO_FEATHER_ESP32",
                 "HAVE_CONFIG_H",
                 "MBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\"",
