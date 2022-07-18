@@ -78,14 +78,14 @@ void RTKBaseManager::notFound(AsyncWebServerRequest *request) {
 }
 
 void RTKBaseManager::actionRebootESP32(AsyncWebServerRequest *request) {
-  Serial.println("ACTION 3!");
+  Serial.println("ACTION actionRebootESP32!");
   request->send_P(200, "text/html", REBOOT_HTML, RTKBaseManager::processor);
   delay(3000);
   ESP.restart();
 }
 
 void RTKBaseManager::actionWipeData(AsyncWebServerRequest *request) {
-  Serial.println("ACTION 2!");
+  Serial.println("ACTION actionWipeData!");
   int params = request->params();
   Serial.printf("params: %d\n", params);
   for (int i = 0; i < params; i++) {
@@ -150,8 +150,8 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_ALTITUDE) == 0) {
       if (p->value().length() > 0) {
         Serial.printf("Got altitude %s\n", p->value().c_str());
-        String getDeconstructedValAsCSV(p->value());
-        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, getDeconstructedValAsCSV.c_str());
+        String deconstructedValAsCSV = getDeconstructedValAsCSV(p->value());
+        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, deconstructedValAsCSV.c_str());
      } 
     }
   }
@@ -168,14 +168,16 @@ String RTKBaseManager::getDeconstructedValAsCSV(const String& doubleStr) {
     return deconstructedCSV;
 }
 
-String RTKBaseManager::getReconstructedValStringFromCSV(const String& csvStr) 
-{ if (csvStr.isEmpty()) return String();
-  char sep = ',';
-  int32_t lowerPrec = (int32_t)getValue(csvStr, sep, 0).toInt();
-  int8_t highPrec = (int8_t)getValue(csvStr, sep, 1).toInt();
+String RTKBaseManager::getDoubleStringFromCSV(const String& csvStr) { 
+  if (csvStr.isEmpty()) return String();
+  int32_t lowerPrec = getValueAsStringFromCSV(csvStr, ',', 0).toInt();
+  Serial.print("lowerPrec: ");Serial.println(getValueAsStringFromCSV(csvStr, ',', 0));
+  int8_t highPrec = getValueAsStringFromCSV(csvStr, ',', 1).toInt();
+  Serial.print("highPrec: ");Serial.println(getValueAsStringFromCSV(csvStr, ',', 1));
   double reconstructedVal = getDoubleFromIntegerParts(lowerPrec, highPrec);
-  Serial.printf("reconstructedVal: %d", reconstructedVal);
-  return String(reconstructedVal);
+  String reconstructedValStr = String(reconstructedVal, 9);
+  Serial.print("reconstructedVal: ");Serial.println(reconstructedVal, 9);
+  return reconstructedValStr;
 }
 
 // Replaces placeholder with stored values
@@ -207,8 +209,10 @@ String RTKBaseManager::processor(const String& var)
   }
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) {
     String savedAlt = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
-    String altitudeDStr = getReconstructedValStringFromCSV(savedAlt);
-    return (altitudeDStr.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : altitudeDStr);
+    Serial.printf("processor savedAlt: %s\n", savedAlt.c_str());
+    String altitudeDoubleStr = getDoubleStringFromCSV(savedAlt);
+    Serial.printf("processor altitudeDoubleStr: %s\n", altitudeDoubleStr.c_str());
+    return (altitudeDoubleStr.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : altitudeDoubleStr);
   }
   else if (var == "next_addr") {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
@@ -343,18 +347,11 @@ double RTKBaseManager::getDoubleFromIntegerParts(int32_t commonPrecisionInt, int
 }
 
   // Function to parse lora string message
-String RTKBaseManager::getValue(const String &data, char separator, int index)
+String RTKBaseManager::getValueAsStringFromCSV(const String &data, char separator, int index)
 {
-  int found = 0;
-  int strIndex[] = {0, -1};
-  int maxIndex = data.length()-1;
-
-  for (int i=0; i<=maxIndex && found<=index; i++) {
-    if (data.charAt(i)==separator || i==maxIndex) {
-        found++;
-        strIndex[0] = strIndex[1]+1;
-        strIndex[1] = (i == maxIndex) ? i+1 : i;
-    }
-  }
-  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
+  int idx = data.indexOf(separator);
+  int length = data.length();
+  String result = (index==0) ? data.substring(0, idx) : data.substring(idx+1, length);
+  // Serial.printf("getValueAsStringFromCSV idx, result: %i, %s\n", index, result.c_str());
+  return  result;
 }

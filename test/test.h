@@ -16,26 +16,36 @@ test(incorrect) {
 
 test(getLowerPrecisionPartFromDouble) {
     double input = 12.345678999;
-    uint8_t lowerPrecPart = getHighPrecisionPartFromDouble(input);
+    int32_t lowerPrecPart = getLowerPrecisionPartFromDouble(input);
     assertTrue(lowerPrecPart == 123456789);
 }
 
 test(getHighPrecisionPartFromDouble) {
     double input = 12.345678999;
-    uint8_t higherPrecPart = getHighPrecisionPartFromDouble(input);
+    int8_t higherPrecPart = getHighPrecisionPartFromDouble(input);
     assertTrue(higherPrecPart == 99);
 }
 
 test(getDoubleFromIntegerParts) {
     int32_t lowerPrecPart = 123456789;
-    uint8_t higherPrecPart= 99;
+    int8_t higherPrecPart= 99;
     double double_var = getDoubleFromIntegerParts(lowerPrecPart, higherPrecPart);
     assertLess(double_var - 12.345678999, 0.000000001);
 }
 
-test(getReconstructedValStringFromCSV) {
-    String csvStr = "111234567,89";
-    String doubleStr = "11.123456789";
-    String testStr = getReconstructedValStringFromCSV(csvStr);
+test(getDoubleStringFromCSV) {
+    String csvStr = "123456789,99";
+    String doubleStr = "12.345678999";
+    String testStr = getDoubleStringFromCSV(csvStr);
+    Serial.printf("testStr: %s\n", testStr.c_str());
     assertTrue (testStr.equals(doubleStr));
+}
+
+test(getValueAsStringFromCSV) {
+    bool result = true;
+    String csv = "123456789,99";
+    Serial.printf("%s, %s\n",getValueAsStringFromCSV(csv, ',',0).c_str(), getValueAsStringFromCSV(csv, ',',1).c_str());
+    result &= getValueAsStringFromCSV(csv, ',',0).equals("123456789");
+    result &= getValueAsStringFromCSV(csv, ',',1).equals("99");
+    assertTrue(result);
 }

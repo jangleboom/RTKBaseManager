@@ -19,7 +19,7 @@ void setup() {
   Serial.print(F("Test test_val: ")); Serial.println(test_val, 9);
   Serial.print(F("Test getLowerPrecisionPartFromDouble: "));Serial.println(getLowerPrecisionPartFromDouble(test_val));
   Serial.print(F("Test getHighPrecisionPartFromDouble: "));Serial.println(getHighPrecisionPartFromDouble(test_val));
-  delay(10000);
+  delay(1000);
 
  
   
@@ -39,5 +39,6 @@ void setup() {
 }
 
 void loop() {
-  
+  // TODO: #Serial and this only #ifdef DEBUG
+  aunit::TestRunner::run();
 }

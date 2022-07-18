@@ -224,7 +224,7 @@ namespace RTKBaseManager {
    * @param inputStr CSV String: <int32_t, int8_t>
    * @return String Reconstructed double value
    */
-  String getReconstructedValStringFromCSV(const String& csvStr);
+  String getDoubleStringFromCSV(const String& csvStr);
 
   /**
    * @brief Get the Value from CSV object
@@ -234,7 +234,7 @@ namespace RTKBaseManager {
    * @param index     Index of val to extract
    * @return String   Extracted val
    */
-  String getValue(const String &data, char separator, int index);
+  String getValueAsStringFromCSV(const String &data, char separator, int index);
 
 }
 
