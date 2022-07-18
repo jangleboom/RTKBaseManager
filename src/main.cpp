@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <SPIFFS.h>
 #include <RTKBaseManager.h>
+#include "../test/test.h"
 
 using namespace RTKBaseManager;
 AsyncWebServer server(80);
