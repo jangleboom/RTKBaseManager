@@ -15,16 +15,10 @@ void setup() {
   setupSPIFFS();
 
   delay(500);
-  high_precision_location_t baseLocation;
-  readIntCoordsFromSPIFFS(&baseLocation, PATH_RTK_BASE_LOCATION);
-  double height = getDoubleFromIntegerParts(baseLocation.alt, baseLocation.alt_hp);
-  Serial.print(F("Read Altitude from location struct: ")); Serial.println(height, 9);
-  // printLocation(&baseLocation);
-
- 
-  // Serial.print(F("Test Latitude: ")); Serial.println(latitude, 9);
-  // Serial.print(F("Test getCommonPrecisionPartFromDouble: "));Serial.println(getCommonPrecisionPartFromDouble(latitude));
-  // Serial.print(F("Test getHighPrecisionPartFromDouble: "));Serial.println(getHighPrecisionPartFromDouble(latitude));
+  double test_val = 11.123456789;
+  Serial.print(F("Test test_val: ")); Serial.println(test_val, 9);
+  Serial.print(F("Test getLowerPrecisionPartFromDouble: "));Serial.println(getLowerPrecisionPartFromDouble(test_val));
+  Serial.print(F("Test getHighPrecisionPartFromDouble: "));Serial.println(getHighPrecisionPartFromDouble(test_val));
   delay(10000);
 
  

@@ -149,27 +149,38 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
 
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_ALTITUDE) == 0) {
       if (p->value().length() > 0) {
-        Serial.printf("Got altitude %s", p->value().c_str());
-        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, p->value().c_str());
+        Serial.printf("Got altitude %s\n", p->value().c_str());
+        String getDeconstructedValAsCSV(p->value());
+        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, getDeconstructedValAsCSV.c_str());
      } 
     }
-
   }
-  high_precision_location_t baseLocation;
-  convertDoubleCoordsToIntLocation(atof(readFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE).c_str()), 
-                                  atof(readFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE).c_str()), 
-                                  atof(readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE).c_str()), 
-                                  &baseLocation);
-  writeIntCoordsToSPIFFS(&baseLocation, PATH_RTK_BASE_LOCATION);
-  printLocation(&baseLocation);
+
   Serial.println(F("Data saved to SPIFFS!"));
   request->send_P(200, "text/html", INDEX_HTML, RTKBaseManager::processor);
 }
 
+String RTKBaseManager::getDeconstructedValAsCSV(const String& doubleStr) {
+    double dVal = doubleStr.toDouble();
+    int32_t lowerPrec = getLowerPrecisionPartFromDouble(dVal);
+    int8_t highPrec = getHighPrecisionPartFromDouble(dVal);
+    String deconstructedCSV = String(lowerPrec) + "," + String(highPrec);
+    return deconstructedCSV;
+}
 
+String RTKBaseManager::getReconstructedValStringFromCSV(const String& csvStr) 
+{ if (csvStr.isEmpty()) return String();
+  char sep = ',';
+  int32_t lowerPrec = (int32_t)getValue(csvStr, sep, 0).toInt();
+  int8_t highPrec = (int8_t)getValue(csvStr, sep, 1).toInt();
+  double reconstructedVal = getDoubleFromIntegerParts(lowerPrec, highPrec);
+  Serial.printf("reconstructedVal: %d", reconstructedVal);
+  return String(reconstructedVal);
+}
 
 // Replaces placeholder with stored values
-String RTKBaseManager::processor(const String& var) {
+String RTKBaseManager::processor(const String& var) 
+{
   if (var == PARAM_WIFI_SSID) {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
     return (savedSSID.isEmpty() ? String(PARAM_WIFI_SSID) : savedSSID);
@@ -195,8 +206,9 @@ String RTKBaseManager::processor(const String& var) {
     return (savedLongitude.isEmpty() ? String(PARAM_RTK_LOCATION_LONGITUDE) : savedLongitude);
   }
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) {
-    String savedHeight = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
-    return (savedHeight.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : savedHeight);
+    String savedAlt = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
+    String altitudeDStr = getReconstructedValStringFromCSV(savedAlt);
+    return (altitudeDStr.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : altitudeDStr);
   }
   else if (var == "next_addr") {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
@@ -234,7 +246,8 @@ void RTKBaseManager::setupSPIFFS(void) {
   #endif
 }
 
-String RTKBaseManager::readFile(fs::FS &fs, const char* path) {
+String RTKBaseManager::readFile(fs::FS &fs, const char* path) 
+{
   Serial.printf("Reading file: %s\r\n", path);
   File file = fs.open(path, "r");
 
@@ -254,7 +267,8 @@ String RTKBaseManager::readFile(fs::FS &fs, const char* path) {
   return fileContent;
 }
 
-void RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message) {
+void RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message) 
+{
   Serial.printf("Writing file: %s\r\n", path);
 
   File file = fs.open(path, "w");
@@ -269,6 +283,7 @@ void RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message
   }
   file.close();
 }
+
 void RTKBaseManager::listFiles() {
   File root = SPIFFS.open("/");
   File file = root.openNextFile();
@@ -282,7 +297,8 @@ void RTKBaseManager::listFiles() {
   root.close();
 }
 
-void RTKBaseManager::wipeSpiffsFiles() {
+void RTKBaseManager::wipeSpiffsFiles() 
+{
   File root = SPIFFS.open("/");
   File file = root.openNextFile();
 
@@ -296,7 +312,8 @@ void RTKBaseManager::wipeSpiffsFiles() {
   }
 }
 
-int32_t RTKBaseManager::getCommonPrecisionPartFromDouble(double input) {
+int32_t RTKBaseManager::getLowerPrecisionPartFromDouble(double input) 
+{
  // We work with 7 + 2 post dot places, (max 0.11 mm accuracy)
   double intp, fracp;
   fracp = modf(input, &intp);
@@ -306,7 +323,8 @@ int32_t RTKBaseManager::getCommonPrecisionPartFromDouble(double input) {
   return atoi(output.c_str());
 }
 
-int8_t RTKBaseManager::getHighPrecisionPartFromDouble(double input) {
+int8_t RTKBaseManager::getHighPrecisionPartFromDouble(double input) 
+{
   // We work with 7 + 2 post dot places, (max 0.11 mm accuracy)
   double intp, fracp;
   fracp = abs(modf(input, &intp));
@@ -315,29 +333,8 @@ int8_t RTKBaseManager::getHighPrecisionPartFromDouble(double input) {
   return atoi(output.c_str());
 }
 
-void RTKBaseManager::convertDoubleCoordsToIntLocation(double lat, double lon, double alt, high_precision_location_t* location) {
-  location->lat = RTKBaseManager::getCommonPrecisionPartFromDouble(lat);
-  location->lat_hp = RTKBaseManager::getHighPrecisionPartFromDouble(lat);
-  location->lon = RTKBaseManager::getCommonPrecisionPartFromDouble(lon);
-  location->lon_hp = RTKBaseManager::getHighPrecisionPartFromDouble(lon);
-  location->alt = RTKBaseManager::getCommonPrecisionPartFromDouble(alt);
-  location->alt_hp = RTKBaseManager::getHighPrecisionPartFromDouble(alt);
-}
-
-void RTKBaseManager::writeIntCoordsToSPIFFS(high_precision_location_t* location, const char* path) {
-  File baseLocation = SPIFFS.open(path, FILE_WRITE);
-  baseLocation.write((byte *)location, sizeof(*location));
-  baseLocation.close();
-}
-
-void RTKBaseManager::readIntCoordsFromSPIFFS(high_precision_location_t* location,  const char* path) {
-  File baseLocation = SPIFFS.open(path, FILE_READ);
-  baseLocation.read((byte *)location, sizeof(*location));
-  printLocation(location);
-  baseLocation.close();
-}
-
-double RTKBaseManager::getDoubleFromIntegerParts(int32_t commonPrecisionInt, int8_t highPrecisionInt) {
+double RTKBaseManager::getDoubleFromIntegerParts(int32_t commonPrecisionInt, int8_t highPrecisionInt) 
+{
   double commonPrecisionDouble, highPrecisionDouble;
   commonPrecisionDouble = (double)commonPrecisionInt * 10e-8;
   highPrecisionDouble = (double)highPrecisionInt * 10e-10;
@@ -345,6 +342,19 @@ double RTKBaseManager::getDoubleFromIntegerParts(int32_t commonPrecisionInt, int
   return (commonPrecisionDouble + highPrecisionDouble);
 }
 
-void RTKBaseManager::printLocation(high_precision_location_t* location) {
-  Serial.printf("Read magic word: %06X\nLatitude: %d, %d\nLongitude: %d, %d\nAltitude: %d, %d\n", location->magic, location->lat, location->lat_hp,  location->lon, location->lon_hp, location->alt, location->alt_hp);
+  // Function to parse lora string message
+String RTKBaseManager::getValue(const String &data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length()-1;
+
+  for (int i=0; i<=maxIndex && found<=index; i++) {
+    if (data.charAt(i)==separator || i==maxIndex) {
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }

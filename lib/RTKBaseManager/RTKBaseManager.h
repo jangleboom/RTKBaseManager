@@ -67,18 +67,6 @@ namespace RTKBaseManager {
   const char PATH_RTK_LOCATION_ALTITUDE[] PROGMEM = "/altitude.txt";
   const char PATH_RTK_BASE_LOCATION[] PROGMEM = "/location.txt";
 
-  struct HighPrecisionLocation {
-    const int32_t magic = 0xC0FFEE; // Magic keyword 0xC0FFEE, that tells us if we're reading garbage from SPIFFS
-    int32_t lat;                    // 7-digits
-    int8_t lat_hp;                  // high precision extension
-    int32_t lon;                    // 7-digits
-    int8_t lon_hp;                  // high precision extension
-    int32_t alt;                    // Unit: mm
-    int8_t alt_hp;                  // high precision extension
-  };
-
-  typedef struct HighPrecisionLocation high_precision_location_t;
-
   /*** Wifi ***/
 
   /**
@@ -196,13 +184,13 @@ namespace RTKBaseManager {
   /*** Help funcs ***/
 
   /**
-   * @brief Get the common precision part from double value
+   * @brief Get the lower precision part from double value
    *        like latitude, longitude or altitude
    * 
    * @param input Value in double format
    * @return int32_t Converted value with 7 post dot digits (up tu 1.11 cm)
    */
-  int32_t getCommonPrecisionPartFromDouble(double input);
+  int32_t getLowerPrecisionPartFromDouble(double input);
 
   /**
    * @brief Get the high precision part from double value
@@ -213,38 +201,40 @@ namespace RTKBaseManager {
    */
   int8_t getHighPrecisionPartFromDouble(double input);
 
-  double getDoubleFromIntegerParts(int32_t commonPrecisionVal, int8_t highPrecisionExtension);
+  /**
+   * @brief Get the Double From Integer Parts 
+   * 
+   * @param lowerPrecPart int32_t holding die lower precision
+   * @param higherPrecPart int8_t holding the high precision extension
+   * @return double reconstructed value
+   */
+  double getDoubleFromIntegerParts(int32_t lowerPrecPart, int8_t higherPrecPart);
 
   /**
-   * @brief Convert floating point coordinates into integer values
+   * @brief Get the deconstructed double val as CSV integer object
    * 
-   * @param lat       Double latitude
-   * @param lon       Double longitude
-   * @param alt       Double altitude (height-over-sea-level of the antenna)
-   * @param location  Struct to hold coordinates.
+   * @param doubleStr Double to deconstruct as String
+   * @return String   Deconstructed double val as CSV
    */
-  void convertDoubleCoordsToIntLocation(double lat, double lon, double alt, high_precision_location_t* location);
-  
+  String getDeconstructedValAsCSV(const String& doubleStr);
+
   /**
-   * @brief Write integer location struct to SPIFFS
+   * @brief Get the reconstructed val from CSV object
    * 
-   * @param location Pointer to struct of type high_precision_location_t
+   * @param inputStr CSV String: <int32_t, int8_t>
+   * @return String Reconstructed double value
    */
-  void writeIntCoordsToSPIFFS(high_precision_location_t* location, const char* path);
-  
+  String getReconstructedValStringFromCSV(const String& csvStr);
+
   /**
-   * @brief Read integer location struct from SPIFFS
+   * @brief Get the Value from CSV object
    * 
-   * @param location Pointer to struct of type high_precision_location_t
+   * @param data      CSV String
+   * @param separator Separator
+   * @param index     Index of val to extract
+   * @return String   Extracted val
    */
-  void readIntCoordsFromSPIFFS(high_precision_location_t* location, const char* path);
-  
-  /**
-   * @brief Debugging func to print location members
-   * 
-   * @param location 
-   */
-  void printLocation(high_precision_location_t* location);
+  String getValue(const String &data, char separator, int index);
 
 }
 
