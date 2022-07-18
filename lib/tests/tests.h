@@ -1,3 +1,6 @@
+#ifndef TESTS_H
+#define TESTS_H
+
 #include <AUnit.h>
 #include <RTKBaseManager.h>
 #include <SPIFFS.h>
@@ -49,3 +52,5 @@ test(getValueAsStringFromCSV) {
     result &= getValueAsStringFromCSV(csv, ',',1).equals("99");
     assertTrue(result);
 }
+
+#endif /*** TESTS_H ***/

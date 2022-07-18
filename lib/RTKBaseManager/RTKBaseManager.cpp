@@ -137,19 +137,20 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
 
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_LATITUDE) == 0) {
       if (p->value().length() > 0) {
-        writeFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE, p->value().c_str());
+        String deconstructedValAsCSV = getDeconstructedValAsCSV(p->value());
+        writeFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE, deconstructedValAsCSV.c_str());
      } 
     }
 
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_LONGITUDE) == 0) {
       if (p->value().length() > 0) {
-        writeFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE, p->value().c_str());
+        String deconstructedValAsCSV = getDeconstructedValAsCSV(p->value());
+        writeFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE, deconstructedValAsCSV.c_str());
      } 
     }
 
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_ALTITUDE) == 0) {
       if (p->value().length() > 0) {
-        Serial.printf("Got altitude %s\n", p->value().c_str());
         String deconstructedValAsCSV = getDeconstructedValAsCSV(p->value());
         writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, deconstructedValAsCSV.c_str());
      } 
@@ -171,12 +172,9 @@ String RTKBaseManager::getDeconstructedValAsCSV(const String& doubleStr) {
 String RTKBaseManager::getDoubleStringFromCSV(const String& csvStr) { 
   if (csvStr.isEmpty()) return String();
   int32_t lowerPrec = getValueAsStringFromCSV(csvStr, ',', 0).toInt();
-  Serial.print("lowerPrec: ");Serial.println(getValueAsStringFromCSV(csvStr, ',', 0));
   int8_t highPrec = getValueAsStringFromCSV(csvStr, ',', 1).toInt();
-  Serial.print("highPrec: ");Serial.println(getValueAsStringFromCSV(csvStr, ',', 1));
   double reconstructedVal = getDoubleFromIntegerParts(lowerPrec, highPrec);
   String reconstructedValStr = String(reconstructedVal, 9);
-  Serial.print("reconstructedVal: ");Serial.println(reconstructedVal, 9);
   return reconstructedValStr;
 }
 
@@ -201,17 +199,17 @@ String RTKBaseManager::processor(const String& var)
   }
   else if (var == PARAM_RTK_LOCATION_LATITUDE) {
     String savedLatitude = readFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE);
-    return (savedLatitude.isEmpty() ? String(PARAM_RTK_LOCATION_LATITUDE) : savedLatitude);
+    String savedLatitudeStr = getDoubleStringFromCSV(savedLatitude);
+    return (savedLatitude.isEmpty() ? String(PARAM_RTK_LOCATION_LATITUDE) : savedLatitudeStr);
   }
   else if (var == PARAM_RTK_LOCATION_LONGITUDE) {
     String savedLongitude = readFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE);
-    return (savedLongitude.isEmpty() ? String(PARAM_RTK_LOCATION_LONGITUDE) : savedLongitude);
+    String savedLongitudeStr = getDoubleStringFromCSV(savedLongitude);
+    return (savedLongitude.isEmpty() ? String(PARAM_RTK_LOCATION_LONGITUDE) : savedLongitudeStr);
   }
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) {
     String savedAlt = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
-    Serial.printf("processor savedAlt: %s\n", savedAlt.c_str());
     String altitudeDoubleStr = getDoubleStringFromCSV(savedAlt);
-    Serial.printf("processor altitudeDoubleStr: %s\n", altitudeDoubleStr.c_str());
     return (altitudeDoubleStr.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : altitudeDoubleStr);
   }
   else if (var == "next_addr") {

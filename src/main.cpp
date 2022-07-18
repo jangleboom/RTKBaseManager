@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <SPIFFS.h>
 #include <RTKBaseManager.h>
-#include "../test/test.h"
+#include <config.h>
 
 using namespace RTKBaseManager;
 AsyncWebServer server(80);
@@ -9,8 +9,11 @@ String scannedSSIDs[MAX_SSIDS];
 
 void setup() {
   
-  Serial.begin(115200);
-  delay(500);
+  #ifdef DEBUGGING
+  Serial.begin(BAUD);
+  while (!Serial) {};
+  #endif
+  
   // Initialize SPIFFS
   setupSPIFFS();
 
