@@ -10,8 +10,10 @@
             "includePath": [
                 "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/include",
                 "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/src",
+                "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/lib/tests",
                 "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/lib/RTKBaseManager",
                 "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/lib/html",
+                "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/lib/config",
                 "/Users/mrmarkuese/.platformio/packages/framework-arduinoespressif32/libraries/SPIFFS/src",
                 "/Users/mrmarkuese/.platformio/packages/framework-arduinoespressif32/libraries/ESPmDNS/src",
                 "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/lib/ESPAsyncWebServer/src",
@@ -230,8 +232,10 @@
                 "path": [
                     "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/include",
                     "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/src",
+                    "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/lib/tests",
                     "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/lib/RTKBaseManager",
                     "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/lib/html",
+                    "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/lib/config",
                     "/Users/mrmarkuese/.platformio/packages/framework-arduinoespressif32/libraries/SPIFFS/src",
                     "/Users/mrmarkuese/.platformio/packages/framework-arduinoespressif32/libraries/ESPmDNS/src",
                     "/Users/mrmarkuese/Documents/Büro/Jobs/Hochschule Basel_RealtimeKinematics/RTKBaseManager/lib/ESPAsyncWebServer/src",
