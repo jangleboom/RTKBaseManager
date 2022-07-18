@@ -10,46 +10,48 @@ void RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   if (WiFi.waitForConnectResult() != WL_CONNECTED) {
     // TODO:  - count reboots and stop after 3 times (save in SPIFFS)
     //        - display state
-    Serial.println("WiFi Failed! Reboot in 10 s as AP!");
+    DEBUG_SERIAL.println("WiFi Failed! Reboot in 10 s as AP!");
     delay(10000);
     ESP.restart();
   }
-  Serial.println();
+  DEBUG_SERIAL.println();
 
   if (!MDNS.begin(deviceName)) {
-      Serial.println("Error starting mDNS, use local IP instead!");
+      DEBUG_SERIAL.println("Error starting mDNS, use local IP instead!");
   } else {
-    Serial.printf("Starting mDNS, find me under <http://www.%s.local>\n", DEVICE_NAME);
+    DEBUG_SERIAL.print(F("Starting mDNS, find me under <http://www."));
+    DEBUG_SERIAL.print("DEVICE_NAME");
+    DEBUG_SERIAL.println(F(".local>"));
   }
 
-  Serial.print("Wifi client started: ");
-  Serial.println(WiFi.getHostname());
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
+  DEBUG_SERIAL.print(F("Wifi client started: "));
+  DEBUG_SERIAL.println(WiFi.getHostname());
+  DEBUG_SERIAL.print(F("IP Address: "));
+  DEBUG_SERIAL.println(WiFi.localIP());
 }
 
 void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword) {
-    Serial.print("Setting soft-AP ... ");
+    DEBUG_SERIAL.print("Setting soft-AP ... ");
     WiFi.mode(WIFI_AP);
-    Serial.println(WiFi.softAP(apSsid, apPassword) ? "Ready" : "Failed!");
-    Serial.print("Access point started: ");
-    Serial.println(AP_SSID);
-    Serial.print("IP address: ");
-    Serial.println(WiFi.softAPIP());
+    DEBUG_SERIAL.println(WiFi.softAP(apSsid, apPassword) ? "Ready" : "Failed!");
+    DEBUG_SERIAL.print("Access point started: ");
+    DEBUG_SERIAL.println(AP_SSID);
+    DEBUG_SERIAL.print("IP address: ");
+    DEBUG_SERIAL.println(WiFi.softAPIP());
 }
 
 bool RTKBaseManager::savedNetworkAvailable(const String& ssid) {
   if (ssid.isEmpty()) return false;
 
   uint8_t nNetworks = (uint8_t) WiFi.scanNetworks();
-  Serial.print(nNetworks);  Serial.println(F(" networks found."));
+  DEBUG_SERIAL.print(nNetworks);  DEBUG_SERIAL.println(F(" networks found."));
     for (uint8_t i=0; i<nNetworks; i++) {
     if (ssid.equals(String(WiFi.SSID(i)))) {
-      Serial.print(F("A known network with SSID found: ")); 
-      Serial.print(WiFi.SSID(i));
-      Serial.print(F(" (")); 
-      Serial.print(WiFi.RSSI(i)); 
-      Serial.println(F(" dB), connecting..."));
+      DEBUG_SERIAL.print(F("A known network with SSID found: ")); 
+      DEBUG_SERIAL.print(WiFi.SSID(i));
+      DEBUG_SERIAL.print(F(" (")); 
+      DEBUG_SERIAL.print(WiFi.RSSI(i)); 
+      DEBUG_SERIAL.println(F(" dB), connecting..."));
       return true;
     }
   }
@@ -78,38 +80,41 @@ void RTKBaseManager::notFound(AsyncWebServerRequest *request) {
 }
 
 void RTKBaseManager::actionRebootESP32(AsyncWebServerRequest *request) {
-  Serial.println("ACTION actionRebootESP32!");
+  DEBUG_SERIAL.println("ACTION actionRebootESP32!");
   request->send_P(200, "text/html", REBOOT_HTML, RTKBaseManager::processor);
   delay(3000);
   ESP.restart();
 }
 
 void RTKBaseManager::actionWipeData(AsyncWebServerRequest *request) {
-  Serial.println("ACTION actionWipeData!");
+  DEBUG_SERIAL.println(F("ACTION actionWipeData!"));
+
   int params = request->params();
-  Serial.printf("params: %d\n", params);
+  DEBUG_SERIAL.print(F("params: "));
+  DEBUG_SERIAL.println(params);
+
   for (int i = 0; i < params; i++) {
     AsyncWebParameter* p = request->getParam(i);
-    Serial.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
+    DEBUG_SERIAL.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
     if (strcmp(p->name().c_str(), "wipe_button") == 0) {
       if (p->value().length() > 0) {
-        Serial.printf("wipe command received: %s",p->value().c_str());
+        DEBUG_SERIAL.printf("wipe command received: %s",p->value().c_str());
         wipeSpiffsFiles();
       } 
      }
     } 
 
-  Serial.print(F("Data in SPIFFS was wiped out!"));
+  DEBUG_SERIAL.print(F("Data in SPIFFS was wiped out!"));
   request->send_P(200, "text/html", INDEX_HTML, processor);
 }
 
 void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
-  Serial.println("ACTION: actionUpdateData!");
+  DEBUG_SERIAL.println("ACTION: actionUpdateData!");
 
   int params = request->params();
   for (int i = 0; i < params; i++) {
     AsyncWebParameter* p = request->getParam(i);
-    Serial.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
+    DEBUG_SERIAL.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
 
     if (strcmp(p->name().c_str(), PARAM_WIFI_SSID) == 0) {
       if (p->value().length() > 0) {
@@ -157,7 +162,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
     }
   }
 
-  Serial.println(F("Data saved to SPIFFS!"));
+  DEBUG_SERIAL.println(F("Data saved to SPIFFS!"));
   request->send_P(200, "text/html", INDEX_HTML, RTKBaseManager::processor);
 }
 
@@ -237,12 +242,12 @@ String RTKBaseManager::processor(const String& var)
 void RTKBaseManager::setupSPIFFS(void) {
   #ifdef ESP32
     if (!SPIFFS.begin(true)) {
-      Serial.println("An Error has occurred while mounting SPIFFS");
+      DEBUG_SERIAL.println("An Error has occurred while mounting SPIFFS");
       return;
     }
   #else
     if (!SPIFFS.begin()) {
-      Serial.println("An Error has occurred while mounting SPIFFS");
+      DEBUG_SERIAL.println("An Error has occurred while mounting SPIFFS");
       return;
     }
   #endif
@@ -250,38 +255,38 @@ void RTKBaseManager::setupSPIFFS(void) {
 
 String RTKBaseManager::readFile(fs::FS &fs, const char* path) 
 {
-  Serial.printf("Reading file: %s\r\n", path);
+  DEBUG_SERIAL.printf("Reading file: %s\r\n", path);
   File file = fs.open(path, "r");
 
   if (!file || file.isDirectory()) {
-    Serial.println("- empty file or failed to open file");
+    DEBUG_SERIAL.println("- empty file or failed to open file");
     return String();
   }
-  Serial.println("- read from file:");
+  DEBUG_SERIAL.println("- read from file:");
   String fileContent;
 
   while (file.available()) {
     fileContent += String((char)file.read());
   }
   file.close();
-  Serial.println(fileContent);
+  DEBUG_SERIAL.println(fileContent);
 
   return fileContent;
 }
 
 void RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message) 
 {
-  Serial.printf("Writing file: %s\r\n", path);
+  DEBUG_SERIAL.printf("Writing file: %s\r\n", path);
 
   File file = fs.open(path, "w");
   if (!file) {
-    Serial.println("- failed to open file for writing");
+    DEBUG_SERIAL.println("- failed to open file for writing");
     return;
   }
   if (file.print(message)) {
-    Serial.println("- file written");
+    DEBUG_SERIAL.println("- file written");
   } else {
-    Serial.println("- write failed");
+    DEBUG_SERIAL.println("- write failed");
   }
   file.close();
 }
@@ -291,8 +296,8 @@ void RTKBaseManager::listFiles() {
   File file = root.openNextFile();
  
   while (file) {
-      Serial.print("FILE: ");
-      Serial.println(file.name());
+      DEBUG_SERIAL.print("FILE: ");
+      DEBUG_SERIAL.println(file.name());
       file = root.openNextFile();
   }
   file.close();
@@ -304,11 +309,11 @@ void RTKBaseManager::wipeSpiffsFiles()
   File root = SPIFFS.open("/");
   File file = root.openNextFile();
 
-  Serial.println(F("Wiping: "));
+  DEBUG_SERIAL.println(F("Wiping: "));
 
   while (file) {
-    Serial.print("FILE: ");
-    Serial.println(file.path());
+    DEBUG_SERIAL.print("FILE: ");
+    DEBUG_SERIAL.println(file.path());
     SPIFFS.remove(file.path());
     file = root.openNextFile();
   }
@@ -350,6 +355,5 @@ String RTKBaseManager::getValueAsStringFromCSV(const String &data, char separato
   int idx = data.indexOf(separator);
   int length = data.length();
   String result = (index==0) ? data.substring(0, idx) : data.substring(idx+1, length);
-  // Serial.printf("getValueAsStringFromCSV idx, result: %i, %s\n", index, result.c_str());
   return  result;
 }

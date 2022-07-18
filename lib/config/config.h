@@ -12,9 +12,7 @@
 
 #define BAUD                          115200
 
-#ifdef DEBUGGING
-#include <tests.h>
-#endif
 
 
-#endif
+
+#endif  /*** CONFIG_H ***/

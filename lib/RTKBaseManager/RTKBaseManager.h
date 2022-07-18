@@ -25,6 +25,7 @@
 #include <index_html.h>
 #include <error_html.h>
 #include <reboot_html.h>
+#include <config.h>
 
 #ifdef ESP32
   #include <WiFi.h>

@@ -40,14 +40,12 @@ test(getDoubleStringFromCSV) {
     String csvStr = "123456789,99";
     String doubleStr = "12.345678999";
     String testStr = getDoubleStringFromCSV(csvStr);
-    Serial.printf("testStr: %s\n", testStr.c_str());
     assertTrue (testStr.equals(doubleStr));
 }
 
 test(getValueAsStringFromCSV) {
     bool result = true;
     String csv = "123456789,99";
-    Serial.printf("%s, %s\n",getValueAsStringFromCSV(csv, ',',0).c_str(), getValueAsStringFromCSV(csv, ',',1).c_str());
     result &= getValueAsStringFromCSV(csv, ',',0).equals("123456789");
     result &= getValueAsStringFromCSV(csv, ',',1).equals("99");
     assertTrue(result);
