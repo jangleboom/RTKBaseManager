@@ -1,20 +1,11 @@
-#ifndef TESTS_H
-#define TESTS_H
+#ifndef TESTS_RTK_BASE_MANAGER_H
+#define TESTS_RTK_BASE_MANAGER_H
 
 #include <AUnit.h>
+#include <RTKBaseManager.h>
 
 using namespace aunit;
 using namespace RTKBaseManager;
-
-test(correct) {
-    int x = 1;
-    assertEqual(x, 1);
-}
-
-test(incorrect) {
-    int x = 2;
-    assertNotEqual(x, 1);
-}
 
 test(getLowerPrecisionPartFromDouble) {
     double input = 12.345678999;

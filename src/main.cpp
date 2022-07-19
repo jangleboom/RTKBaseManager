@@ -4,7 +4,7 @@
 #include <config.h>
 
 #ifdef DEBUGGING
-#include <tests.h>
+#include <TestsRTKBaseManager.h>
 #endif
 
 using namespace RTKBaseManager;
