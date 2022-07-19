@@ -38,3 +38,4 @@
 # Lib stuff
 main.cpp
 lib/
+.vscode
