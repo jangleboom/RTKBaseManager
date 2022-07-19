@@ -34,3 +34,6 @@
 # OS stuff
 .DS_Store
 .pio
+
+# Lib stuff
+main.cpp

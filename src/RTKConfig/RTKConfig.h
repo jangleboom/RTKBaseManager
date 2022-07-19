@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef RTK_CONFIG_H
+#define RTK_CONFIG_H
 #include <Arduino.h>
 
 /******************************************************************************/
@@ -15,4 +15,4 @@
 
 
 
-#endif  /*** CONFIG_H ***/
+#endif  /*** RTK_CONFIG_H ***/
