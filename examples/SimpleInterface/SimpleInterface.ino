@@ -39,7 +39,7 @@ void loop() {
   #ifdef DEBUGGING
   aunit::TestRunner::run();
   #endif
-  DEBUG_SERIAL.println(F("Here are your SPIFFS file paths (empty at first run):"))
+  DEBUG_SERIAL.println(F("Here are your SPIFFS file paths (empty at first run):"));
   RTKBaseManager::listFiles();
   while (true) {};
 }

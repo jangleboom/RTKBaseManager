@@ -41,4 +41,4 @@ test(getValueAsStringFromCSV) {
     assertTrue(result);
 }
 
-#endif /*** TESTS_H ***/
+#endif /*** TESTS_RTK_BASE_MANAGER_H ***/
