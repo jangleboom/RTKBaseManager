@@ -226,7 +226,12 @@ typedef struct {
    */
   bool getIntLocationFromSPIFFS(location_int_t* location, const char* pathLat, const char* pathLon, const char* pathAlt);
   
-
+  /**
+   * @brief Print content of location_int_t struct
+   * 
+   * @param location Pointer to location_int_t var
+   */
+  void printIntLocation(location_int_t* location);
 
   /*** Help funcs ***/
 
