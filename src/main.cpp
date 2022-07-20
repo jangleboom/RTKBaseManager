@@ -18,7 +18,11 @@ void setup() {
   #endif
   
   // Initialize SPIFFS
-  RTKBaseManager::setupSPIFFS();
+  bool format = false;
+  if (!RTKBaseManager::setupSPIFFS(format)) {
+    DEBUG_SERIAL.println(F("setupSPIFFS failed, freezing"));
+    while (true) {};
+  };
 
   WiFi.setHostname(DEVICE_NAME);
   // Check if we have credentials for a available network
@@ -39,7 +43,7 @@ void loop() {
   #ifdef DEBUGGING
   aunit::TestRunner::run();
   #endif
-  DEBUG_SERIAL.println(F("Here are your SPIFFS file paths (empty at first run):"));
-  RTKBaseManager::listFiles();
-  while (true) {};
+  // DEBUG_SERIAL.println(F("Here are your SPIFFS file paths (empty at first run):"));
+  // RTKBaseManager::listFiles();
+  // while (true) {};
 }

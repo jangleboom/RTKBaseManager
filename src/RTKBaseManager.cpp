@@ -176,8 +176,8 @@ String RTKBaseManager::getDeconstructedValAsCSV(const String& doubleStr) {
 
 String RTKBaseManager::getDoubleStringFromCSV(const String& csvStr) { 
   if (csvStr.isEmpty()) return String();
-  int32_t lowerPrec = getValueAsStringFromCSV(csvStr, ',', 0).toInt();
-  int8_t highPrec = getValueAsStringFromCSV(csvStr, ',', 1).toInt();
+  int32_t lowerPrec = (int32_t)getValueAsStringFromCSV(csvStr, ',', 0).toInt();
+  int8_t highPrec = (int8_t)getValueAsStringFromCSV(csvStr, ',', 1).toInt();
   double reconstructedVal = getDoubleFromIntegerParts(lowerPrec, highPrec);
   String reconstructedValStr = String(reconstructedVal, 9);
   return reconstructedValStr;
@@ -239,18 +239,29 @@ String RTKBaseManager::processor(const String& var)
 *                             SPIFFS
 * ******************************************************************************/
 
-void RTKBaseManager::setupSPIFFS(void) {
+bool RTKBaseManager::setupSPIFFS(bool format) {
+  bool success = true;
+
   #ifdef ESP32
     if (!SPIFFS.begin(true)) {
       DEBUG_SERIAL.println("An Error has occurred while mounting SPIFFS");
-      return;
+      success = false;
+      return success;
     }
   #else
     if (!SPIFFS.begin()) {
       DEBUG_SERIAL.println("An Error has occurred while mounting SPIFFS");
-      return;
+      success = false;
+      return success;
     }
   #endif
+  
+  if (format) {
+    DEBUG_SERIAL.println(F("formatting SPIFFS, ..."));
+    success &= SPIFFS.format();
+  }
+
+  return success;
 }
 
 String RTKBaseManager::readFile(fs::FS &fs, const char* path) 
@@ -274,21 +285,25 @@ String RTKBaseManager::readFile(fs::FS &fs, const char* path)
   return fileContent;
 }
 
-void RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message) 
-{
+bool RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message) 
+{ bool success = false;
   DEBUG_SERIAL.printf("Writing file: %s\r\n", path);
 
   File file = fs.open(path, "w");
   if (!file) {
     DEBUG_SERIAL.println("- failed to open file for writing");
-    return;
+    return success;
   }
   if (file.print(message)) {
     DEBUG_SERIAL.println("- file written");
+    success = true;
   } else {
     DEBUG_SERIAL.println("- write failed");
+    success = false;
   }
   file.close();
+
+  return success;
 }
 
 void RTKBaseManager::listFiles() {
@@ -318,6 +333,27 @@ void RTKBaseManager::wipeSpiffsFiles()
     file = root.openNextFile();
   }
 }
+
+bool RTKBaseManager::getIntLocationFromSPIFFS(location_int_t* location, const char* pathLat, const char* pathLon, const char* pathAlt) {
+  bool success = false;
+  String latStr = readFile(SPIFFS, pathLat);
+  String lonStr = readFile(SPIFFS, pathLon);
+  String altStr = readFile(SPIFFS, pathAlt);
+  if (!latStr.isEmpty() && !lonStr.isEmpty() && !altStr.isEmpty()) {
+    location->lat =  (int32_t)getValueAsStringFromCSV(latStr, SEP, LOW_PREC_IDX).toInt();
+    location->lat_hp = (int8_t)getValueAsStringFromCSV(latStr, SEP, HIGH_PREC_IDX).toInt();
+    location->lon =  (int32_t)getValueAsStringFromCSV(lonStr, SEP, LOW_PREC_IDX).toInt();
+    location->lon_hp = (int8_t)getValueAsStringFromCSV(lonStr, SEP, HIGH_PREC_IDX).toInt();
+    location->alt =  (int32_t)getValueAsStringFromCSV(altStr, SEP, LOW_PREC_IDX).toInt();
+    location->alt_hp = (int8_t)getValueAsStringFromCSV(altStr, SEP, HIGH_PREC_IDX).toInt();
+    success = true;
+  } 
+  
+  return success;
+}
+
+/*** Help Functions ***/
+// TODO: make this privat
 
 int32_t RTKBaseManager::getLowerPrecisionPartFromDouble(double input) 
 {

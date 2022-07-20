@@ -41,4 +41,34 @@ test(getValueAsStringFromCSV) {
     assertTrue(result);
 }
 
+test(getIntLocationFromSPIFFS) {
+    bool success = true;
+    location_int_t location;
+    const int32_t lowerPrec = 123456789;
+    const int8_t highPrec = 99;
+    String doubleValStr = "12.345678999";
+    const char* testPathLat = "/testPathLat";
+    const char* testPathLon = "/testPathLon";
+    const char* testPathAlt = "/testPathAlt";
+
+    if (SPIFFS.exists(testPathLat)) SPIFFS.remove(testPathLat);
+    if (SPIFFS.exists(testPathLon)) SPIFFS.remove(testPathLon);
+    if (SPIFFS.exists(testPathAlt)) SPIFFS.remove(testPathAlt);
+   
+    String deconstructedValAsCSV = getDeconstructedValAsCSV(doubleValStr);
+    success &= writeFile(SPIFFS, testPathLat, deconstructedValAsCSV.c_str());
+    success &= writeFile(SPIFFS, testPathLon, deconstructedValAsCSV.c_str());
+    success &= writeFile(SPIFFS, testPathAlt, deconstructedValAsCSV.c_str());
+
+    success &= getIntLocationFromSPIFFS(&location, testPathLat, testPathLon, testPathAlt);
+    success &= location.lat == lowerPrec;
+    success &= location.lon == lowerPrec;
+    success &= location.alt == lowerPrec;
+    success &= location.lat_hp == highPrec;
+    success &= location.lon_hp == highPrec;
+    success &= location.alt_hp == highPrec;
+
+    assertTrue(success);
+}
+
 #endif /*** TESTS_RTK_BASE_MANAGER_H ***/

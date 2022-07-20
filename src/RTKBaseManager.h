@@ -68,6 +68,25 @@ namespace RTKBaseManager {
   const char PATH_RTK_LOCATION_LATITUDE[] PROGMEM = "/latitude.txt";
   const char PATH_RTK_LOCATION_ALTITUDE[] PROGMEM = "/altitude.txt";
   const char PATH_RTK_BASE_LOCATION[] PROGMEM = "/location.txt";
+  const char SEP = ',';
+  const uint8_t LOW_PREC_IDX = 0;
+  const uint8_t HIGH_PREC_IDX = 1;
+ 
+
+// typedef struct {
+//   double latitude;
+//   double longitude;
+//   double altitude;
+// } location_double_t;
+
+typedef struct {
+  int32_t lat;       // 7 post comma digits latitude
+  int8_t  lat_hp;    // high precision extension latitude
+  int32_t lon;       // 7 post comma digits longitude
+  int8_t  lon_hp;    // high precision extension longitude
+  int32_t alt;       // 7 post comma digits height
+  int8_t  alt_hp;    // high precision extension height
+} location_int_t;
 
   /*** Wifi ***/
 
@@ -149,8 +168,11 @@ namespace RTKBaseManager {
   /**
    * @brief Just init SPIFFS for ESP32 or ESP8266
    * 
+   * @param format  True if SPIFFS should formated at start
+   * @return true   If SPIFFS is successfully initialized
+   *         false  If SPIFFS init failed
    */
-  void setupSPIFFS(void);
+  bool setupSPIFFS(bool format);
 
   /**
    * @brief         Write data to SPIFFS
@@ -158,8 +180,10 @@ namespace RTKBaseManager {
    * @param fs      Address of file system
    * @param path    Path to file
    * @param message Content to save in file on path
+   * @return  true  If succeed
+   *          false If failed
    */
-  void writeFile(fs::FS &fs, const char* path, const char* message);
+  bool writeFile(fs::FS &fs, const char* path, const char* message);
 
   /**
    * @brief           Read data from SPIFFS
@@ -181,6 +205,27 @@ namespace RTKBaseManager {
    * 
    */
   void wipeSpiffsFiles(void);
+
+  // /**
+  //  * @brief Get the Location struct from SPIFFS
+  //  * 
+  //  * @param writeLocation Address of location struct to write to
+  //  * @return true  If saved location data exist
+  //  * @return false If reading location data failed or data not exist
+  //  */
+
+  /**
+   * @brief Get the int formated location from SPIFFS 
+   * 
+   * @param location Address of location_int_t location struct to write to
+   * @param pathLat Path to saved latitude
+   * @param pathLon Path to saved longitude
+   * @param pathAlt Path to saved altitude
+   * @return true 
+   * @return false 
+   */
+  bool getIntLocationFromSPIFFS(location_int_t* location, const char* pathLat, const char* pathLon, const char* pathAlt);
+  
 
 
   /*** Help funcs ***/
