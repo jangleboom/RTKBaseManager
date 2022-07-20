@@ -31,6 +31,7 @@
   #include <WiFi.h>
   #include <AsyncTCP.h>
   #include <SPIFFS.h>
+  #include <FS.h>
 #else
   #include <ESP8266WiFi.h>
   #include <ESPAsyncTCP.h>

@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <SPIFFS.h>
 #include <RTKBaseManager.h>
-#include <RTKConfig.h>
+#include <ManagerConfig.h>
 
 #ifdef DEBUGGING
 #include <TestsRTKBaseManager.h>
