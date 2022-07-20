@@ -1,6 +1,9 @@
-#ifndef RTK_CONFIG_H
-#define RTK_CONFIG_H
+#ifndef RTK_BASE_STATION_CONFIG_H
+#ifndef MANAGER_CONFIG_H
+#define MANAGER_CONFIG_H
 #include <Arduino.h>
+
+// THIS WILL BE REPLACED BY THE RTK_BASE_STATION_CONFIG_H
 
 /******************************************************************************/
 //                       Default Serial settings
@@ -15,4 +18,5 @@
 
 
 
-#endif  /*** RTK_CONFIG_H ***/
+#endif  /*** MANAGER_CONFIG_H ***/
+#endif
