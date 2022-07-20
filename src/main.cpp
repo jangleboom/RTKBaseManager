@@ -17,7 +17,7 @@ void setup() {
   while (!Serial) {};
   #endif
   
-  // Initialize SPIFFS
+  // Initialize SPIFFS, set true for formatting
   bool format = false;
   if (!RTKBaseManager::setupSPIFFS(format)) {
     DEBUG_SERIAL.println(F("setupSPIFFS failed, freezing"));
