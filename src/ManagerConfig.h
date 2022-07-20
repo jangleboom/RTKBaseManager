@@ -3,7 +3,7 @@
 #define MANAGER_CONFIG_H
 #include <Arduino.h>
 
-// THIS WILL BE REPLACED BY THE RTK_BASE_STATION_CONFIG_H
+// THIS WILL BE REPLACED BY THE RTKBaseConfig.h after merge
 
 /******************************************************************************/
 //                       Default Serial settings
