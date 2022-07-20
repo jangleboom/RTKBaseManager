@@ -83,7 +83,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
     <form id="Form1" onsubmit="return confirm('Restart the ESP32 by pressing the Reboot button for your changes to take effect!');" action='actionUpdateData' method='post' target="hidden-form"></form>
     <form id="Form2" onsubmit="return confirm('Are you sure? All saved SPIFFS files will be deleted (Wifi and RTK config)');" action='actionWipeData' method='post' target="hidden-form"></form>
     <form id="Form3" onsubmit="return confirm('Connection will be lost during reboot, please refresh this page after reconnecting!');" action='actionRebootESP32' method='post' target="hidden-form"></form>
-     <input form="Form1" type="hidden" id="radio_state" value=%location_method%>
+    <input form="Form1" type="hidden" id="radio_state" value=%location_method%>
     <p>
         <table class=center>
             <tr>
@@ -99,7 +99,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 <td colspan=2></td>
             </tr>
             <tr>
-                <td colspan=2>  </td>
+                <td colspan=2> </td>
             </tr>
             <tr>
                 <td style="text-align:left;">SSID:</td>
@@ -114,53 +114,77 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 </td>
             </tr>
             <tr>
-                <td></td>
-                <td style="text-align:right;"> </td>
-            </tr>
-            <tr>
                 <td colspan=2>
-                    <h3>RTK configuration</h3>
+                    <h3>RTK base setup</h3>
                 </td>
+                <tr>
+                    <td style="text-align:left;">Caster host:</td>
+                    <td>
+                        <input class="text_field" form="Form1" type="text" maxlength="30" name="caster_host" placeholder=%caster_host% style="text-align:center;">
+                    </td>
+
+                </tr>
+                <tr>
+                    <td style="text-align:left;">Mount point:</td>
+                    <td>
+                        <input class="text_field" form="Form1" type="text" maxlength="30" name="mount_point" placeholder=%mount_point% style="text-align:center;">
+                    </td>
+                </tr>
+                                <tr>
+                    <td style="text-align:left;">Mount point PW:</td>
+                    <td>
+                        <input class="text_field" form="Form1" type="text" maxlength="30" name="mount_point_pw" placeholder=%mount_point_pw% style="text-align:center;">
+                    </td>
+
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="text-align:right;"> </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                        <h3>RTK configuration</h3>
+                    </td>
+                    <td colspan=2></td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                        Choose location method:
+                    </td>
+                    <td colspan=2></td>
+                </tr>
+                <tr>
+                    <td style="text-align:right;"> <input form="Form1" type="radio" id="survey_enabled" value="survey_enabled" name="location_method" onclick="enableLocationMethod()"></td>
+                    <td style="text-align:left;" title="For an accuracy of 0.06 m this can take up to 24 hours."> <label for="survey_enabled"> Run a long survey </label></td>
+                </tr>
+                <tr>
+                    <td style="text-align:right;"> <input form="Form1" type="radio" id="coords_enabled" value="coords_enabled" name="location_method" onclick="enableLocationMethod()"></td>
+                    <td style="text-align:left;" title="Seven decimal places are required."> <label for="coords_enabled"> High precision coordinates </label></td>
+                </tr>
                 <td colspan=2></td>
-            </tr>
-            <tr>
-                <td colspan=2>
-                    Choose location method:
-                </td>
-                <td colspan=2></td>
-            </tr>
-            <tr>
-                <td style="text-align:right;"> <input form="Form1" type="radio" id="survey_enabled" value="survey_enabled" name="location_method" onclick="enableLocationMethod()"></td>
-                <td style="text-align:left;" title="For an accuracy of 0.06 m this can take up to 24 hours."> <label for="survey_enabled"> Run a long survey </label></td>
-            </tr>
-            <tr>
-                <td style="text-align:right;"> <input form="Form1" type="radio" id="coords_enabled" value="coords_enabled" name="location_method" onclick="enableLocationMethod()"></td>
-                <td style="text-align:left;" title="Seven decimal places are required."> <label for="coords_enabled"> High precision coordinates </label></td>
-            </tr>
-            <td colspan=2></td>
-            <tr>
-                <td style="text-align:left;"> Accuracy in m: </td>
-                <td><input title="The survey is carried out until the desired accuracy is achieved. After that, the location coordinates are stored in SPIFFS. 0.06 m is a useful value." class="text_field" form="Form1" type="text" maxlength="30" id="survey_accuracy" name="survey_accuracy" placeholder=%survey_accuracy%></td>
-            </tr>
-            <tr>
-                <td style="text-align:left;"> Latitude: </td>
-                <td><input class="text_field" form="Form1" type="text" maxlength="30" id="latitude" name="latitude" placeholder=%latitude%></td>
-            </tr>
-            <tr>
-                <td style="text-align:left;"> Longitude: </td>
-                <td><input class="text_field" form="Form1" type="text" maxlength="30" id="longitude" name="longitude" placeholder=%longitude%></td>
-            </tr>
-            <tr>
-                <td style="text-align:left;"> Altitude in m: </td>
-                <td><input title="Height over sea-level of the antenna is required (float)." class="text_field" form="Form1" type="text" maxlength="30" id="altitude" name="altitude" placeholder=%altitude%></td>
-            </tr>
+                <tr>
+                    <td style="text-align:left;"> Accuracy in m: </td>
+                    <td><input title="The survey is carried out until the desired accuracy is achieved. After that, the location coordinates are stored in SPIFFS. 0.06 m is a useful value." class="text_field" form="Form1" type="text" maxlength="30" id="survey_accuracy" name="survey_accuracy" placeholder=%survey_accuracy%></td>
+                </tr>
+                <tr>
+                    <td style="text-align:left;"> Latitude: </td>
+                    <td><input class="text_field" form="Form1" type="text" maxlength="30" id="latitude" name="latitude" placeholder=%latitude%></td>
+                </tr>
+                <tr>
+                    <td style="text-align:left;"> Longitude: </td>
+                    <td><input class="text_field" form="Form1" type="text" maxlength="30" id="longitude" name="longitude" placeholder=%longitude%></td>
+                </tr>
+                <tr>
+                    <td style="text-align:left;"> Altitude in m: </td>
+                    <td><input title="Height over sea-level of the antenna is required (float)." class="text_field" form="Form1" type="text" maxlength="30" id="altitude" name="altitude" placeholder=%altitude%></td>
+                </tr>
         </table>
     </p>
     <br>
     <div>
-        <input type="submit" form="Form1" class="button" formaction="/actionUpdateData"value="Save" id="save_button" name="save_button"/>
-        <input type="submit" form="Form3" class="button" formaction="/actionRebootESP32"value="Reboot" id="reboot_button" name="reboot_button"/>
-        <input type="reset" form="Form1" class="button" value="Cancel"  />
+        <input type="submit" form="Form1" class="button" formaction="/actionUpdateData" value="Save" id="save_button" name="save_button" />
+        <input type="submit" form="Form3" class="button" formaction="/actionRebootESP32" value="Reboot" id="reboot_button" name="reboot_button" />
+        <input type="reset" form="Form1" class="button" value="Cancel" />
         <input type="submit" form="Form2" class="button" formaction="/actionWipeData" value="Wipe" id="wipe_button" name="wipe_button" />
     </div>
 </body>

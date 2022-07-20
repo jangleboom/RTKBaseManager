@@ -128,6 +128,24 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
      } 
     }
 
+    if (strcmp(p->name().c_str(), PARAM_RTK_CASTER_HOST) == 0) {
+      if (p->value().length() > 0) {
+        writeFile(SPIFFS, PATH_RTK_CASTER_HOST, p->value().c_str());
+     } 
+    }
+
+    if (strcmp(p->name().c_str(), PARAM_RTK_MOINT_POINT) == 0) {
+      if (p->value().length() > 0) {
+        writeFile(SPIFFS, PATH_RTK_MOINT_POINT, p->value().c_str());
+     } 
+    }
+
+    if (strcmp(p->name().c_str(), PARAM_RTK_MOINT_POINT_PW) == 0) {
+      if (p->value().length() > 0) {
+        writeFile(SPIFFS, PATH_RTK_MOINT_POINT_PW, p->value().c_str());
+     } 
+    }
+
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_METHOD) == 0) {
       if (p->value().length() > 0) {
         writeFile(SPIFFS, PATH_RTK_LOCATION_METHOD, p->value().c_str());
@@ -194,6 +212,22 @@ String RTKBaseManager::processor(const String& var)
     String savedPassword = readFile(SPIFFS, PATH_WIFI_PASSWORD);
     return (savedPassword.isEmpty() ? String(PARAM_WIFI_PASSWORD) : "*******");
   }
+
+  else if (var == PARAM_RTK_CASTER_HOST) {
+    String savedCaster = readFile(SPIFFS, PATH_RTK_CASTER_HOST);
+    return (savedCaster.isEmpty() ? String(PARAM_RTK_CASTER_HOST) : savedCaster);
+  }
+
+  else if (var == PARAM_RTK_MOINT_POINT) {
+    String savedMointPoint = readFile(SPIFFS, PATH_RTK_MOINT_POINT);
+    return (savedMointPoint.isEmpty() ? String(PARAM_RTK_MOINT_POINT) : savedMointPoint);
+  }
+
+  else if (var == PARAM_RTK_MOINT_POINT_PW) {
+    String savedMointPointPW = readFile(SPIFFS, PATH_RTK_MOINT_POINT_PW);
+    return (savedMointPointPW.isEmpty() ? String(PARAM_RTK_MOINT_POINT_PW) : "*******");
+  }
+
   else if (var == PARAM_RTK_LOCATION_METHOD) {
     String savedLocationMethod = readFile(SPIFFS, PATH_RTK_LOCATION_METHOD);
     return (savedLocationMethod.isEmpty() ? String(PARAM_RTK_SURVEY_ENABLED) : savedLocationMethod);

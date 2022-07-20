@@ -52,6 +52,9 @@ namespace RTKBaseManager {
   // Parameters for SPIFFS file management
   const char PARAM_WIFI_SSID[] PROGMEM = "ssid"; 
   const char PARAM_WIFI_PASSWORD[] PROGMEM = "password";
+  const char PARAM_RTK_CASTER_HOST[] PROGMEM = "caster_host";
+  const char PARAM_RTK_MOINT_POINT[] PROGMEM = "mount_point";
+  const char PARAM_RTK_MOINT_POINT_PW[] PROGMEM = "mount_point_pw";
   const char PARAM_RTK_LOCATION_METHOD[] PROGMEM = "location_method";
   const char PARAM_RTK_SURVEY_ENABLED[] PROGMEM = "survey_enabled";
   const char PARAM_RTK_COORDS_ENABLED[] PROGMEM = "coords_enabled";
@@ -62,6 +65,9 @@ namespace RTKBaseManager {
   // Paths for SPIFFS file management
   const char PATH_WIFI_SSID[] PROGMEM = "/ssid.txt";
   const char PATH_WIFI_PASSWORD[] PROGMEM = "/password.txt";
+  const char PATH_RTK_CASTER_HOST[] PROGMEM = "/caster_host";
+  const char PATH_RTK_MOINT_POINT[] PROGMEM = "/mount_point";
+  const char PATH_RTK_MOINT_POINT_PW[] PROGMEM = "/mount_point_pw";
   const char PATH_RTK_LOCATION_METHOD[] PROGMEM = "/location_method.txt";
   const char PATH_RTK_LOCATION_SURVEY_ACCURACY[] PROGMEM = "/survey_accuracy.txt";
   const char PATH_RTK_LOCATION_LONGITUDE[] PROGMEM = "/longitude.txt";
