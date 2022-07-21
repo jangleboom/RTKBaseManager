@@ -75,7 +75,6 @@ namespace RTKBaseManager {
   const char PATH_RTK_LOCATION_LONGITUDE[] PROGMEM = "/longitude.txt";
   const char PATH_RTK_LOCATION_LATITUDE[] PROGMEM = "/latitude.txt";
   const char PATH_RTK_LOCATION_ALTITUDE[] PROGMEM = "/altitude.txt";
-  const char PATH_RTK_BASE_LOCATION[] PROGMEM = "/location.txt";
   const char SEP = ',';
   const uint8_t LOW_PREC_IDX = 0;
   const uint8_t HIGH_PREC_IDX = 1;
