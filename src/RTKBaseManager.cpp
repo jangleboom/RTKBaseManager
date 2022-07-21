@@ -134,6 +134,12 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
      } 
     }
 
+    if (strcmp(p->name().c_str(), PARAM_RTK_CASTER_PORT) == 0) {
+      if (p->value().length() > 0) {
+        writeFile(SPIFFS, PATH_RTK_CASTER_PORT, p->value().c_str());
+     } 
+    }
+
     if (strcmp(p->name().c_str(), PARAM_RTK_MOINT_POINT) == 0) {
       if (p->value().length() > 0) {
         writeFile(SPIFFS, PATH_RTK_MOINT_POINT, p->value().c_str());
@@ -216,6 +222,11 @@ String RTKBaseManager::processor(const String& var)
   else if (var == PARAM_RTK_CASTER_HOST) {
     String savedCaster = readFile(SPIFFS, PATH_RTK_CASTER_HOST);
     return (savedCaster.isEmpty() ? String(PARAM_RTK_CASTER_HOST) : savedCaster);
+  }
+
+   else if (var == PARAM_RTK_CASTER_PORT) {
+    String savedPort = readFile(SPIFFS, PATH_RTK_CASTER_PORT);
+    return (savedPort.isEmpty() ? String(PARAM_RTK_CASTER_PORT) : savedPort);
   }
 
   else if (var == PARAM_RTK_MOINT_POINT) {
@@ -432,3 +443,4 @@ String RTKBaseManager::getValueAsStringFromCSV(const String &data, char separato
   String result = (index==0) ? data.substring(0, idx) : data.substring(idx+1, length);
   return  result;
 }
+

@@ -122,7 +122,12 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                     <td>
                         <input class="text_field" form="Form1" type="text" maxlength="30" name="caster_host" placeholder=%caster_host% style="text-align:center;">
                     </td>
-
+                </tr>
+                <tr>
+                    <td style="text-align:left;">Caster port:</td>
+                    <td>
+                        <input class="text_field" form="Form1" type="text" maxlength="30" name="caster_port" placeholder=%caster_port% style="text-align:center;">
+                    </td>
                 </tr>
                 <tr>
                     <td style="text-align:left;">Mount point:</td>
@@ -130,12 +135,11 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                         <input class="text_field" form="Form1" type="text" maxlength="30" name="mount_point" placeholder=%mount_point% style="text-align:center;">
                     </td>
                 </tr>
-                                <tr>
+                <tr>
                     <td style="text-align:left;">Mount point PW:</td>
                     <td>
                         <input class="text_field" form="Form1" type="text" maxlength="30" name="mount_point_pw" placeholder=%mount_point_pw% style="text-align:center;">
                     </td>
-
                 </tr>
                 <tr>
                     <td></td>
@@ -163,19 +167,19 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 </tr>
                 <td colspan=2></td>
                 <tr>
-                    <td style="text-align:left;"> Accuracy in m: </td>
+                    <td style="text-align:left;"> Accuracy, m: </td>
                     <td><input title="The survey is carried out until the desired accuracy is achieved. After that, the location coordinates are stored in SPIFFS. 0.06 m is a useful value." class="text_field" form="Form1" type="text" maxlength="30" id="survey_accuracy" name="survey_accuracy" placeholder=%survey_accuracy%></td>
                 </tr>
                 <tr>
-                    <td style="text-align:left;"> Latitude: </td>
+                    <td style="text-align:left;"> Latitude, deg: </td>
                     <td><input class="text_field" form="Form1" type="text" maxlength="30" id="latitude" name="latitude" placeholder=%latitude%></td>
                 </tr>
                 <tr>
-                    <td style="text-align:left;"> Longitude: </td>
-                    <td><input class="text_field" form="Form1" type="text" maxlength="30" id="longitude" name="longitude" placeholder=%longitude%></td>
+                    <td style="text-align:left;"> Longitude, deg: </td>
+                    <td><input class="text_field" form="Form1" type="text" maxlength="30" id="longitude" name="longitude" placeholder=%longitude%> </td>
                 </tr>
                 <tr>
-                    <td style="text-align:left;"> Altitude in m: </td>
+                    <td style="text-align:left;"> Altitude, m: </td>
                     <td><input title="Height over sea-level of the antenna is required (float)." class="text_field" form="Form1" type="text" maxlength="30" id="altitude" name="altitude" placeholder=%altitude%></td>
                 </tr>
         </table>

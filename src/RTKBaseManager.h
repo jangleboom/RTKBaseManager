@@ -53,6 +53,7 @@ namespace RTKBaseManager {
   const char PARAM_WIFI_SSID[] PROGMEM = "ssid"; 
   const char PARAM_WIFI_PASSWORD[] PROGMEM = "password";
   const char PARAM_RTK_CASTER_HOST[] PROGMEM = "caster_host";
+  const char PARAM_RTK_CASTER_PORT[] PROGMEM = "caster_port";
   const char PARAM_RTK_MOINT_POINT[] PROGMEM = "mount_point";
   const char PARAM_RTK_MOINT_POINT_PW[] PROGMEM = "mount_point_pw";
   const char PARAM_RTK_LOCATION_METHOD[] PROGMEM = "location_method";
@@ -66,6 +67,7 @@ namespace RTKBaseManager {
   const char PATH_WIFI_SSID[] PROGMEM = "/ssid.txt";
   const char PATH_WIFI_PASSWORD[] PROGMEM = "/password.txt";
   const char PATH_RTK_CASTER_HOST[] PROGMEM = "/caster_host";
+  const char PATH_RTK_CASTER_PORT[] PROGMEM = "/caster_port";
   const char PATH_RTK_MOINT_POINT[] PROGMEM = "/mount_point";
   const char PATH_RTK_MOINT_POINT_PW[] PROGMEM = "/mount_point_pw";
   const char PATH_RTK_LOCATION_METHOD[] PROGMEM = "/location_method.txt";
