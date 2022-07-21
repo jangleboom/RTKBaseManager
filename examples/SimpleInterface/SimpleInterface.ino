@@ -24,13 +24,16 @@ void setup() {
     while (true) {};
   }
 
+  DEBUG_SERIAL.print(F("Device name: "));DEBUG_SERIAL.println(DEVICE_NAME);
+
+  String locationMethod = readFile(SPIFFS, PATH_RTK_LOCATION_METHOD);
+  DEBUG_SERIAL.print(F("Location method: ")); DEBUG_SERIAL.println(locationMethod);
+  
   location_int_t lastLocation;
   if (getIntLocationFromSPIFFS(&lastLocation, PATH_RTK_LOCATION_LATITUDE, PATH_RTK_LOCATION_LONGITUDE, PATH_RTK_LOCATION_ALTITUDE)) {
     printIntLocation(&lastLocation);
   }
-  
 
-  WiFi.setHostname(DEVICE_NAME);
   // Check if we have credentials for a available network
   String lastSSID = RTKBaseManager::readFile(SPIFFS, PATH_WIFI_SSID);
   String lastPassword = RTKBaseManager::readFile(SPIFFS, PATH_WIFI_PASSWORD);
@@ -49,7 +52,4 @@ void loop() {
   #ifdef DEBUGGING
   aunit::TestRunner::run();
   #endif
-  // DEBUG_SERIAL.println(F("Here are your SPIFFS file paths (empty at first run):"));
-  // RTKBaseManager::listFiles();
-  // while (true) {};
 }
