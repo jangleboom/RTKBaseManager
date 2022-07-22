@@ -260,7 +260,8 @@ String RTKBaseManager::processor(const String& var)
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) {
     String savedAlt = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
     String altitudeDoubleStr = getDoubleStringFromCSV(savedAlt);
-    return (altitudeDoubleStr.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : altitudeDoubleStr);
+    double d_alt = altitudeDoubleStr.toDouble() * 1e4;
+    return (altitudeDoubleStr.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : String(d_alt, 5));
   }
   else if (var == "next_addr") {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
