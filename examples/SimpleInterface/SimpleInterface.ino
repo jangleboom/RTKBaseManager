@@ -24,7 +24,7 @@ void setup() {
     while (true) {};
   }
 
-  DEBUG_SERIAL.print(F("Device name: "));DEBUG_SERIAL.println(DEVICE_NAME);
+  DEBUG_SERIAL.print(F("Device name: ")); DEBUG_SERIAL.println(DEVICE_NAME);
 
   String locationMethod = readFile(SPIFFS, PATH_RTK_LOCATION_METHOD);
   DEBUG_SERIAL.print(F("Location method: ")); DEBUG_SERIAL.println(locationMethod);
