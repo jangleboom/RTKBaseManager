@@ -420,19 +420,28 @@ int8_t RTKBaseManager::getHighPrecisionPartFromDouble(double input)
 {
   // We work with 7 + 2 post dot places, (max 0.11 mm accuracy)
   double intp, fracp;
+  
   fracp = abs(modf(input, &intp));
   String fracpStr = String(fracp, 9);
-  String output = fracpStr.substring(9, 11);
-  return atoi(output.c_str());
+  String outputStr = fracpStr.substring(9, 11);
+  int8_t output = outputStr.toInt();
+  DEBUG_SERIAL.println("getHighPrecisionPartFromDouble: ");
+  DEBUG_SERIAL.print("intp: ");
+  DEBUG_SERIAL.print(intp, 9);  
+  DEBUG_SERIAL.print(", fracp: ");
+  DEBUG_SERIAL.print(fracp, 9);
+  DEBUG_SERIAL.print(", outputStr: ");
+  DEBUG_SERIAL.println(outputStr.c_str());
+  return output;
 }
 
-double RTKBaseManager::getDoubleFromIntegerParts(int32_t commonPrecisionInt, int8_t highPrecisionInt) 
+double RTKBaseManager::getDoubleFromIntegerParts(int32_t val, int8_t valHp) 
 {
-  double commonPrecisionDouble, highPrecisionDouble;
-  commonPrecisionDouble = (double)commonPrecisionInt * 10e-8;
-  highPrecisionDouble = (double)highPrecisionInt * 10e-10;
+  double d_val;
+  d_val = (double)val * 1e-7;
+  d_val += (double)valHp * 1e-9;
 
-  return (commonPrecisionDouble + highPrecisionDouble);
+  return (d_val);
 }
 
   // Function to parse lora string message

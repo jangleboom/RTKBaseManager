@@ -7,23 +7,44 @@
 using namespace aunit;
 using namespace RTKBaseManager;
 
-test(getLowerPrecisionPartFromDouble) {
+test(getLowerPrecisionPartFromDouble_Pos) {
     double input = 12.345678999;
     int32_t lowerPrecPart = getLowerPrecisionPartFromDouble(input);
     assertTrue(lowerPrecPart == 123456789);
 }
 
-test(getHighPrecisionPartFromDouble) {
+test(getLowerPrecisionPartFromDouble_Neg) {
+    double input = -12.345678999;
+    int32_t lowerPrecPart = getLowerPrecisionPartFromDouble(input);
+    assertTrue(lowerPrecPart == -123456789);
+}
+
+test(getHighPrecisionPartFromDouble_Pos) {
     double input = 12.345678999;
     int8_t higherPrecPart = getHighPrecisionPartFromDouble(input);
     assertTrue(higherPrecPart == 99);
 }
 
-test(getDoubleFromIntegerParts) {
+test(getHighPrecisionPartFromDouble_Neg) {
+    double input = -12.345678999;
+    int8_t higherPrecPart = getHighPrecisionPartFromDouble(input);
+    assertTrue(higherPrecPart == 99);
+}
+
+test(getDoubleFromIntegerParts_Pos) {
     int32_t lowerPrecPart = 123456789;
     int8_t higherPrecPart= 99;
+    double d_val_test = 12.345678999;
     double double_var = getDoubleFromIntegerParts(lowerPrecPart, higherPrecPart);
-    assertLess(double_var - 12.345678999, 0.000000001);
+    assertLess(abs(double_var) - d_val_test, 0.000000001);
+}
+
+test(getDoubleFromIntegerParts_Neg) {
+    int32_t val = -123456789;
+    int8_t valHp = 99;      // high precision extension
+    double d_val_test = -12.345678999;
+    double d_val = getDoubleFromIntegerParts(val, valHp);
+    assertLess(abs(d_val) - abs(d_val_test), 0.000000001);
 }
 
 test(getDoubleStringFromCSV) {

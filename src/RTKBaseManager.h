@@ -264,11 +264,11 @@ typedef struct {
   /**
    * @brief Get the Double From Integer Parts 
    * 
-   * @param lowerPrecPart int32_t holding die lower precision
-   * @param higherPrecPart int8_t holding the high precision extension
+   * @param val int32_t holding die lower precision
+   * @param valHp int8_t holding the high precision extension
    * @return double reconstructed value
    */
-  double getDoubleFromIntegerParts(int32_t lowerPrecPart, int8_t higherPrecPart);
+  double getDoubleFromIntegerParts(int32_t val, int8_t valHp);
 
   /**
    * @brief Get the deconstructed double val as CSV integer object
