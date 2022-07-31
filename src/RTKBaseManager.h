@@ -1,7 +1,7 @@
 /**
  * @file    RTKBaseManager.h
  * @author  jangleboom
- * @link    https://github.com/audio-communication-group/rwaht_esp_wifi_manager
+ * @link    https://github.com/audio-communication-group/RTKBaseManager.git
  * <br>
  * @brief   This is part of a distributed software, here: the web interface to config 
  *          the realtime kinematics base station
