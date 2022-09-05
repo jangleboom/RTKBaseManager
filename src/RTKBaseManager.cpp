@@ -464,3 +464,12 @@ String RTKBaseManager::getValueAsStringFromCSV(const String &data, char separato
   return  result;
 }
 
+void RTKBaseManager::setLocationMethodCoords() {
+  writeFile(SPIFFS, PATH_RTK_LOCATION_METHOD, "coords_enabled");
+}
+
+void RTKBaseManager::setLocationMethodSurvey() {
+  writeFile(SPIFFS, PATH_RTK_LOCATION_METHOD, "survey_enabled");
+}
+
+

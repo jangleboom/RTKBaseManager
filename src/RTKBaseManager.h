@@ -294,6 +294,18 @@ typedef struct {
    * @return bool   true if connected, false if not
    */
   bool checkConnectionToWifiStation(void);
+
+  /**
+   * @brief Set the Location Method in SPIFFS file to Survey
+   * 
+   */
+  void setLocationMethodSurvey(void);
+
+  /**
+   * @brief Set the Location Method in SPIFFS file to Coordinates
+   * 
+   */
+  void setLocationMethodCoords(void);
 }
 
 
