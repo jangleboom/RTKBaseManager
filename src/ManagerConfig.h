@@ -15,8 +15,5 @@
 
 #define BAUD                          115200
 
-
-
-
 #endif  /*** MANAGER_CONFIG_H ***/
 #endif

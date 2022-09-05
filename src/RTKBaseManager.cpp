@@ -119,6 +119,9 @@ void RTKBaseManager::actionWipeData(AsyncWebServerRequest *request) {
 }
 
 void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
+  // First clear SPIFFS
+  // wipeSpiffsFiles();
+
   DEBUG_SERIAL.println("ACTION: actionUpdateData!");
 
   int params = request->params();
@@ -164,6 +167,13 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
 
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_METHOD) == 0) {
       if (p->value().length() > 0) {
+        String pValue = p->value();
+        if (pValue.equals("survey_enabled")) {
+          // Clear old coords values
+          SPIFFS.remove(PATH_RTK_LOCATION_ALTITUDE);
+          SPIFFS.remove(PATH_RTK_LOCATION_LATITUDE);
+          SPIFFS.remove(PATH_RTK_LOCATION_LONGITUDE);
+        }
         writeFile(SPIFFS, PATH_RTK_LOCATION_METHOD, p->value().c_str());
      } 
     }
