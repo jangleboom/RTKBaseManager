@@ -6,7 +6,7 @@
 
 void RTKBaseManager::setupStationMode(const char* ssid, const char* password, const char* deviceName) {
   WiFi.mode(WIFI_STA);
-  WiFi.begin( ssid, password);
+  WiFi.begin(ssid, password);
   if (WiFi.waitForConnectResult() != WL_CONNECTED) {
     // TODO:  - count reboots and stop after 3 times (save in SPIFFS)
     //        - display state
@@ -28,6 +28,15 @@ void RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   DEBUG_SERIAL.println(WiFi.getHostname());
   DEBUG_SERIAL.print(F("IP Address: "));
   DEBUG_SERIAL.println(WiFi.localIP());
+}
+
+void reconnectToWifiStation() {
+  if ((WiFi.status() != WL_CONNECTED) {
+    DEBUG_SERIAL.print(millis());
+    DEBUG_SERIAL.println("Reconnecting to WiFi...");
+    WiFi.disconnect();
+    WiFi.reconnect();
+  }
 }
 
 void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword) {

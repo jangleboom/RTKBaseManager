@@ -214,14 +214,6 @@ typedef struct {
    */
   void wipeSpiffsFiles(void);
 
-  // /**
-  //  * @brief Get the Location struct from SPIFFS
-  //  * 
-  //  * @param writeLocation Address of location struct to write to
-  //  * @return true  If saved location data exist
-  //  * @return false If reading location data failed or data not exist
-  //  */
-
   /**
    * @brief Get the int formated location from SPIFFS 
    * 
@@ -296,6 +288,12 @@ typedef struct {
    */
   String getValueAsStringFromCSV(const String &data, char separator, int index);
 
+  /**
+   * @brief Reconnect with last network if not already connected
+   * 
+   * @return bool   true if connected, false if not
+   */
+  bool checkConnectionToWifiStation(void);
 }
 
 
