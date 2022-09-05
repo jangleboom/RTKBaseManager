@@ -168,7 +168,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 <td colspan=2></td>
                 <tr>
                     <td style="text-align:left;"> min Accuracy, m: </td>
-                    <td><input title="The survey is carried out until the desired accuracy is achieved. After that, the location coordinates are stored in SPIFFS. 0.06 m is a useful value." class="text_field" form="Form1" type="text" maxlength="30" id="survey_accuracy" name="survey_accuracy" placeholder=%survey_accuracy%></td>
+                    <td><input title="The survey is carried out until the desired accuracy is achieved. After that, the location coordinates are stored in SPIFFS. 1.00 is a useful value (fast survey) 0.6 is more accurate but takes hours more." class="text_field" form="Form1" type="text" maxlength="30" id="survey_accuracy" name="survey_accuracy" placeholder=%survey_accuracy%></td>
                 </tr>
                 <tr>
                     <td style="text-align:left;"> Latitude, deg: </td>
