@@ -30,9 +30,8 @@ void RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   DEBUG_SERIAL.println(WiFi.localIP());
 }
 
-bool checkConnectionToWifiStation() {
+bool RTKBaseManager::checkConnectionToWifiStation() {
   if (WiFi.status() != WL_CONNECTED) {
-    DEBUG_SERIAL.print(millis());
     DEBUG_SERIAL.println("Reconnecting to WiFi...");
     WiFi.disconnect();
     return WiFi.reconnect();

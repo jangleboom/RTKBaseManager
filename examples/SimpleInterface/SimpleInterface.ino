@@ -58,11 +58,7 @@ void loop() {
 
   unsigned long currentMillis = millis();
   // if WiFi is down, try reconnecting every RECONNECT_INTERVAL seconds
-  if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis > RECONNECT_INTERVAL)) {
-    Serial.print(millis());
-    Serial.println("Reconnecting to WiFi...");
-    WiFi.disconnect();
-    WiFi.reconnect();
-    previousMillis = currentMillis;
+  if (currentMillis - previousMillis > RECONNECT_INTERVAL) {
+    RTKBaseManager::checkConnectionToWifiStation();
   }
 }
