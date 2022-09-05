@@ -24,7 +24,7 @@ void setup() {
     while (true) {};
   }
 
-  DEBUG_SERIAL.print(F("Device name: ")); DEBUG_SERIAL.println(DEVICE_NAME);
+  DEBUG_SERIAL.print(F("Device name: "));DEBUG_SERIAL.println(DEVICE_NAME);
 
   String locationMethod = readFile(SPIFFS, PATH_RTK_LOCATION_METHOD);
   DEBUG_SERIAL.print(F("Location method: ")); DEBUG_SERIAL.println(locationMethod);
@@ -48,8 +48,21 @@ void setup() {
   RTKBaseManager::startServer(&server);
 }
 
+unsigned long previousMillis = 0;
+const unsigned long RECONNECT_INTERVAL = 30000;
+
 void loop() {
   #ifdef DEBUGGING
   aunit::TestRunner::run();
   #endif
+
+  unsigned long currentMillis = millis();
+  // if WiFi is down, try reconnecting every RECONNECT_INTERVAL seconds
+  if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis > RECONNECT_INTERVAL)) {
+    Serial.print(millis());
+    Serial.println("Reconnecting to WiFi...");
+    WiFi.disconnect();
+    WiFi.reconnect();
+    previousMillis = currentMillis;
+  }
 }
