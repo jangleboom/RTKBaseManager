@@ -36,6 +36,7 @@ bool RTKBaseManager::checkConnectionToWifiStation() {
     WiFi.disconnect();
     return WiFi.reconnect();
   } else {
+    DEBUG_SERIAL.println("WiFi connected.");
     return true;
   }
 }
