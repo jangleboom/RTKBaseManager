@@ -1,4 +1,4 @@
-#ifndef RTK_BASE_STATION_CONFIG_H
+#ifndef RTKBASE_CONFIG_H
 #ifndef MANAGER_CONFIG_H
 #define MANAGER_CONFIG_H
 #include <Arduino.h>
@@ -14,6 +14,9 @@
   if (DEBUGGING) Serial
 
 #define BAUD                          115200
+
+
+
 
 #endif  /*** MANAGER_CONFIG_H ***/
 #endif
