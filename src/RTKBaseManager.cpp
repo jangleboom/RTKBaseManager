@@ -282,7 +282,7 @@ String RTKBaseManager::processor(const String& var)
   }
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) {
     String savedAlt = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
-    float ellipsoid = savedAlt.toFloat() / 1e4;
+    double ellipsoid = savedAlt.toDouble() / 1000.0;
     return (savedAlt.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : String(ellipsoid));
   }
   else if (var == "next_addr") {
