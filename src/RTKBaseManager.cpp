@@ -202,8 +202,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
 
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_ALTITUDE) == 0) {
       if (p->value().length() > 0) {
-        String deconstructedValAsCSV = getDeconstructedValAsCSV(p->value());
-        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, deconstructedValAsCSV.c_str());
+        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, p->value().c_str());
      } 
     }
   }
