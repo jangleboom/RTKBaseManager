@@ -92,8 +92,7 @@ typedef struct {
   int8_t  lat_hp;    // high precision extension latitude
   int32_t lon;       // 7 post comma digits longitude
   int8_t  lon_hp;    // high precision extension longitude
-  int32_t alt;       // 7 post comma digits height
-  int8_t  alt_hp;    // high precision extension height
+  int32_t ellips;     // ellipsoidal altitude es needed, not mean sea level
 } location_int_t;
 
   /*** Wifi ***/

@@ -60,5 +60,7 @@ void loop() {
   // if WiFi is down, try reconnecting every RECONNECT_INTERVAL seconds
   if (currentMillis - previousMillis > RECONNECT_INTERVAL) {
     RTKBaseManager::checkConnectionToWifiStation();
+    previousMillis = currentMillis;
   }
+  
 }

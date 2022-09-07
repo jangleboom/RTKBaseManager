@@ -79,15 +79,14 @@ test(getIntLocationFromSPIFFS) {
     String deconstructedValAsCSV = getDeconstructedValAsCSV(doubleValStr);
     success &= writeFile(SPIFFS, testPathLat, deconstructedValAsCSV.c_str());
     success &= writeFile(SPIFFS, testPathLon, deconstructedValAsCSV.c_str());
-    success &= writeFile(SPIFFS, testPathAlt, deconstructedValAsCSV.c_str());
+    success &= writeFile(SPIFFS, testPathAlt, String(lowerPrec).c_str());
 
     success &= getIntLocationFromSPIFFS(&location, testPathLat, testPathLon, testPathAlt);
     success &= location.lat == lowerPrec;
-    success &= location.lon == lowerPrec;
-    success &= location.alt == lowerPrec;
     success &= location.lat_hp == highPrec;
+    success &= location.lon == lowerPrec;
     success &= location.lon_hp == highPrec;
-    success &= location.alt_hp == highPrec;
+    success &= location.ellips == lowerPrec;
 
     assertTrue(success);
 }

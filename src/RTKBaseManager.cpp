@@ -281,9 +281,8 @@ String RTKBaseManager::processor(const String& var)
   }
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) {
     String savedAlt = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
-    String altitudeDoubleStr = getDoubleStringFromCSV(savedAlt);
-    // double d_alt = altitudeDoubleStr.toDouble();// * 1e4;
-    return (altitudeDoubleStr.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : altitudeDoubleStr);
+    float ellipsoid = savedAlt.toFloat() * 1e4;
+    return (savedAlt.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : String(ellipsoid));
   }
   else if (var == "next_addr") {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
@@ -412,8 +411,7 @@ bool RTKBaseManager::getIntLocationFromSPIFFS(location_int_t* location, const ch
     location->lat_hp = (int8_t)getValueAsStringFromCSV(latStr, SEP, HIGH_PREC_IDX).toInt();
     location->lon =  (int32_t)getValueAsStringFromCSV(lonStr, SEP, LOW_PREC_IDX).toInt();
     location->lon_hp = (int8_t)getValueAsStringFromCSV(lonStr, SEP, HIGH_PREC_IDX).toInt();
-    location->alt =  (int32_t)getValueAsStringFromCSV(altStr, SEP, LOW_PREC_IDX).toInt();
-    location->alt_hp = (int8_t)getValueAsStringFromCSV(altStr, SEP, HIGH_PREC_IDX).toInt();
+    location->ellips =  altStr.toInt();
     success = true;
   } 
   
@@ -423,7 +421,7 @@ bool RTKBaseManager::getIntLocationFromSPIFFS(location_int_t* location, const ch
 void RTKBaseManager::printIntLocation(location_int_t* location) {
   DEBUG_SERIAL.print(F("SPIFFS Lat: ")); DEBUG_SERIAL.print(location->lat, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lat_hp, DEC);
   DEBUG_SERIAL.print(F("SPIFFS Lon: ")); DEBUG_SERIAL.print(location->lon, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lon_hp, DEC);
-  DEBUG_SERIAL.print(F("SPIFFS Alt: ")); DEBUG_SERIAL.print(location->alt, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->alt_hp, DEC);
+  DEBUG_SERIAL.print(F("SPIFFS Ellips: ")); DEBUG_SERIAL.print(location->ellips, DEC); 
 }
 /*** Help Functions ***/
 // TODO: make this privat
