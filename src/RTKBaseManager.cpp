@@ -44,7 +44,8 @@ bool RTKBaseManager::checkConnectionToWifiStation() {
 void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword) {
     DEBUG_SERIAL.print("Setting soft-AP ... ");
     WiFi.mode(WIFI_AP);
-    DEBUG_SERIAL.println(WiFi.softAP(apSsid, apPassword) ? "Ready" : "Failed!");
+    bool result = WiFi.softAP(apSsid, apPassword);
+    DEBUG_SERIAL.println(result ? "Ready" : "Failed!");
     DEBUG_SERIAL.print("Access point started: ");
     DEBUG_SERIAL.println(AP_SSID);
     DEBUG_SERIAL.print("IP address: ");
