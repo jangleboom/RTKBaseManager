@@ -202,7 +202,8 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
 
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_ALTITUDE) == 0) {
       if (p->value().length() > 0) {
-        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, p->value().c_str());
+        String deconstructedValAsCSV = getDeconstructedValAsCSV(p->value());
+        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, deconstructedValAsCSV.c_str());
      } 
     }
   }
@@ -281,8 +282,8 @@ String RTKBaseManager::processor(const String& var)
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) {
     String savedAlt = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
     String altitudeDoubleStr = getDoubleStringFromCSV(savedAlt);
-    double d_alt = altitudeDoubleStr.toDouble() * 1e4;
-    return (altitudeDoubleStr.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : String(d_alt, 5));
+    // double d_alt = altitudeDoubleStr.toDouble();// * 1e4;
+    return (altitudeDoubleStr.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : altitudeDoubleStr);
   }
   else if (var == "next_addr") {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
