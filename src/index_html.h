@@ -159,7 +159,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 </tr>
                 <tr>
                     <td style="text-align:right;"> <input form="Form1" type="radio" id="survey_enabled" value="survey_enabled" name="location_method" onclick="enableLocationMethod()"></td>
-                    <td style="text-align:left;" title="For an accuracy of 0.06 m this can take up to 24 hours."> <label for="survey_enabled"> Run a long survey </label></td>
+                    <td style="text-align:left;" title="For an accuracy of 0.06 m this can take up to 24 hours."> <label for="survey_enabled"> Run a survey-in </label></td>
                 </tr>
                 <tr>
                     <td style="text-align:right;"> <input form="Form1" type="radio" id="coords_enabled" value="coords_enabled" name="location_method" onclick="enableLocationMethod()"></td>
