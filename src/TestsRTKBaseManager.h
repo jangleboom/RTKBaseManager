@@ -124,10 +124,6 @@ test(getIntLocationFromSPIFFS) {
     success &= location.lon_hp == highPrecCoord;
     success &= location.alt == lowerPrecAlt;
     success &= location.alt_hp == highPrecAlt;
-    // DEBUG_SERIAL.printf("location.alt: %d, ", location.alt);
-    // DEBUG_SERIAL.printf(", lowerPrecAlt: %d\n", lowerPrecAlt);
-    // DEBUG_SERIAL.printf("location.alt_hp: %d, ", location.alt_hp);
-    // DEBUG_SERIAL.printf("highPrecAlt: %d\n", highPrecAlt);
 
     assertTrue(success);
 }
@@ -155,6 +151,26 @@ test(getFloatAltitudeFromInt) {
     int8_t altHp = 6;
     float result = getFloatAltitudeFromInt(alt, altHp) - 12.3456;
     assertLess(abs(result), 0.0001);
+}
+
+test(processor_SSID) {
+    String testSsid = "TestSSID";
+    const char* TEST_PATH_SSID = "/testPathSsid";
+    if (SPIFFS.exists(TEST_PATH_SSID)) SPIFFS.remove(TEST_PATH_SSID);
+    writeFile(SPIFFS, TEST_PATH_SSID, testSsid.c_str());
+    delay(100);
+    String savedSSID = readFile(SPIFFS, TEST_PATH_SSID);
+    assertTrue(savedSSID.equals(testSsid));
+}
+
+test(processor_Altitude) {
+    String testAltitude = "12.3456";
+    const char* TEST_PATH_ALT = "/testPathAlt";
+    if (SPIFFS.exists(TEST_PATH_ALT)) SPIFFS.remove(TEST_PATH_ALT);
+    writeFile(SPIFFS, TEST_PATH_ALT, testAltitude.c_str());
+    delay(100);
+    String savedAltitude = readFile(SPIFFS, TEST_PATH_ALT);
+    assertTrue(savedAltitude.equals(testAltitude));
 }
 
 #endif /*** TESTS_RTK_BASE_MANAGER_H ***/

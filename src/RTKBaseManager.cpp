@@ -121,8 +121,6 @@ void RTKBaseManager::actionWipeData(AsyncWebServerRequest *request) {
 }
 
 void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
-  // First clear SPIFFS
-  // wipeSpiffsFiles();
 
   DEBUG_SERIAL.println("ACTION: actionUpdateData!");
 
