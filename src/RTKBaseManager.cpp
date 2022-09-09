@@ -188,23 +188,23 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
 
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_LATITUDE) == 0) {
       if (p->value().length() > 0) {
-        String deconstructedValAsCSV = getDeconstructedValAsCSV(p->value());
+        String deconstructedValAsCSV = getDeconstructedCoordAsCSV(p->value());
         writeFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE, deconstructedValAsCSV.c_str());
      } 
     }
 
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_LONGITUDE) == 0) {
       if (p->value().length() > 0) {
-        String deconstructedValAsCSV = getDeconstructedValAsCSV(p->value());
+        String deconstructedValAsCSV = getDeconstructedCoordAsCSV(p->value());
         writeFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE, deconstructedValAsCSV.c_str());
      } 
     }
 
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_ALTITUDE) == 0) {
       if (p->value().length() > 0) {
-        // String deconstructedValAsCSV = getDeconstructedValAsCSV(p->value());
-        int32_t ellipsoid = String(p->value()).toInt()*1000;
-        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, String(ellipsoid).c_str());
+        String deconstructedAltAsCSV = getDeconstructedAltAsCSV(p->value());
+        // int32_t ellipsoid = String(p->value()).toInt()*1000;
+        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, deconstructedAltAsCSV.c_str());
      } 
     }
   }
@@ -213,20 +213,28 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
   request->send_P(200, "text/html", INDEX_HTML, RTKBaseManager::processor);
 }
 
-String RTKBaseManager::getDeconstructedValAsCSV(const String& doubleStr) {
+String RTKBaseManager::getDeconstructedCoordAsCSV(const String& doubleStr) {
     double dVal = doubleStr.toDouble();
-    int32_t lowerPrec = getLowerPrecisionPartFromDouble(dVal);
-    int8_t highPrec = getHighPrecisionPartFromDouble(dVal);
-    String deconstructedCSV = String(lowerPrec) + "," + String(highPrec);
+    int32_t lowerPrec = getLowerPrecisionCoordFromDouble(dVal);
+    int8_t highPrec = getHighPrecisionCoordFromDouble(dVal);
+    String deconstructedCSV = String(lowerPrec) + SEP + String(highPrec);
     return deconstructedCSV;
 }
 
-String RTKBaseManager::getDoubleStringFromCSV(const String& csvStr) { 
+String RTKBaseManager::getDeconstructedAltAsCSV(const String& floatStr) {
+    float alt = floatStr.toFloat();
+    int32_t lowerPrec = getLowerPrecisionIntAltitudeFromFloat(alt);
+    int8_t highPrec = getHigherPrecisionIntAltitudeFromFloat(alt);
+    String deconstructedCSV = String(lowerPrec) + SEP + String(highPrec);
+    return deconstructedCSV;
+}
+
+String RTKBaseManager::getDoubleValStringFromCSV(const String& csvStr, int precision) { 
   if (csvStr.isEmpty()) return String();
-  int32_t lowerPrec = (int32_t)getValueAsStringFromCSV(csvStr, ',', 0).toInt();
-  int8_t highPrec = (int8_t)getValueAsStringFromCSV(csvStr, ',', 1).toInt();
+  int32_t lowerPrec = (int32_t)getValueAsStringFromCSV(csvStr, SEP, 0).toInt();
+  int8_t highPrec = (int8_t)getValueAsStringFromCSV(csvStr, SEP, 1).toInt();
   double reconstructedVal = getDoubleFromIntegerParts(lowerPrec, highPrec);
-  String reconstructedValStr = String(reconstructedVal, 9);
+  String reconstructedValStr = String(reconstructedVal, precision);
   return reconstructedValStr;
 }
 
@@ -272,18 +280,19 @@ String RTKBaseManager::processor(const String& var)
   }
   else if (var == PARAM_RTK_LOCATION_LATITUDE) {
     String savedLatitude = readFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE);
-    String savedLatitudeStr = getDoubleStringFromCSV(savedLatitude);
+    String savedLatitudeStr = getDoubleValStringFromCSV(savedLatitude, COORD_PRECISION);
     return (savedLatitude.isEmpty() ? String(PARAM_RTK_LOCATION_LATITUDE) : savedLatitudeStr);
   }
   else if (var == PARAM_RTK_LOCATION_LONGITUDE) {
     String savedLongitude = readFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE);
-    String savedLongitudeStr = getDoubleStringFromCSV(savedLongitude);
+    String savedLongitudeStr = getDoubleValStringFromCSV(savedLongitude, COORD_PRECISION);
     return (savedLongitude.isEmpty() ? String(PARAM_RTK_LOCATION_LONGITUDE) : savedLongitudeStr);
   }
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) {
-    String savedAlt = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
-    double ellipsoid = savedAlt.toDouble() / 1000.0;
-    return (savedAlt.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : String(ellipsoid));
+    String savedAltitude = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
+    String savedAltitudeStr = getDoubleValStringFromCSV(savedAltitude, ALT_PRECISION);
+    double altitude = savedAltitude.toDouble() / 1000.0;
+    return (savedAltitude.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : String(altitude));
   }
   else if (var == "next_addr") {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
@@ -412,7 +421,8 @@ bool RTKBaseManager::getIntLocationFromSPIFFS(location_int_t* location, const ch
     location->lat_hp = (int8_t)getValueAsStringFromCSV(latStr, SEP, HIGH_PREC_IDX).toInt();
     location->lon =  (int32_t)getValueAsStringFromCSV(lonStr, SEP, LOW_PREC_IDX).toInt();
     location->lon_hp = (int8_t)getValueAsStringFromCSV(lonStr, SEP, HIGH_PREC_IDX).toInt();
-    location->ellips =  altStr.toInt();
+    location->alt =  (int32_t)getValueAsStringFromCSV(altStr, SEP, LOW_PREC_IDX).toInt();
+    location->alt_hp = (int8_t)getValueAsStringFromCSV(altStr, SEP, HIGH_PREC_IDX).toInt();
     success = true;
   } 
   
@@ -422,12 +432,12 @@ bool RTKBaseManager::getIntLocationFromSPIFFS(location_int_t* location, const ch
 void RTKBaseManager::printIntLocation(location_int_t* location) {
   DEBUG_SERIAL.print(F("SPIFFS Lat: ")); DEBUG_SERIAL.print(location->lat, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lat_hp, DEC);
   DEBUG_SERIAL.print(F("SPIFFS Lon: ")); DEBUG_SERIAL.print(location->lon, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lon_hp, DEC);
-  DEBUG_SERIAL.print(F("SPIFFS Ellips: ")); DEBUG_SERIAL.println(location->ellips, DEC); 
+  DEBUG_SERIAL.print(F("SPIFFS Alt: ")); DEBUG_SERIAL.print(location->alt, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->alt_hp, DEC);
 }
 /*** Help Functions ***/
 // TODO: make this privat
 
-int32_t RTKBaseManager::getLowerPrecisionPartFromDouble(double input) 
+int32_t RTKBaseManager::getLowerPrecisionCoordFromDouble(double input) 
 {
  // We work with 7 + 2 post dot places, (max 0.11 mm accuracy)
   double intp, fracp;
@@ -438,7 +448,7 @@ int32_t RTKBaseManager::getLowerPrecisionPartFromDouble(double input)
   return atoi(output.c_str());
 }
 
-int8_t RTKBaseManager::getHighPrecisionPartFromDouble(double input) 
+int8_t RTKBaseManager::getHighPrecisionCoordFromDouble(double input) 
 {
   // We work with 7 + 2 post dot places, (max 0.11 mm accuracy)
   double intp, fracp;
@@ -447,7 +457,7 @@ int8_t RTKBaseManager::getHighPrecisionPartFromDouble(double input)
   String fracpStr = String(fracp, 9);
   String outputStr = fracpStr.substring(9, 11);
   int8_t output = outputStr.toInt();
-  DEBUG_SERIAL.println("getHighPrecisionPartFromDouble: ");
+  DEBUG_SERIAL.println("getHighPrecisionCoordFromDouble: ");
   DEBUG_SERIAL.print("intp: ");
   DEBUG_SERIAL.print(intp, 9);  
   DEBUG_SERIAL.print(", fracp: ");

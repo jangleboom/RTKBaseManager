@@ -7,27 +7,27 @@
 using namespace aunit;
 using namespace RTKBaseManager;
 
-test(getLowerPrecisionPartFromDouble_Pos) {
+test(getLowerPrecisionCoordFromDouble_Pos) {
     double input = 12.345678999;
-    int32_t lowerPrecPart = getLowerPrecisionPartFromDouble(input);
+    int32_t lowerPrecPart = getLowerPrecisionCoordFromDouble(input);
     assertTrue(lowerPrecPart == 123456789);
 }
 
-test(getLowerPrecisionPartFromDouble_Neg) {
+test(getLowerPrecisionCoordFromDouble_Neg) {
     double input = -12.345678999;
-    int32_t lowerPrecPart = getLowerPrecisionPartFromDouble(input);
+    int32_t lowerPrecPart = getLowerPrecisionCoordFromDouble(input);
     assertTrue(lowerPrecPart == -123456789);
 }
 
-test(getHighPrecisionPartFromDouble_Pos) {
+test(getHighPrecisionCoordFromDouble_Pos) {
     double input = 12.345678999;
-    int8_t higherPrecPart = getHighPrecisionPartFromDouble(input);
+    int8_t higherPrecPart = getHighPrecisionCoordFromDouble(input);
     assertTrue(higherPrecPart == 99);
 }
 
-test(getHighPrecisionPartFromDouble_Neg) {
+test(getHighPrecisionCoordFromDouble_Neg) {
     double input = -12.345678999;
-    int8_t higherPrecPart = getHighPrecisionPartFromDouble(input);
+    int8_t higherPrecPart = getHighPrecisionCoordFromDouble(input);
     assertTrue(higherPrecPart == 99);
 }
 
@@ -47,10 +47,10 @@ test(getDoubleFromIntegerParts_Neg) {
     assertLess(abs(d_val) - abs(d_val_test), 0.000000001);
 }
 
-test(getDoubleStringFromCSV) {
+test(getDoubleValStringFromCSV) {
     String csvStr = "123456789,99";
     String doubleStr = "12.345678999";
-    String testStr = getDoubleStringFromCSV(csvStr);
+    String testStr = getDoubleValStringFromCSV(csvStr, COORD_PRECISION);
     assertTrue (testStr.equals(doubleStr));
 }
 
@@ -62,12 +62,38 @@ test(getValueAsStringFromCSV) {
     assertTrue(result);
 }
 
+test(getDeconstructedCoordAsCSV) {
+    String doubleStr= "12.345678999";
+    double dVal = doubleStr.toDouble();
+    int32_t lowerPrec = getLowerPrecisionCoordFromDouble(dVal);
+    int8_t highPrec = getHighPrecisionCoordFromDouble(dVal);
+    String deconstructedCSV = String(lowerPrec) + SEP + String(highPrec);
+    String testString = getDeconstructedCoordAsCSV(doubleStr);
+
+    assertTrue(deconstructedCSV.equals(testString));
+}
+
+test(getDeconstructedAltAsCSV) {
+    String floatStr= "12.3456";
+    float fVal = floatStr.toDouble();
+    int32_t lowerPrec = getLowerPrecisionIntAltitudeFromFloat(fVal);
+    int8_t highPrec = getHigherPrecisionIntAltitudeFromFloat(fVal);
+    String deconstructedCSV = String(lowerPrec) + SEP + String(highPrec);
+    String testString = getDeconstructedAltAsCSV(floatStr);
+    // DEBUG_SERIAL.printf("deconstructedCSV: %s\n", deconstructedCSV);
+    // DEBUG_SERIAL.printf("testString: %s\n", testString);
+    assertTrue(deconstructedCSV.equals(testString));
+}
+
 test(getIntLocationFromSPIFFS) {
     bool success = true;
     location_int_t location;
-    const int32_t lowerPrec = 123456789;
-    const int8_t highPrec = 99;
-    String doubleValStr = "12.345678999";
+    const int32_t lowerPrecCoord = 123456789;
+    const int8_t highPrecCoord = 99;
+    const int32_t lowerPrecAlt= 12345;
+    const int8_t highPrecAlt = 6;
+    String doubleCoordStr = "12.345678999";
+    String floatAltStr = "12.3456";
     const char* testPathLat = "/testPathLat";
     const char* testPathLon = "/testPathLon";
     const char* testPathAlt = "/testPathAlt";
@@ -76,17 +102,24 @@ test(getIntLocationFromSPIFFS) {
     if (SPIFFS.exists(testPathLon)) SPIFFS.remove(testPathLon);
     if (SPIFFS.exists(testPathAlt)) SPIFFS.remove(testPathAlt);
    
-    String deconstructedValAsCSV = getDeconstructedValAsCSV(doubleValStr);
-    success &= writeFile(SPIFFS, testPathLat, deconstructedValAsCSV.c_str());
-    success &= writeFile(SPIFFS, testPathLon, deconstructedValAsCSV.c_str());
-    success &= writeFile(SPIFFS, testPathAlt, String(lowerPrec).c_str());
+    String deconstructedCoordAsCSV = getDeconstructedCoordAsCSV(doubleCoordStr);
+    String deconstructedAltAsCSV = getDeconstructedAltAsCSV(floatAltStr);
+    // DEBUG_SERIAL.printf("deconstructedAltAsCSV: %s\n", deconstructedAltAsCSV);
+    success &= writeFile(SPIFFS, testPathLat, deconstructedCoordAsCSV.c_str());
+    success &= writeFile(SPIFFS, testPathLon, deconstructedCoordAsCSV.c_str());
+    success &= writeFile(SPIFFS, testPathAlt, deconstructedAltAsCSV.c_str());
 
     success &= getIntLocationFromSPIFFS(&location, testPathLat, testPathLon, testPathAlt);
-    success &= location.lat == lowerPrec;
-    success &= location.lat_hp == highPrec;
-    success &= location.lon == lowerPrec;
-    success &= location.lon_hp == highPrec;
-    success &= location.ellips == lowerPrec;
+    success &= location.lat == lowerPrecCoord;
+    success &= location.lat_hp == highPrecCoord;
+    success &= location.lon == lowerPrecCoord;
+    success &= location.lon_hp == highPrecCoord;
+    success &= location.alt == lowerPrecAlt;
+    success &= location.alt_hp == highPrecAlt;
+    // DEBUG_SERIAL.printf("location.alt: %d, ", location.alt);
+    // DEBUG_SERIAL.printf(", lowerPrecAlt: %d\n", lowerPrecAlt);
+    // DEBUG_SERIAL.printf("location.alt_hp: %d, ", location.alt_hp);
+    // DEBUG_SERIAL.printf("highPrecAlt: %d\n", highPrecAlt);
 
     assertTrue(success);
 }

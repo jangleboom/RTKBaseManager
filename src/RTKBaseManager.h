@@ -92,7 +92,8 @@ typedef struct {
   int8_t  lat_hp;    // high precision extension latitude
   int32_t lon;       // 7 post comma digits longitude
   int8_t  lon_hp;    // high precision extension longitude
-  int32_t ellips;     // ellipsoidal altitude es needed, not mean sea level
+  int32_t alt;       // altitude in mm precision
+  int8_t  alt_hp;    // altitude in 0.1 mm precision
 } location_int_t;
 
   /*** Wifi ***/
@@ -241,7 +242,7 @@ typedef struct {
    * @param input Value in double format
    * @return int32_t Converted value with 7 post dot digits (up tu 1.11 cm)
    */
-  int32_t getLowerPrecisionPartFromDouble(double input);
+  int32_t getLowerPrecisionCoordFromDouble(double input);
 
   /**
    * @brief Get the high precision part from double value
@@ -250,7 +251,7 @@ typedef struct {
    * @param input Value in double format
    * @return int8_t Converted value with 8-9 post dot digits (up tu 1.11 mm, digit 9 is not used)
    */
-  int8_t getHighPrecisionPartFromDouble(double input);
+  int8_t getHighPrecisionCoordFromDouble(double input);
 
   /**
    * @brief Get the Double From Integer Parts 
@@ -264,18 +265,35 @@ typedef struct {
   /**
    * @brief Get the deconstructed double val as CSV integer object
    * 
-   * @param doubleStr Double to deconstruct as String
-   * @return String   Deconstructed double val as CSV
+   * @param doubleStr Double coord to deconstruct as String
+   * @return String   Deconstructed double coord as CSV
    */
-  String getDeconstructedValAsCSV(const String& doubleStr);
+  String getDeconstructedCoordAsCSV(const String& doubleStr);
+
+   /**
+   * @brief Get the deconstructed double val as CSV integer object
+   * 
+   * @param floatStr Float altitude to deconstruct as String
+   * @return String   Deconstructed float altitude val as CSV
+   */
+  String getDeconstructedAltAsCSV(const String& floatStr);
 
   /**
-   * @brief Get the reconstructed val from CSV object
+   * @brief Get the reconstructed coordinate from CSV object
    * 
-   * @param inputStr CSV String: <int32_t, int8_t>
-   * @return String Reconstructed double value
+   * @param csvStr CSV String: <int32_t, int8_t>
+   * @param precision Floating point digit num
+   * @return String Reconstructed int value as String
    */
-  String getDoubleStringFromCSV(const String& csvStr);
+  String getDoubleValStringFromCSV(const String& csvStr, int precision);
+
+  /**
+   * @brief Get the reconstructed altitude from CSV object
+   * 
+   * @param csvStr 
+   * @return String Reconstructed int value as String
+   */
+  String getAltStringFromCSV(const String& csvStr);
 
   /**
    * @brief Get the Value from CSV object
