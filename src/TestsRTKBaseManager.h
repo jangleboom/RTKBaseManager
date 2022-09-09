@@ -31,27 +31,35 @@ test(getHighPrecisionCoordFromDouble_Neg) {
     assertTrue(higherPrecPart == 99);
 }
 
-test(getDoubleFromIntegerParts_Pos) {
+test(getDoubleCoordFromIntegerParts_Pos) {
     int32_t lowerPrecPart = 123456789;
     int8_t higherPrecPart= 99;
     double d_val_test = 12.345678999;
-    double double_var = getDoubleFromIntegerParts(lowerPrecPart, higherPrecPart);
+    double double_var = getDoubleCoordFromIntegerParts(lowerPrecPart, higherPrecPart);
     assertLess(abs(double_var) - d_val_test, 0.000000001);
 }
 
-test(getDoubleFromIntegerParts_Neg) {
+test(getDoubleCoordFromIntegerParts_Neg) {
     int32_t val = -123456789;
     int8_t valHp = 99;      // high precision extension
     double d_val_test = -12.345678999;
-    double d_val = getDoubleFromIntegerParts(val, valHp);
+    double d_val = getDoubleCoordFromIntegerParts(val, valHp);
     assertLess(abs(d_val) - abs(d_val_test), 0.000000001);
 }
 
-test(getDoubleValStringFromCSV) {
+test(getFloatingPointStringFromCSV_Coord) {
     String csvStr = "123456789,99";
     String doubleStr = "12.345678999";
-    String testStr = getDoubleValStringFromCSV(csvStr, COORD_PRECISION);
+    String testStr = getFloatingPointStringFromCSV(csvStr, COORD_PRECISION);
     assertTrue (testStr.equals(doubleStr));
+}
+
+test(getFloatingPointStringFromCSV_Alt) {
+    String csvStr = "12345,6";
+    String floatStr = "12.3456";
+    String testStr = getFloatingPointStringFromCSV(csvStr, ALT_PRECISION);
+    DEBUG_SERIAL.printf("testStr: %s\n", testStr);
+    assertTrue (testStr.equals(floatStr));
 }
 
 test(getValueAsStringFromCSV) {

@@ -260,7 +260,16 @@ typedef struct {
    * @param valHp int8_t holding the high precision extension
    * @return double reconstructed value
    */
-  double getDoubleFromIntegerParts(int32_t val, int8_t valHp);
+  double getDoubleCoordFromIntegerParts(int32_t coord, int8_t coordHp);
+
+  /**
+   * @brief Get the Double From Integer Parts 
+   * 
+   * @param val int32_t holding die lower precision
+   * @param valHp int8_t holding the high precision extension
+   * @return double reconstructed value
+   */
+  float getFloatAltFromIntegerParts(int32_t alt, int8_t altHp);
 
   /**
    * @brief Get the deconstructed double val as CSV integer object
@@ -285,7 +294,7 @@ typedef struct {
    * @param precision Floating point digit num
    * @return String Reconstructed int value as String
    */
-  String getDoubleValStringFromCSV(const String& csvStr, int precision);
+  String getFloatingPointStringFromCSV(const String& csvStr, int precision);
 
   /**
    * @brief Get the reconstructed altitude from CSV object

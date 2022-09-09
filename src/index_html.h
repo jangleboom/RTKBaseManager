@@ -163,7 +163,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 </tr>
                 <tr>
                     <td style="text-align:right;"> <input form="Form1" type="radio" id="coords_enabled" value="coords_enabled" name="location_method" onclick="enableLocationMethod()"></td>
-                    <td style="text-align:left;" title="Seven decimal places are required."> <label for="coords_enabled"> High precision coordinates </label></td>
+                    <td style="text-align:left;" title="Seven decimal places are required."> <label for="coords_enabled"> Enter high precision coords </label></td>
                 </tr>
                 <td colspan=2></td>
                 <tr>

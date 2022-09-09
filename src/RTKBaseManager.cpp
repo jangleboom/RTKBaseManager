@@ -229,12 +229,19 @@ String RTKBaseManager::getDeconstructedAltAsCSV(const String& floatStr) {
     return deconstructedCSV;
 }
 
-String RTKBaseManager::getDoubleValStringFromCSV(const String& csvStr, int precision) { 
+String RTKBaseManager::getFloatingPointStringFromCSV(const String& csvStr, int precision) { 
   if (csvStr.isEmpty()) return String();
   int32_t lowerPrec = (int32_t)getValueAsStringFromCSV(csvStr, SEP, 0).toInt();
   int8_t highPrec = (int8_t)getValueAsStringFromCSV(csvStr, SEP, 1).toInt();
-  double reconstructedVal = getDoubleFromIntegerParts(lowerPrec, highPrec);
-  String reconstructedValStr = String(reconstructedVal, precision);
+  String reconstructedValStr = "";
+  if (precision > ALT_PRECISION) {
+    double reconstructedVal = getDoubleCoordFromIntegerParts(lowerPrec, highPrec);
+    reconstructedValStr = String(reconstructedVal, precision);
+  } else {
+    float reconstructedVal = getFloatAltFromIntegerParts(lowerPrec, highPrec);
+    reconstructedValStr = String(reconstructedVal, precision);
+  }
+  
   return reconstructedValStr;
 }
 
@@ -280,19 +287,19 @@ String RTKBaseManager::processor(const String& var)
   }
   else if (var == PARAM_RTK_LOCATION_LATITUDE) {
     String savedLatitude = readFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE);
-    String savedLatitudeStr = getDoubleValStringFromCSV(savedLatitude, COORD_PRECISION);
+    String savedLatitudeStr = getFloatingPointStringFromCSV(savedLatitude, COORD_PRECISION);
     return (savedLatitude.isEmpty() ? String(PARAM_RTK_LOCATION_LATITUDE) : savedLatitudeStr);
   }
   else if (var == PARAM_RTK_LOCATION_LONGITUDE) {
     String savedLongitude = readFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE);
-    String savedLongitudeStr = getDoubleValStringFromCSV(savedLongitude, COORD_PRECISION);
+    String savedLongitudeStr = getFloatingPointStringFromCSV(savedLongitude, COORD_PRECISION);
     return (savedLongitude.isEmpty() ? String(PARAM_RTK_LOCATION_LONGITUDE) : savedLongitudeStr);
   }
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) {
     String savedAltitude = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
-    String savedAltitudeStr = getDoubleValStringFromCSV(savedAltitude, ALT_PRECISION);
-    double altitude = savedAltitude.toDouble() / 1000.0;
-    return (savedAltitude.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : String(altitude));
+    String savedAltitudeStr = getFloatingPointStringFromCSV(savedAltitude, ALT_PRECISION);
+    // float altitude = savedAltitude.toFloat() / 1000.0;
+    return (savedAltitude.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : savedAltitudeStr);
   }
   else if (var == "next_addr") {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
@@ -467,16 +474,24 @@ int8_t RTKBaseManager::getHighPrecisionCoordFromDouble(double input)
   return output;
 }
 
-double RTKBaseManager::getDoubleFromIntegerParts(int32_t val, int8_t valHp) 
+double RTKBaseManager::getDoubleCoordFromIntegerParts(int32_t coord, int8_t coordHp) 
 {
-  double d_val;
-  d_val = (double)val * 1e-7;
-  d_val += (double)valHp * 1e-9;
+  double d_coord;
+  d_coord = (double)coord * 1e-7;
+  d_coord += (double)coordHp * 1e-9;
 
-  return (d_val);
+  return d_coord;
 }
 
-  // Function to parse lora string message
+float RTKBaseManager::getFloatAltFromIntegerParts(int32_t alt, int8_t altHp) 
+{
+  float f_alt;
+  f_alt = (double)alt * 1e-3;
+  f_alt += (double)altHp * 1e-4;
+
+  return f_alt;
+}
+
 String RTKBaseManager::getValueAsStringFromCSV(const String &data, char separator, int index)
 {
   int idx = data.indexOf(separator);
@@ -485,15 +500,18 @@ String RTKBaseManager::getValueAsStringFromCSV(const String &data, char separato
   return  result;
 }
 
-void RTKBaseManager::setLocationMethodCoords() {
+void RTKBaseManager::setLocationMethodCoords() 
+{
   writeFile(SPIFFS, PATH_RTK_LOCATION_METHOD, "coords_enabled");
 }
 
-void RTKBaseManager::setLocationMethodSurvey() {
+void RTKBaseManager::setLocationMethodSurvey() 
+{
   writeFile(SPIFFS, PATH_RTK_LOCATION_METHOD, "survey_enabled");
 }
 
-int32_t RTKBaseManager::getLowerPrecisionIntAltitudeFromFloat(float alt) {
+int32_t RTKBaseManager::getLowerPrecisionIntAltitudeFromFloat(float alt) 
+{
   // Get cm part (cut mm digit)
   return (int32_t)(alt * 1000.0); // cm accuracy
 }
