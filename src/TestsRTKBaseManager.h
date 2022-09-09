@@ -91,4 +91,29 @@ test(getIntLocationFromSPIFFS) {
     assertTrue(success);
 }
 
+test(getLowerPrecisionIntAltitudeFromFloat) {
+    float alt = 12.3456;
+    int32_t result = getLowerPrecisionIntAltitudeFromFloat(alt);
+    assertEqual( result, 12345);
+}
+
+test(getHigherPrecisionIntAltitudeFromFloat) {
+    float alt = 12.3456;
+    int8_t result = getHigherPrecisionIntAltitudeFromFloat(alt);
+    assertEqual( result, 6);
+}
+
+test(getDigitsCount) {
+    int32_t num = 12345;
+    int8_t digits = getDigitsCount(num);
+    assertEqual(digits, 5);
+}
+
+test(getFloatAltitudeFromInt) {
+    int32_t alt = 12345;
+    int8_t altHp = 6;
+    float result = getFloatAltitudeFromInt(alt, altHp) - 12.3456;
+    assertLess(abs(result), 0.0001);
+}
+
 #endif /*** TESTS_RTK_BASE_MANAGER_H ***/

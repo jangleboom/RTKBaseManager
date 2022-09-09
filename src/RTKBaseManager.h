@@ -305,9 +305,44 @@ typedef struct {
    * 
    */
   void setLocationMethodCoords(void);
+
+  /**
+   * @brief Get the Lower Precision Altitude object
+   * 
+   * @param alt Altitude (mean sea level or ellipsoid)
+   * @return int32_t Mm precision altitude part
+   */
+  int32_t getLowerPrecisionIntAltitudeFromFloat(float alt);
+
+  /**
+   * @brief Get the Higher Precision Altitude object
+   * 
+   * @param alt Altitude (mean sea level or ellipsoid)
+   * @return int8_t int32_t 0.1 mm precision altitude part
+   */
+  int8_t getHigherPrecisionIntAltitudeFromFloat(float alt);
+
+  /**
+   * @brief Get the Digits Count object
+   * 
+   * @param num Integer number to count 
+   * @return int8_t Digits of num
+   */
+  int8_t getDigitsCount(int32_t num);
+
+  // uint8_t getNumberOfDigits(int32_t i);
+
+  // void getIntAltitudeFromDouble(float alt);
+
+  /**
+   * @brief Get the Float Altitude From Int object
+   * 
+   * @param alt Lower precision altitude part (mm)
+   * @param altHp Higher precision altitude part (0.1 mm)
+   * @return Float value of altitude 
+   */
+  float getFloatAltitudeFromInt(int32_t alt, int8_t altHp);
+
 }
-
-
-
 
 #endif /*** RTK_MANAGER_H ***/

@@ -483,4 +483,51 @@ void RTKBaseManager::setLocationMethodSurvey() {
   writeFile(SPIFFS, PATH_RTK_LOCATION_METHOD, "survey_enabled");
 }
 
+int32_t RTKBaseManager::getLowerPrecisionIntAltitudeFromFloat(float alt) {
+  // Get cm part (cut mm digit)
+  return (int32_t)(alt * 1000.0); // cm accuracy
+}
+
+int8_t RTKBaseManager::getHigherPrecisionIntAltitudeFromFloat(float alt) {
+  // Get the 0.1 mm part
+  int8_t alt_100nm = (((int32_t)(alt * 10000)) % 10);
+  return alt_100nm;
+}
+
+int8_t RTKBaseManager::getDigitsCount(int32_t num)
+{
+   return (1 + log10( num ));
+}
+
+// uint8_t RTKBaseManager::getNumberOfDigits(int32_t i)
+// { uint8_t count;
+//   count =  i > 0 ? (uint8_t) log10 ((double) i) + 1 : 1;
+//   return count; 
+// }
+
+// void RTKBaseManager::getIntAltitudeFromDouble(float alt) {
+//   float x, y, z;
+//   int32_t a,b;
+
+//   x = (float)(((int32_t)(alt * 1000.0))/1000.0);
+//   y = modf(x, &z);
+//   a = z;
+//   b = y*1000.0;
+//   DEBUG_SERIAL.printf("Number of digits %d: %i\n", a, RTKBaseManager::getDigitsCount(a));
+//   DEBUG_SERIAL.printf("Number of digits %d: %i\n", a, RTKBaseManager::getNumberOfDigits(a));
+//   DEBUG_SERIAL.printf("Number of digits %d: %i\n", b, RTKBaseManager::getDigitsCount(b));
+//   DEBUG_SERIAL.printf("Number of digits %d: %i\n", b, RTKBaseManager::getNumberOfDigits(b));
+//   DEBUG_SERIAL.printf("Splitted %f: in %d and %d\n", x, a, b);
+
+// }
+
+float RTKBaseManager::getFloatAltitudeFromInt(int32_t alt, int8_t altHp) {
+    float f_alt;
+    // Calculate the height above ellipsoid in mm * 10^-1
+    f_alt = (alt * 10) + altHp;
+    // Now convert to m
+    f_alt /= 10000.0; // Convert from mm * 10^-1 to m
+
+    return f_alt;
+}
 
