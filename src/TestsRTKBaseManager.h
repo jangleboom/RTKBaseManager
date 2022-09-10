@@ -55,8 +55,8 @@ test(getFloatingPointStringFromCSV_Coord) {
 }
 
 test(getFloatingPointStringFromCSV_Alt) {
-    String csvStr = "12345,6";
-    String floatStr = "12.3456";
+    String csvStr = "73666,0";
+    String floatStr = "73.666";
     String testStr = getFloatingPointStringFromCSV(csvStr, ALT_PRECISION);
     DEBUG_SERIAL.printf("testStr: %s\n", testStr);
     assertTrue (testStr.equals(floatStr));
@@ -65,8 +65,11 @@ test(getFloatingPointStringFromCSV_Alt) {
 test(getValueAsStringFromCSV) {
     bool result = true;
     String csv = "123456789,99";
-    result &= getValueAsStringFromCSV(csv, ',',0).equals("123456789");
-    result &= getValueAsStringFromCSV(csv, ',',1).equals("99");
+    const char SEP = ',';
+    const int8_t LOWER_VAL_IDX = 0;
+    const int8_t HIGHER_VAL_IDX = 1;
+    result &= getValueAsStringFromCSV(csv, SEP, LOWER_VAL_IDX).equals("123456789");
+    result &= getValueAsStringFromCSV(csv, SEP, HIGHER_VAL_IDX).equals("99");
     assertTrue(result);
 }
 

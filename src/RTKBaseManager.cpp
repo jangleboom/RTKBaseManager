@@ -490,11 +490,11 @@ float RTKBaseManager::getFloatAltFromIntegerParts(int32_t alt, int8_t altHp)
   return f_alt;
 }
 
-String RTKBaseManager::getValueAsStringFromCSV(const String &data, char separator, int index)
+String RTKBaseManager::getValueAsStringFromCSV(const String &data, char separator, int col)
 {
-  int idx = data.indexOf(separator);
-  int length = data.length();
-  String result = (index==0) ? data.substring(0, idx) : data.substring(idx+1, length);
+  int i = data.indexOf(separator);
+  int len = data.length();
+  String result = (col==0) ? data.substring(0, i) : data.substring(i+1, len);
   return  result;
 }
 
