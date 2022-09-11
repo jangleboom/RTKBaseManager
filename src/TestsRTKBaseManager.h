@@ -103,30 +103,38 @@ test(getLocationFromSPIFFS) {
     const int8_t highPrecCoord = 99;
     const int32_t lowerPrecAlt= 12345;
     const int8_t highPrecAlt = 6;
+    const float accuracy = 0.05;
     String doubleCoordStr = "12.345678999";
     String floatAltStr = "12.3456";
+    String floatAccStr = "0.05";
     const char* testPathLat = "/testPathLat";
     const char* testPathLon = "/testPathLon";
     const char* testPathAlt = "/testPathAlt";
+    const char* testPathAcc = "/testPathAcc";
 
     if (SPIFFS.exists(testPathLat)) SPIFFS.remove(testPathLat);
     if (SPIFFS.exists(testPathLon)) SPIFFS.remove(testPathLon);
     if (SPIFFS.exists(testPathAlt)) SPIFFS.remove(testPathAlt);
+    if (SPIFFS.exists(testPathAcc)) SPIFFS.remove(testPathAcc);
    
     String deconstructedCoordAsCSV = getDeconstructedCoordAsCSV(doubleCoordStr);
     String deconstructedAltAsCSV = getDeconstructedAltAsCSV(floatAltStr);
+    String accuracyString = String(accuracy);
     // DEBUG_SERIAL.printf("deconstructedAltAsCSV: %s\n", deconstructedAltAsCSV);
     success &= writeFile(SPIFFS, testPathLat, deconstructedCoordAsCSV.c_str());
     success &= writeFile(SPIFFS, testPathLon, deconstructedCoordAsCSV.c_str());
     success &= writeFile(SPIFFS, testPathAlt, deconstructedAltAsCSV.c_str());
+    success &= writeFile(SPIFFS, testPathAlt, deconstructedAltAsCSV.c_str());
+    success &= writeFile(SPIFFS, testPathAcc, accuracyString.c_str());
 
-    success &= getLocationFromSPIFFS(&location, testPathLat, testPathLon, testPathAlt);
+    success &= getLocationFromSPIFFS(&location, testPathLat, testPathLon, testPathAlt, testPathAcc);
     success &= location.lat == lowerPrecCoord;
     success &= location.lat_hp == highPrecCoord;
     success &= location.lon == lowerPrecCoord;
     success &= location.lon_hp == highPrecCoord;
     success &= location.alt == lowerPrecAlt;
     success &= location.alt_hp == highPrecAlt;
+    success &= abs(location.acc - accuracy) < 0.0001;
 
     assertTrue(success);
 }

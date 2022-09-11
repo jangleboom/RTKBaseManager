@@ -424,11 +424,13 @@ void RTKBaseManager::wipeSpiffsFiles()
   }
 }
 
-bool RTKBaseManager::getLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt) {
+bool RTKBaseManager::getLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt, const char* pathAcc) {
   bool success = false;
   String latStr = readFile(SPIFFS, pathLat);
   String lonStr = readFile(SPIFFS, pathLon);
   String altStr = readFile(SPIFFS, pathAlt);
+  String accStr = readFile(SPIFFS, pathAcc);
+
   if (!latStr.isEmpty() && !lonStr.isEmpty() && !altStr.isEmpty()) {
     location->lat =  (int32_t)getValueAsStringFromCSV(latStr, SEP, LOW_PREC_IDX).toInt();
     location->lat_hp = (int8_t)getValueAsStringFromCSV(latStr, SEP, HIGH_PREC_IDX).toInt();
@@ -436,6 +438,7 @@ bool RTKBaseManager::getLocationFromSPIFFS(location_t* location, const char* pat
     location->lon_hp = (int8_t)getValueAsStringFromCSV(lonStr, SEP, HIGH_PREC_IDX).toInt();
     location->alt =  (int32_t)getValueAsStringFromCSV(altStr, SEP, LOW_PREC_IDX).toInt();
     location->alt_hp = (int8_t)getValueAsStringFromCSV(altStr, SEP, HIGH_PREC_IDX).toInt();
+    location->acc = accStr.toFloat();
     success = true;
   } 
   

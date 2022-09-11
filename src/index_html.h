@@ -182,8 +182,9 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                     <td style="text-align:left;"> Altitude, m: </td>
                     <td><input title="Ellipsoid height of the antenna is required (float)." class="text_field" form="Form1" type="text" maxlength="30" id="altitude" name="altitude" placeholder=%altitude%></td>
                 </tr>
+                <tr>
                     <td style="text-align:left;"> Accuracy, m: </td>
-                    <tds tyle="text-align:left;">< form="Form1" type="text" title="Accuracy of the coordinates." id="coord_accuracy" name="coord_accuracy" placeholder=%coord_accuracy%></td>
+                    <td tyle="text-align:left;">< form="Form1" type="text" title="Accuracy of the coordinates." id="coord_accuracy" name="coord_accuracy" placeholder=%coord_accuracy%></td>
                 </tr>
         </table>
     </p>

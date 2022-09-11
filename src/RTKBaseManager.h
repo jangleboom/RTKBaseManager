@@ -223,10 +223,11 @@ typedef struct {
    * @param pathLat Path to saved latitude
    * @param pathLon Path to saved longitude
    * @param pathAlt Path to saved altitude
+   * @param pathAcc Path to saved accuracy of this location
    * @return true 
    * @return false 
    */
-  bool getLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt);
+  bool getLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt, const char* pathAcc);
   
   /**
    * @brief Print content of location_t struct
