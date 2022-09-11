@@ -173,6 +173,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
           SPIFFS.remove(PATH_RTK_LOCATION_ALTITUDE);
           SPIFFS.remove(PATH_RTK_LOCATION_LATITUDE);
           SPIFFS.remove(PATH_RTK_LOCATION_LONGITUDE);
+          SPIFFS.remove(PATH_RTK_LOCATION_COORD_ACCURACY);
         }
         writeFile(SPIFFS, PATH_RTK_LOCATION_METHOD, p->value().c_str());
      } 
