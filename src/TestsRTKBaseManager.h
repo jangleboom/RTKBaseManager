@@ -98,7 +98,7 @@ test(getDeconstructedAltAsCSV) {
 
 test(getIntLocationFromSPIFFS) {
     bool success = true;
-    location_int_t location;
+    location_t location;
     const int32_t lowerPrecCoord = 123456789;
     const int8_t highPrecCoord = 99;
     const int32_t lowerPrecAlt= 12345;

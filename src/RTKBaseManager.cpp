@@ -279,15 +279,23 @@ String RTKBaseManager::processor(const String& var)
     String savedLocationMethod = readFile(SPIFFS, PATH_RTK_LOCATION_METHOD);
     return (savedLocationMethod.isEmpty() ? String(PARAM_RTK_SURVEY_ENABLED) : savedLocationMethod);
   }
+
   else if (var == PARAM_RTK_LOCATION_SURVEY_ACCURACY) {
     String savedSurveyAccuracy = readFile(SPIFFS, PATH_RTK_LOCATION_SURVEY_ACCURACY);
     return (savedSurveyAccuracy.isEmpty() ? String(PARAM_RTK_LOCATION_SURVEY_ACCURACY) : savedSurveyAccuracy);
   }
+
+  else if (var == PARAM_RTK_LOCATION_COORD_ACCURACY) {
+    String savedCoordAccuracy = readFile(SPIFFS, PATH_RTK_LOCATION_COORD_ACCURACY);
+    return (savedCoordAccuracy.isEmpty() ? "---" : savedCoordAccuracy);
+  }
+
   else if (var == PARAM_RTK_LOCATION_LATITUDE) {
     String savedLatitude = readFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE);
     String savedLatitudeStr = getFloatingPointStringFromCSV(savedLatitude, COORD_PRECISION);
     return (savedLatitude.isEmpty() ? String(PARAM_RTK_LOCATION_LATITUDE) : savedLatitudeStr);
   }
+
   else if (var == PARAM_RTK_LOCATION_LONGITUDE) {
     String savedLongitude = readFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE);
     String savedLongitudeStr = getFloatingPointStringFromCSV(savedLongitude, COORD_PRECISION);
@@ -416,7 +424,7 @@ void RTKBaseManager::wipeSpiffsFiles()
   }
 }
 
-bool RTKBaseManager::getIntLocationFromSPIFFS(location_int_t* location, const char* pathLat, const char* pathLon, const char* pathAlt) {
+bool RTKBaseManager::getIntLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt) {
   bool success = false;
   String latStr = readFile(SPIFFS, pathLat);
   String lonStr = readFile(SPIFFS, pathLon);
@@ -434,7 +442,7 @@ bool RTKBaseManager::getIntLocationFromSPIFFS(location_int_t* location, const ch
   return success;
 }
 
-void RTKBaseManager::printIntLocation(location_int_t* location) {
+void RTKBaseManager::printIntLocation(location_t* location) {
   DEBUG_SERIAL.print(F("SPIFFS Lat: ")); DEBUG_SERIAL.print(location->lat, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lat_hp, DEC);
   DEBUG_SERIAL.print(F("SPIFFS Lon: ")); DEBUG_SERIAL.print(location->lon, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lon_hp, DEC);
   DEBUG_SERIAL.print(F("SPIFFS Alt: ")); DEBUG_SERIAL.print(location->alt, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->alt_hp, DEC);

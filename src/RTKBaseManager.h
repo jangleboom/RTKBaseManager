@@ -61,6 +61,7 @@ namespace RTKBaseManager {
   const char PARAM_RTK_SURVEY_ENABLED[] PROGMEM = "survey_enabled";
   const char PARAM_RTK_COORDS_ENABLED[] PROGMEM = "coords_enabled";
   const char PARAM_RTK_LOCATION_SURVEY_ACCURACY[] PROGMEM = "survey_accuracy";
+  const char PARAM_RTK_LOCATION_COORD_ACCURACY[] PROGMEM = "coord_accuracy";
   const char PARAM_RTK_LOCATION_LONGITUDE[] PROGMEM = "longitude";
   const char PARAM_RTK_LOCATION_LATITUDE[] PROGMEM = "latitude";
   const char PARAM_RTK_LOCATION_ALTITUDE[] PROGMEM = "altitude";
@@ -73,6 +74,7 @@ namespace RTKBaseManager {
   const char PATH_RTK_MOINT_POINT_PW[] PROGMEM = "/mount_point_pw";
   const char PATH_RTK_LOCATION_METHOD[] PROGMEM = "/location_method.txt";
   const char PATH_RTK_LOCATION_SURVEY_ACCURACY[] PROGMEM = "/survey_accuracy.txt";
+  const char PATH_RTK_LOCATION_COORD_ACCURACY[] PROGMEM = "/coord_accuracy.txt";
   const char PATH_RTK_LOCATION_LONGITUDE[] PROGMEM = "/longitude.txt";
   const char PATH_RTK_LOCATION_LATITUDE[] PROGMEM = "/latitude.txt";
   const char PATH_RTK_LOCATION_ALTITUDE[] PROGMEM = "/altitude.txt";
@@ -94,7 +96,8 @@ typedef struct {
   int8_t  lon_hp;    // high precision extension longitude
   int32_t alt;       // altitude in mm precision
   int8_t  alt_hp;    // altitude in 0.1 mm precision
-} location_int_t;
+  float   accuracy;  // accuracy in m     
+} location_t;
 
   /*** Wifi ***/
 
@@ -217,21 +220,21 @@ typedef struct {
   /**
    * @brief Get the int formated location from SPIFFS 
    * 
-   * @param location Address of location_int_t location struct to write to
+   * @param location Address of location_t location struct to write to
    * @param pathLat Path to saved latitude
    * @param pathLon Path to saved longitude
    * @param pathAlt Path to saved altitude
    * @return true 
    * @return false 
    */
-  bool getIntLocationFromSPIFFS(location_int_t* location, const char* pathLat, const char* pathLon, const char* pathAlt);
+  bool getIntLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt);
   
   /**
-   * @brief Print content of location_int_t struct
+   * @brief Print content of location_t struct
    * 
-   * @param location Pointer to location_int_t var
+   * @param location Pointer to location_t var
    */
-  void printIntLocation(location_int_t* location);
+  void printIntLocation(location_t* location);
 
   /*** Help funcs ***/
 

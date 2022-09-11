@@ -167,8 +167,8 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 </tr>
                 <td colspan=2></td>
                 <tr>
-                    <td style="text-align:left;"> min Accuracy, m: </td>
-                    <td><input title="The survey is carried out until the desired accuracy is achieved. After that, the location coordinates are stored in SPIFFS. 1.00 is a useful value (fast survey) 0.6 is more accurate but takes hours more." class="text_field" form="Form1" type="text" maxlength="30" id="survey_accuracy" name="survey_accuracy" placeholder=%survey_accuracy%></td>
+                    <td style="text-align:left;"> Min Accuracy, m: </td>
+                    <td><input title="The survey is carried out at minimum for 60 s or until the desired accuracy is achieved. After that, the location coordinates are stored in SPIFFS. 1.00 is a useful value (fast survey) 0.6 is more accurate but takes hours more." class="text_field" form="Form1" type="text" maxlength="30" id="survey_accuracy" name="survey_accuracy" placeholder=%survey_accuracy%></td>
                 </tr>
                 <tr>
                     <td style="text-align:left;"> Latitude, deg: </td>
@@ -180,7 +180,10 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 </tr>
                 <tr>
                     <td style="text-align:left;"> Altitude, m: </td>
-                    <td><input title="Height over sea-level of the antenna is required (float)." class="text_field" form="Form1" type="text" maxlength="30" id="altitude" name="altitude" placeholder=%altitude%></td>
+                    <td><input title="Ellipsoid height of the antenna is required (float)." class="text_field" form="Form1" type="text" maxlength="30" id="altitude" name="altitude" placeholder=%altitude%></td>
+                </tr>
+                    <td style="text-align:left;"> Accuracy, m: </td>
+                    <td><input title="Accuracy of the coordinates." class="text_field" form="Form1" type="text" maxlength="30" id="coord_accuracy" name="coord_accuracy" placeholder=%coord_accuracy%></td>
                 </tr>
         </table>
     </p>
