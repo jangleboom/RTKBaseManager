@@ -443,10 +443,10 @@ bool RTKBaseManager::getLocationFromSPIFFS(location_t* location, const char* pat
 }
 
 void RTKBaseManager::printLocation(location_t* location) {
-  DEBUG_SERIAL.print(F("SPIFFS Lat: ")); DEBUG_SERIAL.print(location->lat, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lat_hp, DEC);
-  DEBUG_SERIAL.print(F("SPIFFS Lon: ")); DEBUG_SERIAL.print(location->lon, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lon_hp, DEC);
-  DEBUG_SERIAL.print(F("SPIFFS Alt: ")); DEBUG_SERIAL.print(location->alt, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->alt_hp, DEC);
-  DEBUG_SERIAL.print(F("SPIFFS Acc: ")); DEBUG_SERIAL.println(location->accuracy);
+  DEBUG_SERIAL.print(F("Lat: ")); DEBUG_SERIAL.print(location->lat, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lat_hp, DEC);
+  DEBUG_SERIAL.print(F("Lon: ")); DEBUG_SERIAL.print(location->lon, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lon_hp, DEC);
+  DEBUG_SERIAL.print(F("Alt: ")); DEBUG_SERIAL.print(location->alt, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->alt_hp, DEC);
+  DEBUG_SERIAL.print(F("Acc: ")); DEBUG_SERIAL.println(location->acc);
 }
 /*** Help Functions ***/
 // TODO: make this privat

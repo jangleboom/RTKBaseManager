@@ -96,7 +96,7 @@ typedef struct {
   int8_t  lon_hp;    // high precision extension longitude
   int32_t alt;       // altitude in mm precision
   int8_t  alt_hp;    // altitude in 0.1 mm precision
-  float   accuracy;  // accuracy in m     
+  float   acc;  // accuracy in m     
 } location_t;
 
   /*** Wifi ***/
