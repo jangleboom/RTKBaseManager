@@ -43,9 +43,9 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             font-size: 13px;
         }
 
-        .text_field_2 {
+        .data_text {
             border: none;
-            color: black;
+            color: white;
             text-align: left;
             text-decoration: none;
             display: inline-block;
@@ -193,7 +193,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 </tr>
                 <tr>
                     <td style="text-align:left;"> Accuracy, m: </td>
-                    <td><title="Accuracy of this location." class="text_field_2" form="Form1" type="text" maxlength="30" id="coord_accuracy" name="coord_accuracy" placeholder=%coord_accuracy%></td>
+                    <td class="data_text";">%coord_accuracy%</td>
                 </tr>
         </table>
     </p>
