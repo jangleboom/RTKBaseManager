@@ -176,7 +176,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 </tr>
                 <td colspan=2></td>
                 <tr>
-                    <td style="text-align:left;"> Min. Accuracy, m: </td>
+                    <td style="text-align:left;"> Min. survey-in accuracy, m: </td>
                     <td><input title="The survey is carried out at minimum for 60 s or until the desired accuracy is achieved. After that, the location coordinates are stored in SPIFFS. 1.00 is a useful value (fast survey) 0.6 is more accurate but takes hours more." class="text_field" form="Form1" type="text" maxlength="30" id="survey_accuracy" name="survey_accuracy" placeholder=%survey_accuracy%></td>
                 </tr>
                 <tr>
