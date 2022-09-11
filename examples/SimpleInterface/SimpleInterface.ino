@@ -29,9 +29,9 @@ void setup() {
   String locationMethod = readFile(SPIFFS, PATH_RTK_LOCATION_METHOD);
   DEBUG_SERIAL.print(F("Location method: ")); DEBUG_SERIAL.println(locationMethod);
   
-  location_int_t lastLocation;
+  location_t lastLocation;
   if (getIntLocationFromSPIFFS(&lastLocation, PATH_RTK_LOCATION_LATITUDE, PATH_RTK_LOCATION_LONGITUDE, PATH_RTK_LOCATION_ALTITUDE)) {
-    printIntLocation(&lastLocation);
+    printLocation(&lastLocation);
   }
 
   // Check if we have credentials for a available network

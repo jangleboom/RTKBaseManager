@@ -442,10 +442,11 @@ bool RTKBaseManager::getIntLocationFromSPIFFS(location_t* location, const char* 
   return success;
 }
 
-void RTKBaseManager::printIntLocation(location_t* location) {
+void RTKBaseManager::printLocation(location_t* location) {
   DEBUG_SERIAL.print(F("SPIFFS Lat: ")); DEBUG_SERIAL.print(location->lat, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lat_hp, DEC);
   DEBUG_SERIAL.print(F("SPIFFS Lon: ")); DEBUG_SERIAL.print(location->lon, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lon_hp, DEC);
   DEBUG_SERIAL.print(F("SPIFFS Alt: ")); DEBUG_SERIAL.print(location->alt, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->alt_hp, DEC);
+  DEBUG_SERIAL.print(F("SPIFFS Acc: ")); DEBUG_SERIAL.println(location->accuracy);
 }
 /*** Help Functions ***/
 // TODO: make this privat

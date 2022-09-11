@@ -234,7 +234,7 @@ typedef struct {
    * 
    * @param location Pointer to location_t var
    */
-  void printIntLocation(location_t* location);
+  void printLocation(location_t* location);
 
   /*** Help funcs ***/
 
