@@ -227,7 +227,7 @@ typedef struct {
    * @return true 
    * @return false 
    */
-  bool getIntLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt);
+  bool getLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt);
   
   /**
    * @brief Print content of location_t struct

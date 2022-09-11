@@ -96,7 +96,7 @@ test(getDeconstructedAltAsCSV) {
     assertTrue(deconstructedCSV.equals(testString));
 }
 
-test(getIntLocationFromSPIFFS) {
+test(getLocationFromSPIFFS) {
     bool success = true;
     location_t location;
     const int32_t lowerPrecCoord = 123456789;
@@ -120,7 +120,7 @@ test(getIntLocationFromSPIFFS) {
     success &= writeFile(SPIFFS, testPathLon, deconstructedCoordAsCSV.c_str());
     success &= writeFile(SPIFFS, testPathAlt, deconstructedAltAsCSV.c_str());
 
-    success &= getIntLocationFromSPIFFS(&location, testPathLat, testPathLon, testPathAlt);
+    success &= getLocationFromSPIFFS(&location, testPathLat, testPathLon, testPathAlt);
     success &= location.lat == lowerPrecCoord;
     success &= location.lat_hp == highPrecCoord;
     success &= location.lon == lowerPrecCoord;

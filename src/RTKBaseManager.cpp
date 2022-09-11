@@ -424,7 +424,7 @@ void RTKBaseManager::wipeSpiffsFiles()
   }
 }
 
-bool RTKBaseManager::getIntLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt) {
+bool RTKBaseManager::getLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt) {
   bool success = false;
   String latStr = readFile(SPIFFS, pathLat);
   String lonStr = readFile(SPIFFS, pathLon);
