@@ -497,8 +497,15 @@ double RTKBaseManager::getDoubleCoordFromIntegerParts(int32_t coord, int8_t coor
 float RTKBaseManager::getFloatAltFromIntegerParts(int32_t alt, int8_t altHp) 
 {
   float f_alt;
-  f_alt = (float)alt * 1e-3;
-  f_alt += (float)altHp * 1e-4;
+  f_alt = (float)alt * 1e-3;      // mm to m
+  f_alt += (float)altHp * 1e-4;   // add the 0.1 mm part
+
+  // Works for height above ellipsoid and mean sea level too
+  
+  // Calculate the altitude in mm * 10^-1
+  f_alt = (alt * 10) + altHp;
+  // Now convert to m
+  f_alt = f_alt / 10000.0; // Convert from mm * 10^-1 to m
 
   return f_alt;
 }
