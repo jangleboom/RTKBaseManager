@@ -497,8 +497,8 @@ double RTKBaseManager::getDoubleCoordFromIntegerParts(int32_t coord, int8_t coor
 float RTKBaseManager::getFloatAltFromIntegerParts(int32_t alt, int8_t altHp) 
 {
   float f_alt;
-  f_alt = (double)alt * 1e-3;
-  f_alt += (double)altHp * 1e-4;
+  f_alt = (float)alt * 1e-3;
+  f_alt += (float)altHp * 1e-4;
 
   return f_alt;
 }
