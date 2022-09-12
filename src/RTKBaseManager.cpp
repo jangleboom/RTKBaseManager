@@ -185,6 +185,12 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
      } 
     }
 
+    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_COORD_ACCURACY) == 0) {
+      if (p->value().length() > 0) {
+        writeFile(SPIFFS, PATH_RTK_LOCATION_COORD_ACCURACY, p->value().c_str());
+     } 
+    }
+
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_LATITUDE) == 0) {
       if (p->value().length() > 0) {
         String deconstructedValAsCSV = getDeconstructedCoordAsCSV(p->value());

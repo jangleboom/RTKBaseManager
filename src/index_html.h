@@ -193,7 +193,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                 </tr>
                 <tr>
                     <td style="text-align:left;"> Accuracy, m: </td>
-                    <td class="data_text";">%coord_accuracy%</td>
+                    <td><input title="Optional: You can save your data quality to remember later." class="text_field" form="Form1" type="text" maxlength="30" id="coord_accuracy" name="coord_accuracy" placeholder=%coord_accuracy%></td>
                 </tr>
         </table>
     </p>
