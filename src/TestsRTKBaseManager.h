@@ -124,7 +124,6 @@ test(getLocationFromSPIFFS) {
     success &= writeFile(SPIFFS, testPathLat, deconstructedCoordAsCSV.c_str());
     success &= writeFile(SPIFFS, testPathLon, deconstructedCoordAsCSV.c_str());
     success &= writeFile(SPIFFS, testPathAlt, deconstructedAltAsCSV.c_str());
-    success &= writeFile(SPIFFS, testPathAlt, deconstructedAltAsCSV.c_str());
     success &= writeFile(SPIFFS, testPathAcc, accuracyString.c_str());
 
     success &= getLocationFromSPIFFS(&location, testPathLat, testPathLon, testPathAlt, testPathAcc);

@@ -202,7 +202,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
     if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_ALTITUDE) == 0) {
       if (p->value().length() > 0) {
         String deconstructedAltAsCSV = getDeconstructedAltAsCSV(p->value());
-        // int32_t ellipsoid = String(p->value()).toInt()*1000;
+        // int32_t elipsoid = String(p->value()).toInt()*1000;
         writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, deconstructedAltAsCSV.c_str());
      } 
     }
@@ -500,7 +500,7 @@ float RTKBaseManager::getFloatAltFromIntegerParts(int32_t alt, int8_t altHp)
   f_alt = (float)alt * 1e-3;      // mm to m
   f_alt += (float)altHp * 1e-4;   // add the 0.1 mm part
 
-  // Works for height above ellipsoid and mean sea level too
+  // Works for height above elipsoid and mean sea level too
   
   // Calculate the altitude in mm * 10^-1
   f_alt = (alt * 10) + altHp;
@@ -569,7 +569,7 @@ int8_t RTKBaseManager::getDigitsCount(int32_t num)
 
 float RTKBaseManager::getFloatAltitudeFromInt(int32_t alt, int8_t altHp) {
     float f_alt;
-    // Calculate the height above ellipsoid in mm * 10^-1
+    // Calculate the height above elipsoid in mm * 10^-1
     f_alt = (alt * 10) + altHp;
     // Now convert to m
     f_alt /= 10000.0; // Convert from mm * 10^-1 to m
