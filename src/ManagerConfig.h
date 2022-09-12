@@ -15,7 +15,7 @@
 
 #define BAUD                          115200
 #define COORD_PRECISION               9
-#define ALT_PRECISION                 3
+#define ALT_PRECISION                 4
 
 
 

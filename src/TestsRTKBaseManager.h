@@ -55,8 +55,8 @@ test(getFloatingPointStringFromCSV_Coord) {
 }
 
 test(getFloatingPointStringFromCSV_Alt) {
-    String csvStr = "73666,0";
-    String floatStr = "73.666";
+    String csvStr = "12345,6";
+    String floatStr = "12.3456";
     String testStr = getFloatingPointStringFromCSV(csvStr, ALT_PRECISION);
     DEBUG_SERIAL.printf("testStr: %s\n", testStr);
     assertTrue (testStr.equals(floatStr));
