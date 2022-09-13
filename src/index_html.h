@@ -78,11 +78,13 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             document.getElementById("latitude").disabled = false;
             document.getElementById("longitude").disabled = false;
             document.getElementById("altitude").disabled = false;
+            document.getElementById("coord_accuracy").disabled = false;
         } else {
             document.getElementById("survey_accuracy").disabled = false;
             document.getElementById("latitude").disabled = true;
             document.getElementById("longitude").disabled = true;
             document.getElementById("altitude").disabled = true;
+            document.getElementById("coord_accuracy").disabled = true;
         }
     }
 </script>
