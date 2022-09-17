@@ -7,31 +7,36 @@
 using namespace aunit;
 using namespace RTKBaseManager;
 
-test(getLowerPrecisionCoordFromDouble_Pos) {
+test(getLowerPrecisionCoordFromDouble_Pos) 
+{
     double input = 12.345678999;
     int32_t lowerPrecPart = getLowerPrecisionCoordFromDouble(input);
     assertTrue(lowerPrecPart == 123456789);
 }
 
-test(getLowerPrecisionCoordFromDouble_Neg) {
+test(getLowerPrecisionCoordFromDouble_Neg) 
+{
     double input = -12.345678999;
     int32_t lowerPrecPart = getLowerPrecisionCoordFromDouble(input);
     assertTrue(lowerPrecPart == -123456789);
 }
 
-test(getHighPrecisionCoordFromDouble_Pos) {
+test(getHighPrecisionCoordFromDouble_Pos) 
+{
     double input = 12.345678999;
     int8_t higherPrecPart = getHighPrecisionCoordFromDouble(input);
     assertTrue(higherPrecPart == 99);
 }
 
-test(getHighPrecisionCoordFromDouble_Neg) {
+test(getHighPrecisionCoordFromDouble_Neg) 
+{
     double input = -12.345678999;
     int8_t higherPrecPart = getHighPrecisionCoordFromDouble(input);
     assertTrue(higherPrecPart == 99);
 }
 
-test(getDoubleCoordFromIntegerParts_Pos) {
+test(getDoubleCoordFromIntegerParts_Pos) 
+{
     int32_t lowerPrecPart = 123456789;
     int8_t higherPrecPart= 99;
     double d_val_test = 12.345678999;
@@ -39,7 +44,8 @@ test(getDoubleCoordFromIntegerParts_Pos) {
     assertLess(abs(double_var) - d_val_test, 0.000000001);
 }
 
-test(getDoubleCoordFromIntegerParts_Neg) {
+test(getDoubleCoordFromIntegerParts_Neg) 
+{
     int32_t val = -123456789;
     int8_t valHp = 99;      // high precision extension
     double d_val_test = -12.345678999;
@@ -47,14 +53,16 @@ test(getDoubleCoordFromIntegerParts_Neg) {
     assertLess(abs(d_val) - abs(d_val_test), 0.000000001);
 }
 
-test(getFloatingPointStringFromCSV_Coord) {
+test(getFloatingPointStringFromCSV_Coord) 
+{
     String csvStr = "123456789,99";
     String doubleStr = "12.345678999";
     String testStr = getFloatingPointStringFromCSV(csvStr, COORD_PRECISION);
     assertTrue (testStr.equals(doubleStr));
 }
 
-test(getFloatingPointStringFromCSV_Alt) {
+test(getFloatingPointStringFromCSV_Alt) 
+{
     String csvStr = "12345,6";
     String floatStr = "12.3456";
     String testStr = getFloatingPointStringFromCSV(csvStr, ALT_PRECISION);
@@ -62,7 +70,8 @@ test(getFloatingPointStringFromCSV_Alt) {
     assertTrue (testStr.equals(floatStr));
 }
 
-test(getValueAsStringFromCSV) {
+test(getValueAsStringFromCSV) 
+{
     bool result = true;
     String csv = "123456789,99";
     const char SEP = ',';
@@ -73,7 +82,8 @@ test(getValueAsStringFromCSV) {
     assertTrue(result);
 }
 
-test(getDeconstructedCoordAsCSV) {
+test(getDeconstructedCoordAsCSV) 
+{
     String doubleStr= "12.345678999";
     double dVal = doubleStr.toDouble();
     int32_t lowerPrec = getLowerPrecisionCoordFromDouble(dVal);
@@ -84,7 +94,8 @@ test(getDeconstructedCoordAsCSV) {
     assertTrue(deconstructedCSV.equals(testString));
 }
 
-test(getDeconstructedAltAsCSV) {
+test(getDeconstructedAltAsCSV) 
+{
     String floatStr= "12.3456";
     float fVal = floatStr.toDouble();
     int32_t lowerPrec = getLowerPrecisionIntAltitudeFromFloat(fVal);
@@ -96,7 +107,8 @@ test(getDeconstructedAltAsCSV) {
     assertTrue(deconstructedCSV.equals(testString));
 }
 
-test(getLocationFromSPIFFS) {
+test(getLocationFromSPIFFS) 
+{
     bool success = true;
     location_t location;
     const int32_t lowerPrecCoord = 123456789;
@@ -138,32 +150,37 @@ test(getLocationFromSPIFFS) {
     assertTrue(success);
 }
 
-test(getLowerPrecisionIntAltitudeFromFloat) {
+test(getLowerPrecisionIntAltitudeFromFloat) 
+{
     float alt = 12.3456;
     int32_t result = getLowerPrecisionIntAltitudeFromFloat(alt);
     assertEqual( result, 12345);
 }
 
-test(getHigherPrecisionIntAltitudeFromFloat) {
+test(getHigherPrecisionIntAltitudeFromFloat) 
+{
     float alt = 12.3456;
     int8_t result = getHigherPrecisionIntAltitudeFromFloat(alt);
     assertEqual( result, 6);
 }
 
-test(getDigitsCount) {
+test(getDigitsCount) 
+{
     int32_t num = 12345;
     int8_t digits = getDigitsCount(num);
     assertEqual(digits, 5);
 }
 
-test(getFloatAltitudeFromInt) {
+test(getFloatAltitudeFromInt) 
+{
     int32_t alt = 12345;
     int8_t altHp = 6;
     float result = getFloatAltitudeFromInt(alt, altHp) - 12.3456;
     assertLess(abs(result), 0.0001);
 }
 
-test(processor_SSID) {
+test(processor_SSID) 
+{
     String testSsid = "TestSSID";
     const char* TEST_PATH_SSID = "/testPathSsid";
     if (SPIFFS.exists(TEST_PATH_SSID)) SPIFFS.remove(TEST_PATH_SSID);
@@ -173,7 +190,8 @@ test(processor_SSID) {
     assertTrue(savedSSID.equals(testSsid));
 }
 
-test(processor_Altitude) {
+test(processor_Altitude) 
+{
     String testAltitude = "12.3456";
     const char* TEST_PATH_ALT = "/testPathAlt";
     if (SPIFFS.exists(TEST_PATH_ALT)) SPIFFS.remove(TEST_PATH_ALT);

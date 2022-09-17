@@ -10,7 +10,8 @@
 AsyncWebServer server(80);
 String scannedSSIDs[MAX_SSIDS];
 
-void setup() {
+void setup() 
+{
   
   #ifdef DEBUGGING
   Serial.begin(BAUD);
@@ -19,7 +20,8 @@ void setup() {
   
   // Initialize SPIFFS, set true for formatting
   bool format = false;
-  if (!RTKBaseManager::setupSPIFFS(format)) {
+  if (!RTKBaseManager::setupSPIFFS(format)) 
+  {
     DEBUG_SERIAL.println(F("setupSPIFFS failed, freezing"));
     while (true) {};
   }
@@ -30,7 +32,8 @@ void setup() {
   DEBUG_SERIAL.print(F("Location method: ")); DEBUG_SERIAL.println(locationMethod);
   
   location_t lastLocation;
-  if (getIntLocationFromSPIFFS(&lastLocation, PATH_RTK_LOCATION_LATITUDE, PATH_RTK_LOCATION_LONGITUDE, PATH_RTK_LOCATION_ALTITUDE)) {
+  if (getIntLocationFromSPIFFS(&lastLocation, PATH_RTK_LOCATION_LATITUDE, PATH_RTK_LOCATION_LONGITUDE, PATH_RTK_LOCATION_ALTITUDE)) 
+  {
     printLocation(&lastLocation);
   }
 
@@ -38,27 +41,31 @@ void setup() {
   String lastSSID = RTKBaseManager::readFile(SPIFFS, PATH_WIFI_SSID);
   String lastPassword = RTKBaseManager::readFile(SPIFFS, PATH_WIFI_PASSWORD);
 
-  if (!RTKBaseManager::savedNetworkAvailable(lastSSID) || lastPassword.isEmpty() ) {
+  if (!RTKBaseManager::savedNetworkAvailable(lastSSID) || lastPassword.isEmpty() ) 
+  {
     RTKBaseManager::setupAPMode(AP_SSID, AP_PASSWORD);
     delay(500);
-  } else {
+  } else 
+  {
    RTKBaseManager::setupStationMode(lastSSID.c_str(), lastPassword.c_str(), DEVICE_NAME);
    delay(500);
- }
+  }
   RTKBaseManager::startServer(&server);
 }
 
 unsigned long previousMillis = 0;
 const unsigned long RECONNECT_INTERVAL = 30000;
 
-void loop() {
+void loop() 
+{
   #ifdef DEBUGGING
   aunit::TestRunner::run();
   #endif
 
   unsigned long currentMillis = millis();
   // if WiFi is down, try reconnecting every RECONNECT_INTERVAL seconds
-  if (currentMillis - previousMillis > RECONNECT_INTERVAL) {
+  if (currentMillis - previousMillis > RECONNECT_INTERVAL) 
+  {
     RTKBaseManager::checkConnectionToWifiStation();
     previousMillis = currentMillis;
   }
