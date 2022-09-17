@@ -4,10 +4,12 @@
 *                             WiFi
 * ******************************************************************************/
 
-void RTKBaseManager::setupStationMode(const char* ssid, const char* password, const char* deviceName) {
+void RTKBaseManager::setupStationMode(const char* ssid, const char* password, const char* deviceName) 
+{
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  if (WiFi.waitForConnectResult() != WL_CONNECTED) {
+  if (WiFi.waitForConnectResult() != WL_CONNECTED) 
+  {
     // TODO:  - count reboots and stop after 3 times (save in SPIFFS)
     //        - display state
     DEBUG_SERIAL.println("WiFi Failed! Reboot in 10 s as AP!");
@@ -16,7 +18,8 @@ void RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   }
   DEBUG_SERIAL.println();
 
-  if (!MDNS.begin(deviceName)) {
+  if (!MDNS.begin(deviceName)) 
+  {
       DEBUG_SERIAL.println("Error starting mDNS, use local IP instead!");
   } else {
     DEBUG_SERIAL.print(F("Starting mDNS, find me under <http://www."));
@@ -30,8 +33,10 @@ void RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   DEBUG_SERIAL.println(WiFi.localIP());
 }
 
-bool RTKBaseManager::checkConnectionToWifiStation() {
-  if (WiFi.status() != WL_CONNECTED) {
+bool RTKBaseManager::checkConnectionToWifiStation() 
+{
+  if (WiFi.status() != WL_CONNECTED) 
+  {
     DEBUG_SERIAL.println("Reconnecting to WiFi...");
     WiFi.disconnect();
     return WiFi.reconnect();
@@ -41,7 +46,8 @@ bool RTKBaseManager::checkConnectionToWifiStation() {
   }
 }
 
-void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword) {
+void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword) 
+{
     DEBUG_SERIAL.print("Setting soft-AP ... ");
     WiFi.mode(WIFI_AP);
     bool result = WiFi.softAP(apSsid, apPassword);
@@ -52,13 +58,16 @@ void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword) {
     DEBUG_SERIAL.println(WiFi.softAPIP());
 }
 
-bool RTKBaseManager::savedNetworkAvailable(const String& ssid) {
+bool RTKBaseManager::savedNetworkAvailable(const String& ssid) 
+{
   if (ssid.isEmpty()) return false;
 
   uint8_t nNetworks = (uint8_t) WiFi.scanNetworks();
   DEBUG_SERIAL.print(nNetworks);  DEBUG_SERIAL.println(F(" networks found."));
-    for (uint8_t i=0; i<nNetworks; i++) {
-    if (ssid.equals(String(WiFi.SSID(i)))) {
+    for (uint8_t i=0; i<nNetworks; i++) 
+    {
+    if (ssid.equals(String(WiFi.SSID(i)))) 
+    {
       DEBUG_SERIAL.print(F("A known network with SSID found: ")); 
       DEBUG_SERIAL.print(WiFi.SSID(i));
       DEBUG_SERIAL.print(F(" (")); 
@@ -74,8 +83,10 @@ bool RTKBaseManager::savedNetworkAvailable(const String& ssid) {
 *                             Web server
 * ******************************************************************************/
 
-void RTKBaseManager::startServer(AsyncWebServer *server) {
-  server->on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+void RTKBaseManager::startServer(AsyncWebServer *server) 
+{
+  server->on("/", HTTP_GET, [](AsyncWebServerRequest *request) 
+  {
     request->send_P(200, "text/html", INDEX_HTML, processor);
   });
 
@@ -87,29 +98,35 @@ void RTKBaseManager::startServer(AsyncWebServer *server) {
   server->begin();
 }
   
-void RTKBaseManager::notFound(AsyncWebServerRequest *request) {
+void RTKBaseManager::notFound(AsyncWebServerRequest *request) 
+{
   request->send(404, "text/plain", "Not found");
 }
 
-void RTKBaseManager::actionRebootESP32(AsyncWebServerRequest *request) {
+void RTKBaseManager::actionRebootESP32(AsyncWebServerRequest *request) 
+{
   DEBUG_SERIAL.println("ACTION actionRebootESP32!");
   request->send_P(200, "text/html", REBOOT_HTML, RTKBaseManager::processor);
   delay(3000);
   ESP.restart();
 }
 
-void RTKBaseManager::actionWipeData(AsyncWebServerRequest *request) {
+void RTKBaseManager::actionWipeData(AsyncWebServerRequest *request) 
+{
   DEBUG_SERIAL.println(F("ACTION actionWipeData!"));
 
   int params = request->params();
   DEBUG_SERIAL.print(F("params: "));
   DEBUG_SERIAL.println(params);
 
-  for (int i = 0; i < params; i++) {
+  for (int i = 0; i < params; i++) 
+  {
     AsyncWebParameter* p = request->getParam(i);
     DEBUG_SERIAL.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
-    if (strcmp(p->name().c_str(), "wipe_button") == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), "wipe_button") == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         DEBUG_SERIAL.printf("wipe command received: %s",p->value().c_str());
         wipeSpiffsFiles();
       } 
@@ -120,55 +137,72 @@ void RTKBaseManager::actionWipeData(AsyncWebServerRequest *request) {
   request->send_P(200, "text/html", INDEX_HTML, processor);
 }
 
-void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
+void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) 
+{
 
   DEBUG_SERIAL.println("ACTION: actionUpdateData!");
 
   int params = request->params();
-  for (int i = 0; i < params; i++) {
+  for (int i = 0; i < params; i++) 
+  {
     AsyncWebParameter* p = request->getParam(i);
     DEBUG_SERIAL.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
 
-    if (strcmp(p->name().c_str(), PARAM_WIFI_SSID) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_WIFI_SSID) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         writeFile(SPIFFS, PATH_WIFI_SSID, p->value().c_str());
-     } 
+      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_WIFI_PASSWORD) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_WIFI_PASSWORD) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         writeFile(SPIFFS, PATH_WIFI_PASSWORD, p->value().c_str());
-     } 
+      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_RTK_CASTER_HOST) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_RTK_CASTER_HOST) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         writeFile(SPIFFS, PATH_RTK_CASTER_HOST, p->value().c_str());
-     } 
+      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_RTK_CASTER_PORT) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_RTK_CASTER_PORT) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         writeFile(SPIFFS, PATH_RTK_CASTER_PORT, p->value().c_str());
-     } 
+      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_RTK_MOINT_POINT) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_RTK_MOINT_POINT) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         writeFile(SPIFFS, PATH_RTK_MOINT_POINT, p->value().c_str());
-     } 
+      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_RTK_MOINT_POINT_PW) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_RTK_MOINT_POINT_PW) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         writeFile(SPIFFS, PATH_RTK_MOINT_POINT_PW, p->value().c_str());
-     } 
+      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_METHOD) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_METHOD) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         String pValue = p->value();
-        if (pValue.equals("survey_enabled")) {
+        if (pValue.equals("survey_enabled")) 
+        {
           // Clear old coords values
           SPIFFS.remove(PATH_RTK_LOCATION_ALTITUDE);
           SPIFFS.remove(PATH_RTK_LOCATION_LATITUDE);
@@ -179,38 +213,48 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_SURVEY_ACCURACY) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_SURVEY_ACCURACY) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         writeFile(SPIFFS, PATH_RTK_LOCATION_SURVEY_ACCURACY, p->value().c_str());
-     } 
+      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_COORD_ACCURACY) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_COORD_ACCURACY) == 0) 
+    {
+      if (p->value().length() > 0)
+      {
         writeFile(SPIFFS, PATH_RTK_LOCATION_COORD_ACCURACY, p->value().c_str());
-     } 
+      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_LATITUDE) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_LATITUDE) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         String deconstructedValAsCSV = getDeconstructedCoordAsCSV(p->value());
         writeFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE, deconstructedValAsCSV.c_str());
      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_LONGITUDE) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_LONGITUDE) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         String deconstructedValAsCSV = getDeconstructedCoordAsCSV(p->value());
         writeFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE, deconstructedValAsCSV.c_str());
      } 
     }
 
-    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_ALTITUDE) == 0) {
-      if (p->value().length() > 0) {
+    if (strcmp(p->name().c_str(), PARAM_RTK_LOCATION_ALTITUDE) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
         String deconstructedAltAsCSV = getDeconstructedAltAsCSV(p->value());
         // int32_t elipsoid = String(p->value()).toInt()*1000;
         writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, deconstructedAltAsCSV.c_str());
-     } 
+      } 
     }
   }
 
@@ -218,31 +262,36 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) {
   request->send_P(200, "text/html", INDEX_HTML, RTKBaseManager::processor);
 }
 
-String RTKBaseManager::getDeconstructedCoordAsCSV(const String& doubleStr) {
-    double dVal = doubleStr.toDouble();
-    int32_t lowerPrec = getLowerPrecisionCoordFromDouble(dVal);
-    int8_t highPrec = getHighPrecisionCoordFromDouble(dVal);
-    String deconstructedCSV = String(lowerPrec) + SEP + String(highPrec);
-    return deconstructedCSV;
+String RTKBaseManager::getDeconstructedCoordAsCSV(const String& doubleStr) 
+{
+  double dVal = doubleStr.toDouble();
+  int32_t lowerPrec = getLowerPrecisionCoordFromDouble(dVal);
+  int8_t highPrec = getHighPrecisionCoordFromDouble(dVal);
+  String deconstructedCSV = String(lowerPrec) + SEP + String(highPrec);
+  return deconstructedCSV;
 }
 
-String RTKBaseManager::getDeconstructedAltAsCSV(const String& floatStr) {
-    float alt = floatStr.toFloat();
-    int32_t lowerPrec = getLowerPrecisionIntAltitudeFromFloat(alt);
-    int8_t highPrec = getHigherPrecisionIntAltitudeFromFloat(alt);
-    String deconstructedCSV = String(lowerPrec) + SEP + String(highPrec);
-    return deconstructedCSV;
+String RTKBaseManager::getDeconstructedAltAsCSV(const String& floatStr) 
+{
+  float alt = floatStr.toFloat();
+  int32_t lowerPrec = getLowerPrecisionIntAltitudeFromFloat(alt);
+  int8_t highPrec = getHigherPrecisionIntAltitudeFromFloat(alt);
+  String deconstructedCSV = String(lowerPrec) + SEP + String(highPrec);
+  return deconstructedCSV;
 }
 
-String RTKBaseManager::getFloatingPointStringFromCSV(const String& csvStr, int precision) { 
+String RTKBaseManager::getFloatingPointStringFromCSV(const String& csvStr, int precision) 
+{ 
   if (csvStr.isEmpty()) return String();
   int32_t lowerPrec = (int32_t)getValueAsStringFromCSV(csvStr, SEP, 0).toInt();
   int8_t highPrec = (int8_t)getValueAsStringFromCSV(csvStr, SEP, 1).toInt();
   String reconstructedValStr = "";
-  if (precision > ALT_PRECISION) {
+  if (precision > ALT_PRECISION) 
+  {
     double reconstructedVal = getDoubleCoordFromIntegerParts(lowerPrec, highPrec);
     reconstructedValStr = String(reconstructedVal, precision);
-  } else {
+  } else 
+  {
     float reconstructedVal = getFloatAltFromIntegerParts(lowerPrec, highPrec);
     reconstructedValStr = String(reconstructedVal, precision);
   }
@@ -253,71 +302,86 @@ String RTKBaseManager::getFloatingPointStringFromCSV(const String& csvStr, int p
 // Replaces placeholder with stored values
 String RTKBaseManager::processor(const String& var) 
 {
-  if (var == PARAM_WIFI_SSID) {
+  if (var == PARAM_WIFI_SSID) 
+  {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
     return (savedSSID.isEmpty() ? String(PARAM_WIFI_SSID) : savedSSID);
   }
-  else if (var == PARAM_WIFI_PASSWORD) {
+  else if (var == PARAM_WIFI_PASSWORD) 
+  {
     String savedPassword = readFile(SPIFFS, PATH_WIFI_PASSWORD);
     return (savedPassword.isEmpty() ? String(PARAM_WIFI_PASSWORD) : "*******");
   }
 
-  else if (var == PARAM_RTK_CASTER_HOST) {
+  else if (var == PARAM_RTK_CASTER_HOST) 
+  {
     String savedCaster = readFile(SPIFFS, PATH_RTK_CASTER_HOST);
     return (savedCaster.isEmpty() ? String(PARAM_RTK_CASTER_HOST) : savedCaster);
   }
 
-   else if (var == PARAM_RTK_CASTER_PORT) {
+  else if (var == PARAM_RTK_CASTER_PORT) 
+  {
     String savedPort = readFile(SPIFFS, PATH_RTK_CASTER_PORT);
     return (savedPort.isEmpty() ? String(PARAM_RTK_CASTER_PORT) : savedPort);
   }
 
-  else if (var == PARAM_RTK_MOINT_POINT) {
+  else if (var == PARAM_RTK_MOINT_POINT) 
+  {
     String savedMointPoint = readFile(SPIFFS, PATH_RTK_MOINT_POINT);
     return (savedMointPoint.isEmpty() ? String(PARAM_RTK_MOINT_POINT) : savedMointPoint);
   }
 
-  else if (var == PARAM_RTK_MOINT_POINT_PW) {
+  else if (var == PARAM_RTK_MOINT_POINT_PW) 
+  {
     String savedMointPointPW = readFile(SPIFFS, PATH_RTK_MOINT_POINT_PW);
     return (savedMointPointPW.isEmpty() ? String(PARAM_RTK_MOINT_POINT_PW) : "*******");
   }
 
-  else if (var == PARAM_RTK_LOCATION_METHOD) {
+  else if (var == PARAM_RTK_LOCATION_METHOD) 
+  {
     String savedLocationMethod = readFile(SPIFFS, PATH_RTK_LOCATION_METHOD);
     return (savedLocationMethod.isEmpty() ? String(PARAM_RTK_SURVEY_ENABLED) : savedLocationMethod);
   }
 
-  else if (var == PARAM_RTK_LOCATION_SURVEY_ACCURACY) {
+  else if (var == PARAM_RTK_LOCATION_SURVEY_ACCURACY) 
+  {
     String savedSurveyAccuracy = readFile(SPIFFS, PATH_RTK_LOCATION_SURVEY_ACCURACY);
     return (savedSurveyAccuracy.isEmpty() ? String(PARAM_RTK_LOCATION_SURVEY_ACCURACY) : savedSurveyAccuracy);
   }
 
-  else if (var == PARAM_RTK_LOCATION_COORD_ACCURACY) {
+  else if (var == PARAM_RTK_LOCATION_COORD_ACCURACY) 
+  {
     String savedCoordAccuracy = readFile(SPIFFS, PATH_RTK_LOCATION_COORD_ACCURACY);
     return (savedCoordAccuracy.isEmpty() ? "---" : savedCoordAccuracy);
   }
 
-  else if (var == PARAM_RTK_LOCATION_LATITUDE) {
+  else if (var == PARAM_RTK_LOCATION_LATITUDE) 
+  {
     String savedLatitude = readFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE);
     String savedLatitudeStr = getFloatingPointStringFromCSV(savedLatitude, COORD_PRECISION);
     return (savedLatitude.isEmpty() ? String(PARAM_RTK_LOCATION_LATITUDE) : savedLatitudeStr);
   }
 
-  else if (var == PARAM_RTK_LOCATION_LONGITUDE) {
+  else if (var == PARAM_RTK_LOCATION_LONGITUDE) 
+  {
     String savedLongitude = readFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE);
     String savedLongitudeStr = getFloatingPointStringFromCSV(savedLongitude, COORD_PRECISION);
     return (savedLongitude.isEmpty() ? String(PARAM_RTK_LOCATION_LONGITUDE) : savedLongitudeStr);
   }
-  else if (var == PARAM_RTK_LOCATION_ALTITUDE) {
+
+  else if (var == PARAM_RTK_LOCATION_ALTITUDE) 
+  {
     String savedAltitude = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
     String savedAltitudeStr = getFloatingPointStringFromCSV(savedAltitude, ALT_PRECISION);
     // float altitude = savedAltitude.toFloat() / 1000.0;
     return (savedAltitude.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : savedAltitudeStr);
   }
-  else if (var == "next_addr") {
+  else if (var == "next_addr") 
+  {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
     String savedPW = readFile(SPIFFS, PATH_WIFI_PASSWORD);
-    if (savedSSID.isEmpty() || savedPW.isEmpty()) {
+    if (savedSSID.isEmpty() || savedPW.isEmpty()) 
+    {
       return String(IP_AP);
     } else {
       String clientAddr = String(DEVICE_NAME);
@@ -325,7 +389,8 @@ String RTKBaseManager::processor(const String& var)
       return clientAddr;
     }
   }
-  else if (var == "next_ssid") {
+  else if (var == "next_ssid") 
+  {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
     return (savedSSID.isEmpty() ? String(AP_SSID) : savedSSID);
   }
@@ -336,24 +401,28 @@ String RTKBaseManager::processor(const String& var)
 *                             SPIFFS
 * ******************************************************************************/
 
-bool RTKBaseManager::setupSPIFFS(bool format) {
+bool RTKBaseManager::setupSPIFFS(bool format) 
+{
   bool success = true;
 
   #ifdef ESP32
-    if (!SPIFFS.begin(true)) {
+    if (!SPIFFS.begin(true)) 
+    {
       DEBUG_SERIAL.println("An Error has occurred while mounting SPIFFS");
       success = false;
       return success;
     }
   #else
-    if (!SPIFFS.begin()) {
+    if (!SPIFFS.begin()) 
+    {
       DEBUG_SERIAL.println("An Error has occurred while mounting SPIFFS");
       success = false;
       return success;
     }
   #endif
   
-  if (format) {
+  if (format) 
+  {
     DEBUG_SERIAL.println(F("formatting SPIFFS, ..."));
     success &= SPIFFS.format();
   }
@@ -366,14 +435,16 @@ String RTKBaseManager::readFile(fs::FS &fs, const char* path)
   DEBUG_SERIAL.printf("Reading file: %s\r\n", path);
   File file = fs.open(path, "r");
 
-  if (!file || file.isDirectory()) {
+  if (!file || file.isDirectory()) 
+  {
     DEBUG_SERIAL.println("- empty file or failed to open file");
     return String();
   }
   DEBUG_SERIAL.println("- read from file:");
   String fileContent;
 
-  while (file.available()) {
+  while (file.available()) 
+  {
     fileContent += String((char)file.read());
   }
   file.close();
@@ -383,18 +454,22 @@ String RTKBaseManager::readFile(fs::FS &fs, const char* path)
 }
 
 bool RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message) 
-{ bool success = false;
+{ 
+  bool success = false;
   DEBUG_SERIAL.printf("Writing file: %s\r\n", path);
 
   File file = fs.open(path, "w");
-  if (!file) {
+  if (!file) 
+  {
     DEBUG_SERIAL.println("- failed to open file for writing");
     return success;
   }
-  if (file.print(message)) {
+  if (file.print(message)) 
+  {
     DEBUG_SERIAL.println("- file written");
     success = true;
-  } else {
+  } else 
+  {
     DEBUG_SERIAL.println("- write failed");
     success = false;
   }
@@ -403,14 +478,16 @@ bool RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message
   return success;
 }
 
-void RTKBaseManager::listFiles() {
+void RTKBaseManager::listFiles() 
+{
   File root = SPIFFS.open("/");
   File file = root.openNextFile();
  
-  while (file) {
-      DEBUG_SERIAL.print("FILE: ");
-      DEBUG_SERIAL.println(file.name());
-      file = root.openNextFile();
+  while (file) 
+  {
+    DEBUG_SERIAL.print("FILE: ");
+    DEBUG_SERIAL.println(file.name());
+    file = root.openNextFile();
   }
   file.close();
   root.close();
@@ -423,7 +500,8 @@ void RTKBaseManager::wipeSpiffsFiles()
 
   DEBUG_SERIAL.println(F("Wiping: "));
 
-  while (file) {
+  while (file) 
+  {
     DEBUG_SERIAL.print("FILE: ");
     DEBUG_SERIAL.println(file.path());
     SPIFFS.remove(file.path());
@@ -431,14 +509,16 @@ void RTKBaseManager::wipeSpiffsFiles()
   }
 }
 
-bool RTKBaseManager::getLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt, const char* pathAcc) {
+bool RTKBaseManager::getLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt, const char* pathAcc) 
+{
   bool success = false;
   String latStr = readFile(SPIFFS, pathLat);
   String lonStr = readFile(SPIFFS, pathLon);
   String altStr = readFile(SPIFFS, pathAlt);
   String accStr = readFile(SPIFFS, pathAcc);
 
-  if (!latStr.isEmpty() && !lonStr.isEmpty() && !altStr.isEmpty()) {
+  if (!latStr.isEmpty() && !lonStr.isEmpty() && !altStr.isEmpty()) 
+  {
     location->lat =  (int32_t)getValueAsStringFromCSV(latStr, SEP, LOW_PREC_IDX).toInt();
     location->lat_hp = (int8_t)getValueAsStringFromCSV(latStr, SEP, HIGH_PREC_IDX).toInt();
     location->lon =  (int32_t)getValueAsStringFromCSV(lonStr, SEP, LOW_PREC_IDX).toInt();
@@ -452,7 +532,8 @@ bool RTKBaseManager::getLocationFromSPIFFS(location_t* location, const char* pat
   return success;
 }
 
-void RTKBaseManager::printLocation(location_t* location) {
+void RTKBaseManager::printLocation(location_t* location) 
+{
   DEBUG_SERIAL.print(F("Lat: ")); DEBUG_SERIAL.print(location->lat, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lat_hp, DEC);
   DEBUG_SERIAL.print(F("Lon: ")); DEBUG_SERIAL.print(location->lon, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lon_hp, DEC);
   DEBUG_SERIAL.print(F("Alt: ")); DEBUG_SERIAL.print(location->alt, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->alt_hp, DEC);
@@ -540,7 +621,8 @@ int32_t RTKBaseManager::getLowerPrecisionIntAltitudeFromFloat(float alt)
   return (int32_t)(alt * 1000.0); // cm accuracy
 }
 
-int8_t RTKBaseManager::getHigherPrecisionIntAltitudeFromFloat(float alt) {
+int8_t RTKBaseManager::getHigherPrecisionIntAltitudeFromFloat(float alt) 
+{
   // Get the 0.1 mm part
   int8_t alt_100nm = (((int32_t)(alt * 10000)) % 10);
   return alt_100nm;
@@ -551,29 +633,8 @@ int8_t RTKBaseManager::getDigitsCount(int32_t num)
    return (1 + log10( num ));
 }
 
-// uint8_t RTKBaseManager::getNumberOfDigits(int32_t i)
-// { uint8_t count;
-//   count =  i > 0 ? (uint8_t) log10 ((double) i) + 1 : 1;
-//   return count; 
-// }
-
-// void RTKBaseManager::getIntAltitudeFromDouble(float alt) {
-//   float x, y, z;
-//   int32_t a,b;
-
-//   x = (float)(((int32_t)(alt * 1000.0))/1000.0);
-//   y = modf(x, &z);
-//   a = z;
-//   b = y*1000.0;
-//   DEBUG_SERIAL.printf("Number of digits %d: %i\n", a, RTKBaseManager::getDigitsCount(a));
-//   DEBUG_SERIAL.printf("Number of digits %d: %i\n", a, RTKBaseManager::getNumberOfDigits(a));
-//   DEBUG_SERIAL.printf("Number of digits %d: %i\n", b, RTKBaseManager::getDigitsCount(b));
-//   DEBUG_SERIAL.printf("Number of digits %d: %i\n", b, RTKBaseManager::getNumberOfDigits(b));
-//   DEBUG_SERIAL.printf("Splitted %f: in %d and %d\n", x, a, b);
-
-// }
-
-float RTKBaseManager::getFloatAltitudeFromInt(int32_t alt, int8_t altHp) {
+float RTKBaseManager::getFloatAltitudeFromInt(int32_t alt, int8_t altHp) 
+{
     float f_alt;
     // Calculate the height above elipsoid in mm * 10^-1
     f_alt = (alt * 10) + altHp;

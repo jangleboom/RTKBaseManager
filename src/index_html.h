@@ -10,7 +10,8 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
     <meta name="viewport" content="width = device-width, initial-scale = 1.0, maximum-scale = 1.0, user-scalable=0">
     <title>RTK base setup</title>
     <style>
-        body {
+        body 
+        {
             background-color: #4180C8;
             font-family: Lato, Helvetica, Roboto, sans-serif;
             color: GhostWhite;
@@ -18,12 +19,14 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             border: 1em;
         }
 
-        .center {
+        .center 
+        {
             margin-left: auto;
             margin-right: auto;
         }
 
-        .button {
+        .button 
+        {
             background-color: #F0A03C;
             border: none;
             color: white;
@@ -34,7 +37,8 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             font-size: 13px;
         }
 
-        .text_field {
+        .text_field 
+        {
             border: none;
             color: black;
             text-align: center;
@@ -43,7 +47,8 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             font-size: 13px;
         }
 
-        .data_text {
+        .data_text 
+        {
             border: none;
             color: white;
             text-align: left;
@@ -52,34 +57,42 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             font-size: 13px;
         }
 
-        ::placeholder {
+        ::placeholder 
+        {
             color: navy;
             opacity: 1;
             transition: opacity 1s;
         }
 
-        :focus::placeholder {
+        :focus::placeholder 
+        {
             opacity: 0
         }
     </style>
 </head>
 <script>
-    function loadRadioState() {
-        if (document.getElementById("radio_state").value == "survey_enabled") {
+    function loadRadioState() 
+    {
+        if (document.getElementById("radio_state").value == "survey_enabled") 
+        {
             (document.getElementById("survey_enabled").checked = true);
-        } else {
+        } else 
+        {
             (document.getElementById("coords_enabled").checked = true);
         }
     }
 
-    function enableLocationMethod() {
-        if (document.getElementById("survey_enabled").checked == false) {
+    function enableLocationMethod() 
+    {
+        if (document.getElementById("survey_enabled").checked == false) 
+        {
             document.getElementById("survey_accuracy").disabled = true;
             document.getElementById("latitude").disabled = false;
             document.getElementById("longitude").disabled = false;
             document.getElementById("altitude").disabled = false;
             document.getElementById("coord_accuracy").disabled = false;
-        } else {
+        } else 
+        {
             document.getElementById("survey_accuracy").disabled = false;
             document.getElementById("latitude").disabled = true;
             document.getElementById("longitude").disabled = true;
