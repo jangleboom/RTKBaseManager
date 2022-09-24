@@ -179,26 +179,15 @@ test(getFloatAltitudeFromInt)
     assertLess(abs(result), 0.0001);
 }
 
-test(processor_SSID) 
+test(processorWriteToSpiffs) 
 {
-    String testSsid = "TestSSID";
-    const char* TEST_PATH_SSID = "/testPathSsid";
-    if (SPIFFS.exists(TEST_PATH_SSID)) SPIFFS.remove(TEST_PATH_SSID);
-    writeFile(SPIFFS, TEST_PATH_SSID, testSsid.c_str());
+    String testValue = "TestValue";
+    const char* PATH_TEST_VALUE = "/pathTestValue";
+    if (SPIFFS.exists(PATH_TEST_VALUE)) SPIFFS.remove(PATH_TEST_VALUE);
+    writeFile(SPIFFS, PATH_TEST_VALUE, testValue.c_str());
     delay(100);
-    String savedSSID = readFile(SPIFFS, TEST_PATH_SSID);
-    assertTrue(savedSSID.equals(testSsid));
-}
-
-test(processor_Altitude) 
-{
-    String testAltitude = "12.3456";
-    const char* TEST_PATH_ALT = "/testPathAlt";
-    if (SPIFFS.exists(TEST_PATH_ALT)) SPIFFS.remove(TEST_PATH_ALT);
-    writeFile(SPIFFS, TEST_PATH_ALT, testAltitude.c_str());
-    delay(100);
-    String savedAltitude = readFile(SPIFFS, TEST_PATH_ALT);
-    assertTrue(savedAltitude.equals(testAltitude));
+    String savedValue = readFile(SPIFFS, PATH_TEST_VALUE);
+    assertTrue(savedValue.equals(testValue));
 }
 
 #endif /*** TESTS_RTK_BASE_MANAGER_H ***/
