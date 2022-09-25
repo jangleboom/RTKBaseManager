@@ -35,17 +35,27 @@ void RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   DEBUG_SERIAL.println(WiFi.localIP());
 }
 
-bool RTKBaseManager::checkConnectionToWifiStation() 
-{
-  if (WiFi.status() != WL_CONNECTED) 
+bool RTKRoverManager::checkConnectionToWifiStation() 
+{ 
+  bool isConnectedToStation = false;
+
+  if (WiFi.getMode() == WIFI_MODE_STA)
   {
-    DEBUG_SERIAL.println("Reconnecting to WiFi...");
-    WiFi.disconnect();
-    return WiFi.reconnect();
-  } else {
-    DEBUG_SERIAL.println("WiFi connected.");
-    return true;
+    if (WiFi.status() != WL_CONNECTED) 
+    {
+      DEBUG_SERIAL.println("Reconnecting to access point.");
+      DEBUG_SERIAL.print("SSID: ");
+      WiFi.disconnect();
+      isConnectedToStation = WiFi.reconnect();
+    } 
+    else 
+    {
+      DEBUG_SERIAL.println("WiFi connected.");
+      isConnectedToStation = true;
+    }
   }
+
+  return isConnectedToStation;
 }
 
 void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword) 
