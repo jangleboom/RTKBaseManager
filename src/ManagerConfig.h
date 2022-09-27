@@ -19,6 +19,5 @@
 
 
 
-
 #endif  /*** MANAGER_CONFIG_H ***/
 #endif

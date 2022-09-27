@@ -40,16 +40,13 @@
 #endif
 
 namespace RTKBaseManager {
-  // DEVICE_NAME can be defined in separate config.h file, if not use this here
-  #ifndef DEVICE_NAME
-  #define DEVICE_NAME "rtkbase"
-  #endif
   // WiFi credentials for AP mode
   #define MAX_SSIDS 10 // Space to scan and remember SSIDs
-  const char AP_SSID[] PROGMEM = "RTK-Base";
+  const char DEVICE_NAME[] PROGMEM = "rtkbase";
   const char AP_PASSWORD[] PROGMEM = "12345678";
   const char IP_AP[] PROGMEM = "192.168.4.1";
   // Parameters for SPIFFS file management
+  #define FORMAT_SPIFFS_IF_FAILED true
   const char PARAM_WIFI_SSID[] PROGMEM = "ssid"; 
   const char PARAM_WIFI_PASSWORD[] PROGMEM = "password";
   const char PARAM_RTK_CASTER_HOST[] PROGMEM = "caster_host";
@@ -80,13 +77,6 @@ namespace RTKBaseManager {
   const char SEP = ',';
   const uint8_t LOW_PREC_IDX = 0;
   const uint8_t HIGH_PREC_IDX = 1;
- 
-
-// typedef struct {
-//   double latitude;
-//   double longitude;
-//   double altitude;
-// } location_double_t;
 
 typedef struct {
   int32_t lat;       // 7 post comma digits latitude
@@ -95,7 +85,7 @@ typedef struct {
   int8_t  lon_hp;    // high precision extension longitude
   int32_t alt;       // altitude in mm precision
   int8_t  alt_hp;    // altitude in 0.1 mm precision
-  float   acc;  // accuracy in m     
+  float   acc;       // accuracy in m     
 } location_t;
 
   /*** Wifi ***/

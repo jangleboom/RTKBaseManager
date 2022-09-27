@@ -35,7 +35,7 @@ void RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   DEBUG_SERIAL.println(WiFi.localIP());
 }
 
-bool RTKRoverManager::checkConnectionToWifiStation() 
+bool RTKBaseManager::checkConnectionToWifiStation() 
 { 
   bool isConnectedToStation = false;
 
@@ -65,7 +65,7 @@ void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword)
     bool result = WiFi.softAP(apSsid, apPassword);
     DEBUG_SERIAL.println(result ? "Ready" : "Failed!");
     DEBUG_SERIAL.print("Access point started: ");
-    DEBUG_SERIAL.println(AP_SSID);
+    DEBUG_SERIAL.println(DEVICE_NAME);
     DEBUG_SERIAL.print("IP address: ");
     DEBUG_SERIAL.println(WiFi.softAPIP());
 }
@@ -405,7 +405,7 @@ String RTKBaseManager::processor(const String& var)
   else if (var == "next_ssid") 
   {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
-    return (savedSSID.isEmpty() ? String(AP_SSID) : savedSSID);
+    return (savedSSID.isEmpty() ? String(DEVICE_NAME) : savedSSID);
   }
   return String();
 }
