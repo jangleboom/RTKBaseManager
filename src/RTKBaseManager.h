@@ -40,11 +40,13 @@
 #endif
 
 namespace RTKBaseManager {
+
   // WiFi credentials for AP mode
   #define MAX_SSIDS 10 // Space to scan and remember SSIDs
   const char DEVICE_NAME[] PROGMEM = "rtkbase";
   const char AP_PASSWORD[] PROGMEM = "12345678";
   const char IP_AP[] PROGMEM = "192.168.4.1";
+  
   // Parameters for SPIFFS file management
   #define FORMAT_SPIFFS_IF_FAILED true
   const char PARAM_WIFI_SSID[] PROGMEM = "ssid"; 
