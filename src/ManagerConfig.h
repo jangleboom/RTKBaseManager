@@ -1,4 +1,4 @@
-#ifndef RTKBASE_CONFIG_H
+#ifndef RTK_BASE_CONFIG_H
 #ifndef MANAGER_CONFIG_H
 #define MANAGER_CONFIG_H
 #include <Arduino.h>
