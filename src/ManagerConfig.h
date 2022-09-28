@@ -3,7 +3,10 @@
 #define MANAGER_CONFIG_H
 #include <Arduino.h>
 
-// THIS WILL BE REPLACED BY THE RTKBaseConfig.h after merge
+/*******************************************************************************
+ *                         WiFi settings
+ * ****************************************************************************/
+const uint8_t MAX_SSIDS = 10; // Space to scan and remember SSIDs
 
 /******************************************************************************/
 //                       Default Serial settings
