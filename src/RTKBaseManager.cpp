@@ -14,25 +14,25 @@ void RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   {
     // TODO:  - count reboots and stop after 3 times (save in SPIFFS)
     //        - display state
-    DEBUG_SERIAL.println("WiFi Failed! Reboot in 10 s as AP!");
+    DBG.println("WiFi Failed! Reboot in 10 s as AP!");
     delay(10000);
     ESP.restart();
   }
-  DEBUG_SERIAL.println();
+  DBG.println();
 
   if (!MDNS.begin(deviceName)) 
   {
-      DEBUG_SERIAL.println("Error starting mDNS, use local IP instead!");
+      DBG.println("Error starting mDNS, use local IP instead!");
   } else {
-    DEBUG_SERIAL.print(F("Starting mDNS, find me under <http://www."));
-    DEBUG_SERIAL.print(DEVICE_NAME);
-    DEBUG_SERIAL.println(F(".local>"));
+    DBG.print(F("Starting mDNS, find me under <http://www."));
+    DBG.print(DEVICE_NAME);
+    DBG.println(F(".local>"));
   }
 
-  DEBUG_SERIAL.print(F("Wifi client started: "));
-  DEBUG_SERIAL.println(WiFi.getHostname());
-  DEBUG_SERIAL.print(F("IP Address: "));
-  DEBUG_SERIAL.println(WiFi.localIP());
+  DBG.print(F("Wifi client started: "));
+  DBG.println(WiFi.getHostname());
+  DBG.print(F("IP Address: "));
+  DBG.println(WiFi.localIP());
 }
 
 bool RTKBaseManager::checkConnectionToWifiStation() 
@@ -43,14 +43,14 @@ bool RTKBaseManager::checkConnectionToWifiStation()
   {
     if (WiFi.status() != WL_CONNECTED) 
     {
-      DEBUG_SERIAL.println("Reconnecting to access point.");
-      DEBUG_SERIAL.print("SSID: ");
+      DBG.println("Reconnecting to access point.");
+      DBG.print("SSID: ");
       WiFi.disconnect();
       isConnectedToStation = WiFi.reconnect();
     } 
     else 
     {
-      DEBUG_SERIAL.println("WiFi connected.");
+      DBG.println("WiFi connected.");
       isConnectedToStation = true;
     }
   }
@@ -60,14 +60,14 @@ bool RTKBaseManager::checkConnectionToWifiStation()
 
 void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword) 
 {
-    DEBUG_SERIAL.print("Setting soft-AP ... ");
+    DBG.print("Setting soft-AP ... ");
     WiFi.mode(WIFI_AP);
     bool result = WiFi.softAP(apSsid, apPassword);
-    DEBUG_SERIAL.println(result ? "Ready" : "Failed!");
-    DEBUG_SERIAL.print("Access point started: ");
-    DEBUG_SERIAL.println(DEVICE_NAME);
-    DEBUG_SERIAL.print("IP address: ");
-    DEBUG_SERIAL.println(WiFi.softAPIP());
+    DBG.println(result ? "Ready" : "Failed!");
+    DBG.print("Access point started: ");
+    DBG.println(DEVICE_NAME);
+    DBG.print("IP address: ");
+    DBG.println(WiFi.softAPIP());
 }
 
 bool RTKBaseManager::savedNetworkAvailable(const String& ssid) 
@@ -75,16 +75,16 @@ bool RTKBaseManager::savedNetworkAvailable(const String& ssid)
   if (ssid.isEmpty()) return false;
 
   uint8_t nNetworks = (uint8_t) WiFi.scanNetworks();
-  DEBUG_SERIAL.print(nNetworks);  DEBUG_SERIAL.println(F(" networks found."));
+  DBG.print(nNetworks);  DBG.println(F(" networks found."));
     for (uint8_t i=0; i<nNetworks; i++) 
     {
     if (ssid.equals(String(WiFi.SSID(i)))) 
     {
-      DEBUG_SERIAL.print(F("A known network with SSID found: ")); 
-      DEBUG_SERIAL.print(WiFi.SSID(i));
-      DEBUG_SERIAL.print(F(" (")); 
-      DEBUG_SERIAL.print(WiFi.RSSI(i)); 
-      DEBUG_SERIAL.println(F(" dB), connecting..."));
+      DBG.print(F("A known network with SSID found: ")); 
+      DBG.print(WiFi.SSID(i));
+      DBG.print(F(" (")); 
+      DBG.print(WiFi.RSSI(i)); 
+      DBG.println(F(" dB), connecting..."));
       return true;
     }
   }
@@ -118,7 +118,7 @@ void RTKBaseManager::notFound(AsyncWebServerRequest *request)
 
 void RTKBaseManager::actionRebootESP32(AsyncWebServerRequest *request) 
 {
-  DEBUG_SERIAL.println("ACTION actionRebootESP32!");
+  DBG.println("ACTION actionRebootESP32!");
   request->send_P(200, "text/html", REBOOT_HTML, RTKBaseManager::processor);
   delay(3000);
   ESP.restart();
@@ -126,40 +126,40 @@ void RTKBaseManager::actionRebootESP32(AsyncWebServerRequest *request)
 
 void RTKBaseManager::actionWipeData(AsyncWebServerRequest *request) 
 {
-  DEBUG_SERIAL.println(F("ACTION actionWipeData!"));
+  DBG.println(F("ACTION actionWipeData!"));
 
   int params = request->params();
-  DEBUG_SERIAL.print(F("params: "));
-  DEBUG_SERIAL.println(params);
+  DBG.print(F("params: "));
+  DBG.println(params);
 
   for (int i = 0; i < params; i++) 
   {
     AsyncWebParameter* p = request->getParam(i);
-    DEBUG_SERIAL.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
+    DBG.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
     if (strcmp(p->name().c_str(), "wipe_button") == 0) 
     {
       if (p->value().length() > 0) 
       {
-        DEBUG_SERIAL.printf("wipe command received: %s",p->value().c_str());
+        DBG.printf("wipe command received: %s",p->value().c_str());
         wipeSpiffsFiles();
       } 
      }
     } 
 
-  DEBUG_SERIAL.print(F("Data in SPIFFS was wiped out!"));
+  DBG.print(F("Data in SPIFFS was wiped out!"));
   request->send_P(200, "text/html", INDEX_HTML, processor);
 }
 
 void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request) 
 {
 
-  DEBUG_SERIAL.println("ACTION: actionUpdateData!");
+  DBG.println("ACTION: actionUpdateData!");
 
   int params = request->params();
   for (int i = 0; i < params; i++) 
   {
     AsyncWebParameter* p = request->getParam(i);
-    DEBUG_SERIAL.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
+    DBG.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
 
     if (strcmp(p->name().c_str(), PARAM_WIFI_SSID) == 0) 
     {
@@ -271,7 +271,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     }
   }
 
-  DEBUG_SERIAL.println(F("Data saved to SPIFFS!"));
+  DBG.println(F("Data saved to SPIFFS!"));
   request->send_P(200, "text/html", INDEX_HTML, RTKBaseManager::processor);
 }
 
@@ -422,14 +422,14 @@ bool RTKBaseManager::setupSPIFFS(bool format)
   #ifdef ESP32
     if (!SPIFFS.begin(true)) 
     {
-      DEBUG_SERIAL.println("An Error has occurred while mounting SPIFFS");
+      DBG.println("An Error has occurred while mounting SPIFFS");
       success = false;
       return success;
     }
   #else
     if (!SPIFFS.begin()) 
     {
-      DEBUG_SERIAL.println("An Error has occurred while mounting SPIFFS");
+      DBG.println("An Error has occurred while mounting SPIFFS");
       success = false;
       return success;
     }
@@ -437,7 +437,7 @@ bool RTKBaseManager::setupSPIFFS(bool format)
   
   if (format) 
   {
-    DEBUG_SERIAL.println(F("formatting SPIFFS, ..."));
+    DBG.println(F("formatting SPIFFS, ..."));
     success &= SPIFFS.format();
   }
 
@@ -446,15 +446,15 @@ bool RTKBaseManager::setupSPIFFS(bool format)
 
 String RTKBaseManager::readFile(fs::FS &fs, const char* path) 
 {
-  DEBUG_SERIAL.printf("Reading file: %s\r\n", path);
+  DBG.printf("Reading file: %s\r\n", path);
   File file = fs.open(path, "r");
 
   if (!file || file.isDirectory()) 
   {
-    DEBUG_SERIAL.println("- empty file or failed to open file");
+    DBG.println("- empty file or failed to open file");
     return String();
   }
-  DEBUG_SERIAL.println("- read from file:");
+  DBG.println("- read from file:");
   String fileContent;
 
   while (file.available()) 
@@ -462,7 +462,7 @@ String RTKBaseManager::readFile(fs::FS &fs, const char* path)
     fileContent += String((char)file.read());
   }
   file.close();
-  DEBUG_SERIAL.println(fileContent);
+  DBG.println(fileContent);
 
   return fileContent;
 }
@@ -470,21 +470,21 @@ String RTKBaseManager::readFile(fs::FS &fs, const char* path)
 bool RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message) 
 { 
   bool success = false;
-  DEBUG_SERIAL.printf("Writing file: %s\r\n", path);
+  DBG.printf("Writing file: %s\r\n", path);
 
   File file = fs.open(path, "w");
   if (!file) 
   {
-    DEBUG_SERIAL.println("- failed to open file for writing");
+    DBG.println("- failed to open file for writing");
     return success;
   }
   if (file.print(message)) 
   {
-    DEBUG_SERIAL.println("- file written");
+    DBG.println("- file written");
     success = true;
   } else 
   {
-    DEBUG_SERIAL.println("- write failed");
+    DBG.println("- write failed");
     success = false;
   }
   file.close();
@@ -499,8 +499,8 @@ void RTKBaseManager::listFiles()
  
   while (file) 
   {
-    DEBUG_SERIAL.print("FILE: ");
-    DEBUG_SERIAL.println(file.name());
+    DBG.print("FILE: ");
+    DBG.println(file.name());
     file = root.openNextFile();
   }
   file.close();
@@ -512,12 +512,12 @@ void RTKBaseManager::wipeSpiffsFiles()
   File root = SPIFFS.open("/");
   File file = root.openNextFile();
 
-  DEBUG_SERIAL.println(F("Wiping: "));
+  DBG.println(F("Wiping: "));
 
   while (file) 
   {
-    DEBUG_SERIAL.print("FILE: ");
-    DEBUG_SERIAL.println(file.path());
+    DBG.print("FILE: ");
+    DBG.println(file.path());
     SPIFFS.remove(file.path());
     file = root.openNextFile();
   }
@@ -548,10 +548,10 @@ bool RTKBaseManager::getLocationFromSPIFFS(location_t* location, const char* pat
 
 void RTKBaseManager::printLocation(location_t* location) 
 {
-  DEBUG_SERIAL.print(F("Lat: ")); DEBUG_SERIAL.print(location->lat, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lat_hp, DEC);
-  DEBUG_SERIAL.print(F("Lon: ")); DEBUG_SERIAL.print(location->lon, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->lon_hp, DEC);
-  DEBUG_SERIAL.print(F("Alt: ")); DEBUG_SERIAL.print(location->alt, DEC); DEBUG_SERIAL.print(SEP); DEBUG_SERIAL.println(location->alt_hp, DEC);
-  DEBUG_SERIAL.print(F("Acc: ")); DEBUG_SERIAL.println(location->acc);
+  DBG.print(F("Lat: ")); DBG.print(location->lat, DEC); DBG.print(SEP); DBG.println(location->lat_hp, DEC);
+  DBG.print(F("Lon: ")); DBG.print(location->lon, DEC); DBG.print(SEP); DBG.println(location->lon_hp, DEC);
+  DBG.print(F("Alt: ")); DBG.print(location->alt, DEC); DBG.print(SEP); DBG.println(location->alt_hp, DEC);
+  DBG.print(F("Acc: ")); DBG.println(location->acc);
 }
 /*** Help Functions ***/
 // TODO: make this privat
@@ -576,13 +576,13 @@ int8_t RTKBaseManager::getHighPrecisionCoordFromDouble(double input)
   String fracpStr = String(fracp, 9);
   String outputStr = fracpStr.substring(9, 11);
   int8_t output = outputStr.toInt();
-  DEBUG_SERIAL.println("getHighPrecisionCoordFromDouble: ");
-  DEBUG_SERIAL.print("intp: ");
-  DEBUG_SERIAL.print(intp, 9);  
-  DEBUG_SERIAL.print(", fracp: ");
-  DEBUG_SERIAL.print(fracp, 9);
-  DEBUG_SERIAL.print(", outputStr: ");
-  DEBUG_SERIAL.println(outputStr.c_str());
+  DBG.println("getHighPrecisionCoordFromDouble: ");
+  DBG.print("intp: ");
+  DBG.print(intp, 9);  
+  DBG.print(", fracp: ");
+  DBG.print(fracp, 9);
+  DBG.print(", outputStr: ");
+  DBG.println(outputStr.c_str());
   return output;
 }
 

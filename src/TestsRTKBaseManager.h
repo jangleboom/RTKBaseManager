@@ -66,7 +66,6 @@ test(getFloatingPointStringFromCSV_Alt)
     String csvStr = "12345,6";
     String floatStr = "12.3456";
     String testStr = getFloatingPointStringFromCSV(csvStr, ALT_PRECISION);
-    DEBUG_SERIAL.printf("testStr: %s\n", testStr);
     assertTrue (testStr.equals(floatStr));
 }
 
@@ -102,8 +101,6 @@ test(getDeconstructedAltAsCSV)
     int8_t highPrec = getHigherPrecisionIntAltitudeFromFloat(fVal);
     String deconstructedCSV = String(lowerPrec) + SEP + String(highPrec);
     String testString = getDeconstructedAltAsCSV(floatStr);
-    // DEBUG_SERIAL.printf("deconstructedCSV: %s\n", deconstructedCSV);
-    // DEBUG_SERIAL.printf("testString: %s\n", testString);
     assertTrue(deconstructedCSV.equals(testString));
 }
 
@@ -132,7 +129,6 @@ test(getLocationFromSPIFFS)
     String deconstructedCoordAsCSV = getDeconstructedCoordAsCSV(doubleCoordStr);
     String deconstructedAltAsCSV = getDeconstructedAltAsCSV(floatAltStr);
     String accuracyString = String(accuracy);
-    // DEBUG_SERIAL.printf("deconstructedAltAsCSV: %s\n", deconstructedAltAsCSV);
     success &= writeFile(SPIFFS, testPathLat, deconstructedCoordAsCSV.c_str());
     success &= writeFile(SPIFFS, testPathLon, deconstructedCoordAsCSV.c_str());
     success &= writeFile(SPIFFS, testPathAlt, deconstructedAltAsCSV.c_str());

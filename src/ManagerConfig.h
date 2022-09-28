@@ -10,7 +10,7 @@
 /******************************************************************************/
 //set to true for debug output, false for no debug output
 #define DEBUGGING true 
-#define DEBUG_SERIAL \
+#define DBG \
   if (DEBUGGING) Serial
 
 #define BAUD                          115200
