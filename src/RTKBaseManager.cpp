@@ -415,16 +415,15 @@ String RTKBaseManager::processor(const String& var)
                                 SPIFFS
 =================================================================================
 */
-bool RTKBaseManager::setupSPIFFS(bool format) 
+bool RTKRoverManager::setupSPIFFS(bool formatIfFailed) 
 {
-  bool success = true;
+  bool success = false;
 
   #ifdef ESP32
-    if (!SPIFFS.begin(true)) 
+    if (SPIFFS.begin(formatIfFailed)) 
     {
       DBG.println("An Error has occurred while mounting SPIFFS");
-      success = false;
-      return success;
+      success = true;
     }
   #else
     if (!SPIFFS.begin()) 
@@ -434,12 +433,6 @@ bool RTKBaseManager::setupSPIFFS(bool format)
       return success;
     }
   #endif
-  
-  if (format) 
-  {
-    DBG.println(F("formatting SPIFFS, ..."));
-    success &= SPIFFS.format();
-  }
 
   return success;
 }
