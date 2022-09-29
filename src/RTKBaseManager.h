@@ -174,7 +174,7 @@ typedef struct {
    * @return true   If SPIFFS is successfully initialized
    *         false  If SPIFFS init failed
    */
-  bool setupSPIFFS(bool format);
+  bool setupSPIFFS(bool formatIfFailed);
 
   /**
    * @brief         Write data to SPIFFS

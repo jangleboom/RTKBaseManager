@@ -415,7 +415,7 @@ String RTKBaseManager::processor(const String& var)
                                 SPIFFS
 =================================================================================
 */
-bool RTKRoverManager::setupSPIFFS(bool formatIfFailed) 
+bool RTKBaseManager::setupSPIFFS(bool formatIfFailed) 
 {
   bool success = false;
 
