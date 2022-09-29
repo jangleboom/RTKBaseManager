@@ -18,6 +18,11 @@ void RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
     delay(10000);
     ESP.restart();
   }
+  else 
+  {
+    DBG.print(F("WiFi connected to SSID: "));
+    DBG.println(WiFi.SSID());
+  }
   DBG.println();
 
   if (!MDNS.begin(deviceName)) 
@@ -422,7 +427,7 @@ bool RTKBaseManager::setupSPIFFS(bool formatIfFailed)
   #ifdef ESP32
     if (SPIFFS.begin(formatIfFailed)) 
     {
-      DBG.println("An Error has occurred while mounting SPIFFS");
+      DBG.println("SPIFFS successfully mounted.");
       success = true;
     }
   #else
