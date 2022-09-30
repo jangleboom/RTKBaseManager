@@ -48,9 +48,8 @@ bool RTKBaseManager::checkConnectionToWifiStation()
   {
     if (WiFi.status() != WL_CONNECTED) 
     {
-      DBG.println("Reconnecting to access point.");
-      DBG.print("SSID: ");
       WiFi.disconnect();
+      DBG.println("Try reconnect to access point.");
       isConnectedToStation = WiFi.reconnect();
     } 
     else 
