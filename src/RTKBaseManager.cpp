@@ -6,8 +6,28 @@
 =================================================================================
 */
 
-void RTKBaseManager::setupStationMode(const char* ssid, const char* password, const char* deviceName) 
+void RTKBaseManager::setupWiFi(AsyncWebServer* server)
 {
+  // Check if we have credentials for a available network
+  String lastSSID = readFile(SPIFFS, PATH_WIFI_SSID);
+  String lastPassword = readFile(SPIFFS, PATH_WIFI_PASSWORD);
+
+  if (! savedNetworkAvailable(lastSSID) || lastPassword.isEmpty() ) 
+  {
+    setupAPMode(DEVICE_NAME, AP_PASSWORD);
+    delay(500);
+  } 
+  if (! setupStationMode(lastSSID.c_str(), lastPassword.c_str(), DEVICE_NAME))
+  {
+    setupAPMode(DEVICE_NAME, AP_PASSWORD);
+    delay(500);
+  }
+  startServer(server);
+}
+
+bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, const char* deviceName) 
+{
+  bool success = false;
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   if (WiFi.waitForConnectResult() != WL_CONNECTED) 
@@ -15,15 +35,14 @@ void RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
     // TODO:  - count reboots and stop after 3 times (save in SPIFFS)
     //        - display state
     DBG.println("WiFi Failed! Reboot in 10 s as AP!");
-    delay(10000);
-    ESP.restart();
+    success = false;
   }
   else 
   {
     DBG.print(F("WiFi connected to SSID: "));
     DBG.println(WiFi.SSID());
+    success = true;
   }
-  DBG.println();
 
   if (!MDNS.begin(deviceName)) 
   {
@@ -38,6 +57,8 @@ void RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   DBG.println(WiFi.getHostname());
   DBG.print(F("IP Address: "));
   DBG.println(WiFi.localIP());
+
+  return success;
 }
 
 bool RTKBaseManager::checkConnectionToWifiStation() 

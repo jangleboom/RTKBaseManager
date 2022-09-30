@@ -93,13 +93,21 @@ typedef struct {
   /*** Wifi ***/
 
   /**
+   * @brief Check saved credentials an decide WiFi mode
+   * 
+   * @param server AsyncWebServer for parameter and credential input
+   */
+  void setupWiFi(AsyncWebServer* server);
+
+  /**
    * @brief Setup RTK base station in station mode to enter further settings
    * 
    * @param ssid        SSID of the local network
    * @param password    Password of the local network
    * @param deviceName  MDNS name, connect via http://<deviceName>.local
+   * @return bool       True if success, false if not
    */
-  void setupStationMode(const char* ssid, const char* password, const char* deviceName);
+  bool setupStationMode(const char* ssid, const char* password, const char* deviceName);
 
   /**
    * @brief Setup RTK base station in access point mode to enter local network
