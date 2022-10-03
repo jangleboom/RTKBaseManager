@@ -12,16 +12,24 @@ void RTKBaseManager::setupWiFi(AsyncWebServer* server)
   String lastSSID = readFile(SPIFFS, PATH_WIFI_SSID);
   String lastPassword = readFile(SPIFFS, PATH_WIFI_PASSWORD);
 
-  if (! savedNetworkAvailable(lastSSID) || lastPassword.isEmpty() ) 
+  if (lastSSID.isEmpty() || lastPassword.isEmpty() ) 
   {
-    setupAPMode(DEVICE_NAME, AP_PASSWORD);
+    setupAPMode(getDeviceName(DEVICE_TYPE).c_str(), AP_PASSWORD);
     delay(500);
   } 
-  if (! setupStationMode(lastSSID.c_str(), lastPassword.c_str(), DEVICE_NAME))
+  else
   {
-    setupAPMode(DEVICE_NAME, AP_PASSWORD);
+    while (! savedNetworkAvailable(lastSSID)) 
+    {
+      DBG.print(F("Waiting for HotSpot "));
+      DBG.print(lastSSID);
+      DBG.println(F(" to appear..."));
+      vTaskDelay(1000/portTICK_RATE_MS);
+    }
+    setupStationMode(lastSSID.c_str(), lastPassword.c_str(), getDeviceName(DEVICE_TYPE).c_str());
     delay(500);
   }
+
   startServer(server);
 }
 
