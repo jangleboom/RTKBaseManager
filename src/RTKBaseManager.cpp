@@ -14,7 +14,7 @@ void RTKBaseManager::setupWiFi(AsyncWebServer* server)
 
   if (lastSSID.isEmpty() || lastPassword.isEmpty() ) 
   {
-    setupAPMode(getDeviceName(DEVICE_TYPE).c_str(), AP_PASSWORD);
+    setupAPMode(DEVICE_TYPE, AP_PASSWORD);
     delay(500);
   } 
   else
@@ -26,7 +26,7 @@ void RTKBaseManager::setupWiFi(AsyncWebServer* server)
       DBG.println(F(" to appear..."));
       vTaskDelay(1000/portTICK_RATE_MS);
     }
-    setupStationMode(lastSSID.c_str(), lastPassword.c_str(), getDeviceName(DEVICE_TYPE).c_str());
+    setupStationMode(lastSSID.c_str(), lastPassword.c_str(), DEVICE_TYPE);
     delay(500);
   }
 
@@ -57,7 +57,7 @@ bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
       DBG.println("Error starting mDNS, use local IP instead!");
   } else {
     DBG.print(F("Starting mDNS, find me under <http://www."));
-    DBG.print(DEVICE_NAME);
+    DBG.print(DEVICE_TYPE);
     DBG.println(F(".local>"));
   }
 
@@ -98,7 +98,7 @@ void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword)
     bool result = WiFi.softAP(apSsid, apPassword);
     DBG.println(result ? "Ready" : "Failed!");
     DBG.print("Access point started: ");
-    DBG.println(DEVICE_NAME);
+    DBG.println(DEVICE_TYPE);
     DBG.print("IP address: ");
     DBG.println(WiFi.softAPIP());
 }
@@ -430,7 +430,7 @@ String RTKBaseManager::processor(const String& var)
     {
       return String(IP_AP);
     } else {
-      String clientAddr = String(DEVICE_NAME);
+      String clientAddr = String(DEVICE_TYPE);
       clientAddr += ".local";
       return clientAddr;
     }
@@ -438,7 +438,7 @@ String RTKBaseManager::processor(const String& var)
   else if (var == "next_ssid") 
   {
     String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
-    return (savedSSID.isEmpty() ? String(DEVICE_NAME) : savedSSID);
+    return (savedSSID.isEmpty() ? String(DEVICE_TYPE) : savedSSID);
   }
   return String();
 }
