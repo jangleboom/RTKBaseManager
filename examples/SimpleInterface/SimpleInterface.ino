@@ -10,47 +10,41 @@
 AsyncWebServer server(80);
 String scannedSSIDs[MAX_SSIDS];
 
+bool deleteFilesystem = false;
+
 void setup() 
 {
-  
   #ifdef DEBUGGING
   Serial.begin(BAUD);
   while (!Serial) {};
   #endif
   
-  // Initialize SPIFFS, set true for formatting
-  bool format = false;
-  if (!RTKBaseManager::setupSPIFFS(format)) 
+  // Initialize SPIFFS
+  if (!RTKBaseManager::setupSPIFFS(FORMAT_SPIFFS_IF_FAILED)) 
   {
-    DEBUG_SERIAL.println(F("setupSPIFFS failed, freezing"));
+    DBG.println(F("setupSPIFFS failed, freezing"));
     while (true) {};
   }
 
-  DEBUG_SERIAL.print(F("Device name: "));DEBUG_SERIAL.println(DEVICE_NAME);
+  // If you want to clean the whole filesystem set deleteFilesystem true, run 1x and set it false again
+  if (deleteFilesystem) 
+  {
+    wipeSpiffsFiles();
+    while (true) {};
+  }
+
+  DBG.print(F("Device name: ")); DBG.println(DEVICE_TYPE);
 
   String locationMethod = readFile(SPIFFS, PATH_RTK_LOCATION_METHOD);
-  DEBUG_SERIAL.print(F("Location method: ")); DEBUG_SERIAL.println(locationMethod);
+  DBG.print(F("Location method: ")); DBG.println(locationMethod);
   
   location_t lastLocation;
-  if (getIntLocationFromSPIFFS(&lastLocation, PATH_RTK_LOCATION_LATITUDE, PATH_RTK_LOCATION_LONGITUDE, PATH_RTK_LOCATION_ALTITUDE)) 
+  if (getLocationFromSPIFFS(&lastLocation, PATH_RTK_LOCATION_LATITUDE, PATH_RTK_LOCATION_LONGITUDE, PATH_RTK_LOCATION_ALTITUDE, PATH_RTK_LOCATION_COORD_ACCURACY)) 
   {
     printLocation(&lastLocation);
   }
 
-  // Check if we have credentials for a available network
-  String lastSSID = RTKBaseManager::readFile(SPIFFS, PATH_WIFI_SSID);
-  String lastPassword = RTKBaseManager::readFile(SPIFFS, PATH_WIFI_PASSWORD);
-
-  if (!RTKBaseManager::savedNetworkAvailable(lastSSID) || lastPassword.isEmpty() ) 
-  {
-    RTKBaseManager::setupAPMode(AP_SSID, AP_PASSWORD);
-    delay(500);
-  } else 
-  {
-   RTKBaseManager::setupStationMode(lastSSID.c_str(), lastPassword.c_str(), DEVICE_NAME);
-   delay(500);
-  }
-  RTKBaseManager::startServer(&server);
+  setupWiFi(&server);
 }
 
 unsigned long previousMillis = 0;
