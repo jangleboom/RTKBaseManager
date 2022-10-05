@@ -1,4 +1,5 @@
 ### RTKBaseManager
+<img align="right" src="./screenshots/RTKBaseManager.png" width="240"> 
 This is a submodule of the 
 [Realtime Kinematics Base Station](https://github.com/audio-communication-group/RTKBaseStation).
 
@@ -8,5 +9,5 @@ The device runs as an access point if no credentials are saved, (SSID:
 Fill the web form with your data, save and reboot. 
 After restart the device is reachable as a client in your local network ("rtkbase.local" or local IP).
 
-<img align="right" src="./screenshots/RTKBaseManager.png" width="240"/> 
+
 
