@@ -66,10 +66,10 @@ namespace RTKBaseManager {
   // Paths for SPIFFS file management
   const char PATH_WIFI_SSID[] PROGMEM = "/ssid.txt";
   const char PATH_WIFI_PASSWORD[] PROGMEM = "/password.txt";
-  const char PATH_RTK_CASTER_HOST[] PROGMEM = "/caster_host";
-  const char PATH_RTK_CASTER_PORT[] PROGMEM = "/caster_port";
-  const char PATH_RTK_MOINT_POINT[] PROGMEM = "/mount_point";
-  const char PATH_RTK_MOINT_POINT_PW[] PROGMEM = "/mount_point_pw";
+  const char PATH_RTK_CASTER_HOST[] PROGMEM = "/caster_host.txt";
+  const char PATH_RTK_CASTER_PORT[] PROGMEM = "/caster_port.txt";
+  const char PATH_RTK_MOINT_POINT[] PROGMEM = "/mount_point.txt";
+  const char PATH_RTK_MOINT_POINT_PW[] PROGMEM = "/mount_point_pw.txt";
   const char PATH_RTK_LOCATION_METHOD[] PROGMEM = "/location_method.txt";
   const char PATH_RTK_LOCATION_SURVEY_ACCURACY[] PROGMEM = "/survey_accuracy.txt";
   const char PATH_RTK_LOCATION_COORD_ACCURACY[] PROGMEM = "/coord_accuracy.txt";
