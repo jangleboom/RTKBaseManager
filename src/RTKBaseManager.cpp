@@ -448,26 +448,40 @@ String RTKBaseManager::processor(const String& var)
                                 SPIFFS
 =================================================================================
 */
-bool RTKBaseManager::setupSPIFFS(bool formatIfFailed) 
+
+void RTKBaseManager::setupSPIFFS() 
 {
-  bool success = false;
-
-  #ifdef ESP32
-    if (SPIFFS.begin(formatIfFailed)) 
+ if ( !SPIFFS.begin(false) )
     {
-      DBG.println("SPIFFS successfully mounted.");
-      success = true;
-    }
-  #else
-    if (!SPIFFS.begin()) 
+      DBG.println("SPIFFS mount failed");
+      if ( !SPIFFS.begin(true) )
+      {
+        DBG.println("SPIFFS formatting failed");
+        return;
+      }
+      else
+      {
+        DBG.println("SPIFFS formatted");
+      }
+    } 
+    else
     {
-      DBG.println("An Error has occurred while mounting SPIFFS");
-      success = false;
-      return success;
+      DBG.println("SPIFFS mounted");
     }
-  #endif
+}
 
-  return success;
+void RTKBaseManager::formatSPIFFS()
+{
+  bool formatted = SPIFFS.format();
+ 
+  if (formatted) 
+  {
+    DBG.println("\n\nSuccess formatting");
+  }
+  else
+  {
+    DBG.println("\n\nError formatting");
+  }
 }
 
 String RTKBaseManager::readFile(fs::FS &fs, const char* path) 

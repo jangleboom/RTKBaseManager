@@ -178,11 +178,15 @@ typedef struct {
   /**
    * @brief Just init SPIFFS for ESP32 or ESP8266
    * 
-   * @param format  True if SPIFFS should formated at start
-   * @return true   If SPIFFS is successfully initialized
-   *         false  If SPIFFS init failed
+   * If mounting fails, it will try to format the partition
    */
-  bool setupSPIFFS(bool formatIfFailed);
+  void setupSPIFFS(void);
+
+  /**
+   * @brief Just format the partition
+   * 
+   */
+  void formatSPIFFS(void);
 
   /**
    * @brief         Write data to SPIFFS
