@@ -180,13 +180,20 @@ typedef struct {
    * 
    * If mounting fails, it will try to format the partition
    */
-  void setupSPIFFS(void);
+  bool setupSPIFFS(void);
 
   /**
    * @brief Just format the partition
    * 
    */
-  void formatSPIFFS(void);
+
+  /**
+   * @brief 
+   * 
+   * @return true   Formatting succeeded
+   * @return false  Formatting failed
+   */
+  bool formatSPIFFS(void);
 
   /**
    * @brief         Write data to SPIFFS

@@ -449,15 +449,17 @@ String RTKBaseManager::processor(const String& var)
 =================================================================================
 */
 
-void RTKBaseManager::setupSPIFFS() 
+bool RTKBaseManager::setupSPIFFS() 
 {
- if ( !SPIFFS.begin(false) )
-    {
-      DBG.println("SPIFFS mount failed");
-      if ( !SPIFFS.begin(true) )
+  bool isMounted = false; 
+
+  if ( !SPIFFS.begin(false) )
+  {
+    DBG.println("SPIFFS mount failed");
+    if ( !SPIFFS.begin(true) )
       {
         DBG.println("SPIFFS formatting failed");
-        return;
+        return isMounted;
       }
       else
       {
@@ -467,10 +469,13 @@ void RTKBaseManager::setupSPIFFS()
     else
     {
       DBG.println("SPIFFS mounted");
+      isMounted = true;
     }
+
+    return isMounted;
 }
 
-void RTKBaseManager::formatSPIFFS()
+bool RTKBaseManager::formatSPIFFS()
 {
   bool formatted = SPIFFS.format();
  
@@ -482,6 +487,8 @@ void RTKBaseManager::formatSPIFFS()
   {
     DBG.println("\n\nError formatting");
   }
+
+  return formatted;
 }
 
 String RTKBaseManager::readFile(fs::FS &fs, const char* path) 
