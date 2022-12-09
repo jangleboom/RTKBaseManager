@@ -176,12 +176,7 @@ typedef struct {
   bool setupLittleFS(void);
 
   /**
-   * @brief Just format the partition
-   * 
-   */
-
-  /**
-   * @brief 
+   * @brief Format the partition
    * 
    * @return true   Formatting succeeded
    * @return false  Formatting failed
@@ -363,10 +358,6 @@ typedef struct {
    * @return int8_t Digits of num
    */
   int8_t getDigitsCount(int32_t num);
-
-  // uint8_t getNumberOfDigits(int32_t i);
-
-  // void getIntAltitudeFromDouble(float alt);
 
   /**
    * @brief Get the Float Altitude From Int object

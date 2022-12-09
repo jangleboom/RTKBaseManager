@@ -43,7 +43,7 @@ const char REBOOT_HTML[] PROGMEM = R"rawliteral(
             let label = `in ${timeleft} second(s)`;
             document.getElementById("countdown").innerHTML = label;
             if ((timeleft) == -1) {
-                document.getElementById("countdown").innerHTML = "done";
+                document.getElementById("countdown").innerHTML = "(You can close this now.)";
             }
             timeleft -= 1;
         }, 1000);

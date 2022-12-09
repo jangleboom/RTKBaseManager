@@ -482,29 +482,6 @@ bool RTKBaseManager::formatLittleFS()
   return formatted;
 }
 
-// String RTKBaseManager::readFile(fs::FS &fs, const char* path) 
-// {
-//   DBG.printf("Reading file: %s\r\n", path);
-//   File file = fs.open(path, FILE_READ);
-
-//   if (!file || file.isDirectory()) 
-//   {
-//     DBG.println("- empty file or failed to open file");
-//     return String();
-//   }
-//   DBG.println("- read from file:");
-//   String fileContent;
-
-//   while (file.available()) 
-//   {
-//     fileContent += String((char)file.read());
-//   }
-//   file.close();
-//   DBG.println(fileContent);
-
-//   return fileContent;
-// }
-
 String RTKBaseManager::readFile(fs::FS &fs, const char* path) 
 {
   String fileContent;
@@ -557,7 +534,7 @@ bool RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message
 
 void RTKBaseManager::listFiles() 
 {
-  File root = LittleFS.open("/", "r");
+  File root = LittleFS.open("/", FILE_READ);
   File file = root.openNextFile();
  
   while (file) 
@@ -572,30 +549,20 @@ void RTKBaseManager::listFiles()
 
 void RTKBaseManager::wipeLittleFSFiles() 
 {
-  File root = LittleFS.open("/", "w");
+  File root = LittleFS.open("/", FILE_WRITE);
   File file = root.openNextFile();
 
   DBG.println(F("Wiping: "));
 
-  // while (file) 
-  // {
-  //   DBG.print("remove file: ");
-  //   DBG.println(file.path());
-  //   LittleFS.remove(strdup(file.path()));
-  //   file = root.openNextFile();
-  // }
+  while (file) 
+  {
+      const char* pathStr = strdup(file.path());
+      file.close();
+      LittleFS.remove(pathStr);
+      file = root.openNextFile();
+  }
 
-    // File root = LittleFS.open(ROOT_DIR);
-    // File file;
-    while (file) 
-    {
-        const char* pathStr = strdup(file.path());
-        file.close();
-        LittleFS.remove(pathStr);
-        file = root.openNextFile();
-    }
-
-    DBG.println(F("Data in LittleFS wiped out!"));
+  DBG.println(F("Data in LittleFS wiped out!"));
 }
 
 bool RTKBaseManager::getLocationFromLittleFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt, const char* pathAcc) 
