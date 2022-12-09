@@ -10,9 +10,9 @@
  *          - a check for special characters in the form
  *          - a check of the number of decimal places in the input of the geo-coordinates 
  *            with regard to a suitable level of accuracy
- *          - upload html and (separated css and js) to SPIFFS 
+ *          - upload html and (separated css and js) to LittleFS 
  * 
- * @note    FYI: A good tutorial about how to transfer input data from a from and save them to SPIFFS
+ * @note    FYI: A good tutorial about how to transfer input data from a from and save them to LittleFS
  *          https://medium.com/@adihendro/html-form-data-input-c942ba23224
  */
 
@@ -20,26 +20,24 @@
 #define RTK_MANAGER_H
 
 #include <Arduino.h>
+#include <WiFi.h>
 #include <ESPmDNS.h>
+#include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <LittleFS.h> 
+#include <FS.h>
+#include <ManagerConfig.h>
 #include <index_html.h>
 #include <error_html.h>
 #include <reboot_html.h>
-#include <ManagerConfig.h>
 
-#ifdef ESP32
-  #include <WiFi.h>
-  #include <AsyncTCP.h>
-  #include <SPIFFS.h>
-  #include <FS.h>
-#else
-  #include <ESP8266WiFi.h>
-  #include <ESPAsyncTCP.h>
-  #include <Hash.h>
-  #include <FS.h>
-#endif
 
-namespace RTKBaseManager {
+namespace RTKBaseManager 
+{
+  // LittleFS
+  #define FILE_WRITE                              "w"
+  #define FILE_READ                               "r"
+  #define ROOT_DIR                                "/"
 
   // WiFi credentials for AP mode
   #define MAX_SSIDS 10 // Space to scan and remember SSIDs
@@ -47,8 +45,8 @@ namespace RTKBaseManager {
   const char AP_PASSWORD[] PROGMEM = "12345678";
   const char IP_AP[] PROGMEM = "192.168.4.1";
   
-  // Parameters for SPIFFS file management
-  #define FORMAT_SPIFFS_IF_FAILED true
+  // Parameters for LittleFS file management
+  #define FORMAT_LittleFS_IF_FAILED true
   const char PARAM_WIFI_SSID[] PROGMEM = "ssid"; 
   const char PARAM_WIFI_PASSWORD[] PROGMEM = "password";
   const char PARAM_RTK_CASTER_HOST[] PROGMEM = "caster_host";
@@ -63,7 +61,7 @@ namespace RTKBaseManager {
   const char PARAM_RTK_LOCATION_LONGITUDE[] PROGMEM = "longitude";
   const char PARAM_RTK_LOCATION_LATITUDE[] PROGMEM = "latitude";
   const char PARAM_RTK_LOCATION_ALTITUDE[] PROGMEM = "altitude";
-  // Paths for SPIFFS file management
+  // Paths for LittleFS file management
   const char PATH_WIFI_SSID[] PROGMEM = "/ssid.txt";
   const char PATH_WIFI_PASSWORD[] PROGMEM = "/password.txt";
   const char PATH_RTK_CASTER_HOST[] PROGMEM = "/caster_host.txt";
@@ -121,7 +119,7 @@ typedef struct {
   /**
    * @brief Check possibility of connecting with an availbale network.
    * 
-   * @param ssid        SSID of saved network in SPIFFS
+   * @param ssid        SSID of saved network in LittleFS
    * @return true       If the credentials are complete and the network is available.
    * @return false      If the credentials are incomplete or the network is not available.
    */
@@ -152,7 +150,7 @@ typedef struct {
   void notFound(AsyncWebServerRequest *request);
 
   /**
-   * @brief Action to handle wipe SPIFFS button
+   * @brief Action to handle wipe LittleFS button
    * 
    * @param request Request
    */
@@ -173,14 +171,14 @@ typedef struct {
   void actionUpdateData(AsyncWebServerRequest *request);
 
 
-  /*** SPIFFS ***/
+  /*** LittleFS ***/
 
   /**
-   * @brief Just init SPIFFS for ESP32 or ESP8266
+   * @brief Just init LittleFS for ESP32 or ESP8266
    * 
    * If mounting fails, it will try to format the partition
    */
-  bool setupSPIFFS(void);
+  bool setupLittleFS(void);
 
   /**
    * @brief Just format the partition
@@ -193,10 +191,10 @@ typedef struct {
    * @return true   Formatting succeeded
    * @return false  Formatting failed
    */
-  bool formatSPIFFS(void);
+  bool formatLittleFS(void);
 
   /**
-   * @brief         Write data to SPIFFS
+   * @brief         Write data to LittleFS
    * 
    * @param fs      Address of file system
    * @param path    Path to file
@@ -207,7 +205,7 @@ typedef struct {
   bool writeFile(fs::FS &fs, const char* path, const char* message);
 
   /**
-   * @brief           Read data from SPIFFS
+   * @brief           Read data from LittleFS
    * 
    * @param fs        Address of file system
    * @param path      Path to file
@@ -216,19 +214,19 @@ typedef struct {
   String readFile(fs::FS &fs, const char* path);
 
   /**
-   * @brief List all saved SPIFFS files 
+   * @brief List all saved LittleFS files 
    * 
    */
   void listFiles(void);
 
   /**
-   * @brief Delete all saved SPIFFS files 
+   * @brief Delete all saved LittleFS files 
    * 
    */
-  void wipeSpiffsFiles(void);
+  void wipeLittleFSFiles(void);
 
   /**
-   * @brief Get the int formated location from SPIFFS 
+   * @brief Get the int formated location from LittleFS 
    * 
    * @param location Address of location_t location struct to write to
    * @param pathLat Path to saved latitude
@@ -238,7 +236,7 @@ typedef struct {
    * @return true 
    * @return false 
    */
-  bool getLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt, const char* pathAcc);
+  bool getLocationFromLittleFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt, const char* pathAcc);
   
   /**
    * @brief Print content of location_t struct
@@ -336,13 +334,13 @@ typedef struct {
   bool checkConnectionToWifiStation(void);
 
   /**
-   * @brief Set the Location Method in SPIFFS file to Survey
+   * @brief Set the Location Method in LittleFS file to Survey
    * 
    */
   void setLocationMethodSurvey(void);
 
   /**
-   * @brief Set the Location Method in SPIFFS file to Coordinates
+   * @brief Set the Location Method in LittleFS file to Coordinates
    * 
    */
   void setLocationMethodCoords(void);

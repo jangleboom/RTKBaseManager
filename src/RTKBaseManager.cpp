@@ -9,8 +9,8 @@
 void RTKBaseManager::setupWiFi(AsyncWebServer* server)
 {
   // Check if we have credentials for a available network
-  String lastSSID = readFile(SPIFFS, PATH_WIFI_SSID);
-  String lastPassword = readFile(SPIFFS, PATH_WIFI_PASSWORD);
+  String lastSSID = readFile(LittleFS, PATH_WIFI_SSID);
+  String lastPassword = readFile(LittleFS, PATH_WIFI_PASSWORD);
 
   if (lastSSID.isEmpty() || lastPassword.isEmpty() ) 
   {
@@ -40,7 +40,7 @@ bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   WiFi.begin(ssid, password);
   if (WiFi.waitForConnectResult() != WL_CONNECTED) 
   {
-    // TODO:  - count reboots and stop after 3 times (save in SPIFFS)
+    // TODO:  - count reboots and stop after 3 times (save in LittleFS)
     //        - display state
     DBG.println("WiFi Failed! Reboot in 10 s as AP!");
     success = false;
@@ -131,7 +131,7 @@ bool RTKBaseManager::savedNetworkAvailable(const String& ssid)
 */
 void RTKBaseManager::startServer(AsyncWebServer *server) 
 {
-  server->on("/", HTTP_GET, [](AsyncWebServerRequest *request) 
+  server->on(ROOT_DIR, HTTP_GET, [](AsyncWebServerRequest *request) 
   {
     request->send_P(200, "text/html", INDEX_HTML, processor);
   });
@@ -173,13 +173,13 @@ void RTKBaseManager::actionWipeData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        DBG.printf("wipe command received: %s",p->value().c_str());
-        wipeSpiffsFiles();
+        DBG.printf("wipe command received: %s\n",p->value().c_str());
+        wipeLittleFSFiles();
       } 
      }
     } 
 
-  DBG.print(F("Data in SPIFFS was wiped out!"));
+  DBG.print(F("Data in LittleFS was wiped out!"));
   request->send_P(200, "text/html", INDEX_HTML, processor);
 }
 
@@ -198,7 +198,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(SPIFFS, PATH_WIFI_SSID, p->value().c_str());
+        writeFile(LittleFS, PATH_WIFI_SSID, p->value().c_str());
       } 
     }
 
@@ -206,7 +206,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(SPIFFS, PATH_WIFI_PASSWORD, p->value().c_str());
+        writeFile(LittleFS, PATH_WIFI_PASSWORD, p->value().c_str());
       } 
     }
 
@@ -214,7 +214,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(SPIFFS, PATH_RTK_CASTER_HOST, p->value().c_str());
+        writeFile(LittleFS, PATH_RTK_CASTER_HOST, p->value().c_str());
       } 
     }
 
@@ -222,7 +222,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(SPIFFS, PATH_RTK_CASTER_PORT, p->value().c_str());
+        writeFile(LittleFS, PATH_RTK_CASTER_PORT, p->value().c_str());
       } 
     }
 
@@ -230,7 +230,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(SPIFFS, PATH_RTK_MOINT_POINT, p->value().c_str());
+        writeFile(LittleFS, PATH_RTK_MOINT_POINT, p->value().c_str());
       } 
     }
 
@@ -238,7 +238,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(SPIFFS, PATH_RTK_MOINT_POINT_PW, p->value().c_str());
+        writeFile(LittleFS, PATH_RTK_MOINT_POINT_PW, p->value().c_str());
       } 
     }
 
@@ -250,12 +250,12 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
         if (pValue.equals("survey_enabled")) 
         {
           // Clear old coords values
-          SPIFFS.remove(PATH_RTK_LOCATION_ALTITUDE);
-          SPIFFS.remove(PATH_RTK_LOCATION_LATITUDE);
-          SPIFFS.remove(PATH_RTK_LOCATION_LONGITUDE);
-          SPIFFS.remove(PATH_RTK_LOCATION_COORD_ACCURACY);
+          LittleFS.remove(PATH_RTK_LOCATION_ALTITUDE);
+          LittleFS.remove(PATH_RTK_LOCATION_LATITUDE);
+          LittleFS.remove(PATH_RTK_LOCATION_LONGITUDE);
+          LittleFS.remove(PATH_RTK_LOCATION_COORD_ACCURACY);
         }
-        writeFile(SPIFFS, PATH_RTK_LOCATION_METHOD, p->value().c_str());
+        writeFile(LittleFS, PATH_RTK_LOCATION_METHOD, p->value().c_str());
      } 
     }
 
@@ -263,7 +263,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(SPIFFS, PATH_RTK_LOCATION_SURVEY_ACCURACY, p->value().c_str());
+        writeFile(LittleFS, PATH_RTK_LOCATION_SURVEY_ACCURACY, p->value().c_str());
       } 
     }
 
@@ -271,7 +271,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0)
       {
-        writeFile(SPIFFS, PATH_RTK_LOCATION_COORD_ACCURACY, p->value().c_str());
+        writeFile(LittleFS, PATH_RTK_LOCATION_COORD_ACCURACY, p->value().c_str());
       } 
     }
 
@@ -280,7 +280,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
       if (p->value().length() > 0) 
       {
         String deconstructedValAsCSV = getDeconstructedCoordAsCSV(p->value());
-        writeFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE, deconstructedValAsCSV.c_str());
+        writeFile(LittleFS, PATH_RTK_LOCATION_LATITUDE, deconstructedValAsCSV.c_str());
      } 
     }
 
@@ -289,7 +289,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
       if (p->value().length() > 0) 
       {
         String deconstructedValAsCSV = getDeconstructedCoordAsCSV(p->value());
-        writeFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE, deconstructedValAsCSV.c_str());
+        writeFile(LittleFS, PATH_RTK_LOCATION_LONGITUDE, deconstructedValAsCSV.c_str());
      } 
     }
 
@@ -299,12 +299,12 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
       {
         String deconstructedAltAsCSV = getDeconstructedAltAsCSV(p->value());
         // int32_t elipsoid = String(p->value()).toInt()*1000;
-        writeFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE, deconstructedAltAsCSV.c_str());
+        writeFile(LittleFS, PATH_RTK_LOCATION_ALTITUDE, deconstructedAltAsCSV.c_str());
       } 
     }
   }
 
-  DBG.println(F("Data saved to SPIFFS!"));
+  DBG.println(F("Data saved to LittleFS!"));
   request->send_P(200, "text/html", INDEX_HTML, RTKBaseManager::processor);
 }
 
@@ -350,82 +350,82 @@ String RTKBaseManager::processor(const String& var)
 {
   if (var == PARAM_WIFI_SSID) 
   {
-    String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
+    String savedSSID = readFile(LittleFS, PATH_WIFI_SSID);
     return (savedSSID.isEmpty() ? String(PARAM_WIFI_SSID) : savedSSID);
   }
   else if (var == PARAM_WIFI_PASSWORD) 
   {
-    String savedPassword = readFile(SPIFFS, PATH_WIFI_PASSWORD);
+    String savedPassword = readFile(LittleFS, PATH_WIFI_PASSWORD);
     return (savedPassword.isEmpty() ? String(PARAM_WIFI_PASSWORD) : "*******");
   }
 
   else if (var == PARAM_RTK_CASTER_HOST) 
   {
-    String savedCaster = readFile(SPIFFS, PATH_RTK_CASTER_HOST);
+    String savedCaster = readFile(LittleFS, PATH_RTK_CASTER_HOST);
     return (savedCaster.isEmpty() ? String(PARAM_RTK_CASTER_HOST) : savedCaster);
   }
 
   else if (var == PARAM_RTK_CASTER_PORT) 
   {
-    String savedPort = readFile(SPIFFS, PATH_RTK_CASTER_PORT);
+    String savedPort = readFile(LittleFS, PATH_RTK_CASTER_PORT);
     return (savedPort.isEmpty() ? String(PARAM_RTK_CASTER_PORT) : savedPort);
   }
 
   else if (var == PARAM_RTK_MOINT_POINT) 
   {
-    String savedMointPoint = readFile(SPIFFS, PATH_RTK_MOINT_POINT);
+    String savedMointPoint = readFile(LittleFS, PATH_RTK_MOINT_POINT);
     return (savedMointPoint.isEmpty() ? String(PARAM_RTK_MOINT_POINT) : savedMointPoint);
   }
 
   else if (var == PARAM_RTK_MOINT_POINT_PW) 
   {
-    String savedMointPointPW = readFile(SPIFFS, PATH_RTK_MOINT_POINT_PW);
+    String savedMointPointPW = readFile(LittleFS, PATH_RTK_MOINT_POINT_PW);
     return (savedMointPointPW.isEmpty() ? String(PARAM_RTK_MOINT_POINT_PW) : "*******");
   }
 
   else if (var == PARAM_RTK_LOCATION_METHOD) 
   {
-    String savedLocationMethod = readFile(SPIFFS, PATH_RTK_LOCATION_METHOD);
+    String savedLocationMethod = readFile(LittleFS, PATH_RTK_LOCATION_METHOD);
     return (savedLocationMethod.isEmpty() ? String(PARAM_RTK_SURVEY_ENABLED) : savedLocationMethod);
   }
 
   else if (var == PARAM_RTK_LOCATION_SURVEY_ACCURACY) 
   {
-    String savedSurveyAccuracy = readFile(SPIFFS, PATH_RTK_LOCATION_SURVEY_ACCURACY);
+    String savedSurveyAccuracy = readFile(LittleFS, PATH_RTK_LOCATION_SURVEY_ACCURACY);
     return (savedSurveyAccuracy.isEmpty() ? String(PARAM_RTK_LOCATION_SURVEY_ACCURACY) : savedSurveyAccuracy);
   }
 
   else if (var == PARAM_RTK_LOCATION_COORD_ACCURACY) 
   {
-    String savedCoordAccuracy = readFile(SPIFFS, PATH_RTK_LOCATION_COORD_ACCURACY);
+    String savedCoordAccuracy = readFile(LittleFS, PATH_RTK_LOCATION_COORD_ACCURACY);
     return (savedCoordAccuracy.isEmpty() ? "---" : savedCoordAccuracy);
   }
 
   else if (var == PARAM_RTK_LOCATION_LATITUDE) 
   {
-    String savedLatitude = readFile(SPIFFS, PATH_RTK_LOCATION_LATITUDE);
+    String savedLatitude = readFile(LittleFS, PATH_RTK_LOCATION_LATITUDE);
     String savedLatitudeStr = getFloatingPointStringFromCSV(savedLatitude, COORD_PRECISION);
     return (savedLatitude.isEmpty() ? String(PARAM_RTK_LOCATION_LATITUDE) : savedLatitudeStr);
   }
 
   else if (var == PARAM_RTK_LOCATION_LONGITUDE) 
   {
-    String savedLongitude = readFile(SPIFFS, PATH_RTK_LOCATION_LONGITUDE);
+    String savedLongitude = readFile(LittleFS, PATH_RTK_LOCATION_LONGITUDE);
     String savedLongitudeStr = getFloatingPointStringFromCSV(savedLongitude, COORD_PRECISION);
     return (savedLongitude.isEmpty() ? String(PARAM_RTK_LOCATION_LONGITUDE) : savedLongitudeStr);
   }
 
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) 
   {
-    String savedAltitude = readFile(SPIFFS, PATH_RTK_LOCATION_ALTITUDE);
+    String savedAltitude = readFile(LittleFS, PATH_RTK_LOCATION_ALTITUDE);
     String savedAltitudeStr = getFloatingPointStringFromCSV(savedAltitude, ALT_PRECISION);
     // float altitude = savedAltitude.toFloat() / 1000.0;
     return (savedAltitude.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : savedAltitudeStr);
   }
   else if (var == "next_addr") 
   {
-    String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
-    String savedPW = readFile(SPIFFS, PATH_WIFI_PASSWORD);
+    String savedSSID = readFile(LittleFS, PATH_WIFI_SSID);
+    String savedPW = readFile(LittleFS, PATH_WIFI_PASSWORD);
     if (savedSSID.isEmpty() || savedPW.isEmpty()) 
     {
       return String(IP_AP);
@@ -437,7 +437,7 @@ String RTKBaseManager::processor(const String& var)
   }
   else if (var == "next_ssid") 
   {
-    String savedSSID = readFile(SPIFFS, PATH_WIFI_SSID);
+    String savedSSID = readFile(LittleFS, PATH_WIFI_SSID);
     return (savedSSID.isEmpty() ? String(DEVICE_TYPE) : savedSSID);
   }
   return String();
@@ -445,39 +445,32 @@ String RTKBaseManager::processor(const String& var)
 
 /*
 =================================================================================
-                                SPIFFS
+                                LittleFS
 =================================================================================
 */
 
-bool RTKBaseManager::setupSPIFFS() 
+bool RTKBaseManager::setupLittleFS() 
 {
   bool isMounted = false; 
 
-  if ( !SPIFFS.begin(false) )
+  if ( !LittleFS.begin() ) 
   {
-    DBG.println("SPIFFS mount failed");
-    if ( !SPIFFS.begin(true) )
-      {
-        DBG.println("SPIFFS formatting failed");
-        return isMounted;
-      }
-      else
-      {
-        DBG.println("SPIFFS formatted");
-      }
-    } 
-    else
-    {
-      DBG.println("SPIFFS mounted");
-      isMounted = true;
-    }
-
+    Serial.println(F("An Error has occurred while mounting LittleFS"));
     return isMounted;
+  } 
+  else
+  {
+    DBG.println("LittleFS mounted");
+    isMounted = true;
+  }
+
+  return isMounted;
 }
 
-bool RTKBaseManager::formatSPIFFS()
+bool RTKBaseManager::formatLittleFS()
 {
-  bool formatted = SPIFFS.format();
+  DBG.println("Formatting file system, please wait...");
+  bool formatted = LittleFS.format();
  
   if (formatted) 
   {
@@ -491,22 +484,47 @@ bool RTKBaseManager::formatSPIFFS()
   return formatted;
 }
 
+// String RTKBaseManager::readFile(fs::FS &fs, const char* path) 
+// {
+//   DBG.printf("Reading file: %s\r\n", path);
+//   File file = fs.open(path, FILE_READ);
+
+//   if (!file || file.isDirectory()) 
+//   {
+//     DBG.println("- empty file or failed to open file");
+//     return String();
+//   }
+//   DBG.println("- read from file:");
+//   String fileContent;
+
+//   while (file.available()) 
+//   {
+//     fileContent += String((char)file.read());
+//   }
+//   file.close();
+//   DBG.println(fileContent);
+
+//   return fileContent;
+// }
+
 String RTKBaseManager::readFile(fs::FS &fs, const char* path) 
 {
-  DBG.printf("Reading file: %s\r\n", path);
-  File file = fs.open(path, "r");
+  String fileContent;
 
-  if (!file || file.isDirectory()) 
+  DBG.printf("Reading file: %s\r\n", path);
+  File file = fs.open(path, FILE_READ);
+
+  if ( !file || file.isDirectory() ) 
   {
     DBG.println("- empty file or failed to open file");
     return String();
   }
-  DBG.println("- read from file:");
-  String fileContent;
 
-  while (file.available()) 
+  DBG.println("- read from file:");
+
+  while ( file.available() ) 
   {
-    fileContent += String((char)file.read());
+    fileContent += String( (char) file.read() );
   }
   file.close();
   DBG.println(fileContent);
@@ -519,7 +537,7 @@ bool RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message
   bool success = false;
   DBG.printf("Writing file: %s\r\n", path);
 
-  File file = fs.open(path, "w");
+  File file = fs.open(path, FILE_WRITE);
   if (!file) 
   {
     DBG.println("- failed to open file for writing");
@@ -541,7 +559,7 @@ bool RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message
 
 void RTKBaseManager::listFiles() 
 {
-  File root = SPIFFS.open("/");
+  File root = LittleFS.open(ROOT_DIR);
   File file = root.openNextFile();
  
   while (file) 
@@ -554,29 +572,38 @@ void RTKBaseManager::listFiles()
   root.close();
 }
 
-void RTKBaseManager::wipeSpiffsFiles() 
+void RTKBaseManager::wipeLittleFSFiles() 
 {
-  File root = SPIFFS.open("/");
+  File root = LittleFS.open(ROOT_DIR);
   File file = root.openNextFile();
 
   DBG.println(F("Wiping: "));
 
   while (file) 
   {
-    DBG.print("FILE: ");
+    DBG.print("remove file: ");
     DBG.println(file.path());
-    SPIFFS.remove(file.path());
+    LittleFS.remove(strdup(file.name()));
     file = root.openNextFile();
   }
+
+    // File root = LittleFS.open(ROOT_DIR);
+    // File file;
+    // while (file = root.openNextFile()) 
+    // {
+    //     char* pathStr = strdup(file.name());
+    //     file.close();
+    //     LittleFS.remove(pathStr);
+    // }
 }
 
-bool RTKBaseManager::getLocationFromSPIFFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt, const char* pathAcc) 
+bool RTKBaseManager::getLocationFromLittleFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt, const char* pathAcc) 
 {
   bool success = false;
-  String latStr = readFile(SPIFFS, pathLat);
-  String lonStr = readFile(SPIFFS, pathLon);
-  String altStr = readFile(SPIFFS, pathAlt);
-  String accStr = readFile(SPIFFS, pathAcc);
+  String latStr = readFile(LittleFS, pathLat);
+  String lonStr = readFile(LittleFS, pathLon);
+  String altStr = readFile(LittleFS, pathAlt);
+  String accStr = readFile(LittleFS, pathAcc);
 
   if (!latStr.isEmpty() && !lonStr.isEmpty() && !altStr.isEmpty()) 
   {
@@ -668,12 +695,12 @@ String RTKBaseManager::getValueAsStringFromCSV(const String &data, char separato
 
 void RTKBaseManager::setLocationMethodCoords() 
 {
-  writeFile(SPIFFS, PATH_RTK_LOCATION_METHOD, "coords_enabled");
+  writeFile(LittleFS, PATH_RTK_LOCATION_METHOD, "coords_enabled");
 }
 
 void RTKBaseManager::setLocationMethodSurvey() 
 {
-  writeFile(SPIFFS, PATH_RTK_LOCATION_METHOD, "survey_enabled");
+  writeFile(LittleFS, PATH_RTK_LOCATION_METHOD, "survey_enabled");
 }
 
 int32_t RTKBaseManager::getLowerPrecisionIntAltitudeFromFloat(float alt) 

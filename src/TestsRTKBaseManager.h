@@ -104,7 +104,7 @@ test(getDeconstructedAltAsCSV)
     assertTrue(deconstructedCSV.equals(testString));
 }
 
-test(getLocationFromSPIFFS) 
+test(getLocationFromLittleFS) 
 {
     bool success = true;
     location_t location;
@@ -121,20 +121,20 @@ test(getLocationFromSPIFFS)
     const char* kTestAltPath = "/testAlt.txt";
     const char* kTestAccPath = "/testAcc.txt";
 
-    if (SPIFFS.exists(kTestLatPath)) SPIFFS.remove(kTestLatPath);
-    if (SPIFFS.exists(kTestLonPath)) SPIFFS.remove(kTestLonPath);
-    if (SPIFFS.exists(kTestAltPath)) SPIFFS.remove(kTestAltPath);
-    if (SPIFFS.exists(kTestAccPath)) SPIFFS.remove(kTestAccPath);
+    if (LittleFS.exists(kTestLatPath)) LittleFS.remove(kTestLatPath);
+    if (LittleFS.exists(kTestLonPath)) LittleFS.remove(kTestLonPath);
+    if (LittleFS.exists(kTestAltPath)) LittleFS.remove(kTestAltPath);
+    if (LittleFS.exists(kTestAccPath)) LittleFS.remove(kTestAccPath);
    
     String deconstructedCoordAsCSV = getDeconstructedCoordAsCSV(doubleCoordStr);
     String deconstructedAltAsCSV = getDeconstructedAltAsCSV(floatAltStr);
     String accuracyString = String(accuracy);
-    success &= writeFile(SPIFFS, kTestLatPath, deconstructedCoordAsCSV.c_str());
-    success &= writeFile(SPIFFS, kTestLonPath, deconstructedCoordAsCSV.c_str());
-    success &= writeFile(SPIFFS, kTestAltPath, deconstructedAltAsCSV.c_str());
-    success &= writeFile(SPIFFS, kTestAccPath, accuracyString.c_str());
+    success &= writeFile(LittleFS, kTestLatPath, deconstructedCoordAsCSV.c_str());
+    success &= writeFile(LittleFS, kTestLonPath, deconstructedCoordAsCSV.c_str());
+    success &= writeFile(LittleFS, kTestAltPath, deconstructedAltAsCSV.c_str());
+    success &= writeFile(LittleFS, kTestAccPath, accuracyString.c_str());
 
-    success &= getLocationFromSPIFFS(&location, kTestLatPath, kTestLonPath, kTestAltPath, kTestAccPath);
+    success &= getLocationFromLittleFS(&location, kTestLatPath, kTestLonPath, kTestAltPath, kTestAccPath);
     success &= location.lat == lowerPrecCoord;
     success &= location.lat_hp == highPrecCoord;
     success &= location.lon == lowerPrecCoord;
@@ -175,14 +175,14 @@ test(getFloatAltitudeFromInt)
     assertLess(abs(result), 0.0001);
 }
 
-test(processorWriteToSpiffs) 
+test(processorWriteToLittleFS) 
 {
     String testValue = "TestValue";
     const char* kTestValuePath = "/testValue.txt";
-    if (SPIFFS.exists(kTestValuePath)) SPIFFS.remove(kTestValuePath);
-    writeFile(SPIFFS, kTestValuePath, testValue.c_str());
+    if (LittleFS.exists(kTestValuePath)) LittleFS.remove(kTestValuePath);
+    writeFile(LittleFS, kTestValuePath, testValue.c_str());
     delay(100);
-    String savedValue = readFile(SPIFFS, kTestValuePath);
+    String savedValue = readFile(LittleFS, kTestValuePath);
     assertTrue(savedValue.equals(testValue));
 }
 
