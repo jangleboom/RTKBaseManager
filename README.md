@@ -13,6 +13,4 @@ After restart the device is reachable as a client in your local network ("rtkbas
 
 
 The mklittlefs file in the root dir you have to [get](https://github.com/earlephilhower/mklittlefs/releases) for for your OS.
-Or if you have Arduino IDE installed, you can borrow it from there. On macOS: `~/Library/Arduino15/packages/esp32/tools/mklittlefs/3.0.0-gnu12-dc7f933/mklittlefs`. This project was created on macOS (silicon).
-
-If you run in trouble creating a LittleFS file system take a look [here]().
+Or if you have Arduino IDE installed, you can borrow it from there. On macOS: `~/Library/Arduino15/packages/esp32/tools/mklittlefs/3.0.0-gnu12-dc7f933/mklittlefs`. This project was created on macOS (silicon). 
