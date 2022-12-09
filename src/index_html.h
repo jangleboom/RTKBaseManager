@@ -105,7 +105,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
 <body onload="loadRadioState();enableLocationMethod();">
 
     <form id="Form1" onsubmit="return confirm('Restart the ESP32 by pressing the Reboot button for your changes to take effect!');" action='actionUpdateData' method='post' target="hidden-form"></form>
-    <form id="Form2" onsubmit="return confirm('Are you sure? All saved SPIFFS files will be deleted (Wifi and RTK config)');" action='actionWipeData' method='post' target="hidden-form"></form>
+    <form id="Form2" onsubmit="return confirm('Are you sure? All saved LittleFS files will be deleted (Wifi and RTK config).');" action='actionWipeData' method='post' target="hidden-form"></form>
     <form id="Form3" onsubmit="return confirm('Connection will be lost during reboot, please refresh this page after reconnecting!');" action='actionRebootESP32' method='post' target="hidden-form"></form>
     <input form="Form1" type="hidden" id="radio_state" value=%location_method%>
     <p>

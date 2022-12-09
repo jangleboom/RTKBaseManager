@@ -34,11 +34,6 @@
 
 namespace RTKBaseManager 
 {
-  // LittleFS
-  #define FILE_WRITE                              "w"
-  #define FILE_READ                               "r"
-  #define ROOT_DIR                                "/"
-
   // WiFi credentials for AP mode
   #define MAX_SSIDS 10 // Space to scan and remember SSIDs
   const char DEVICE_TYPE[] PROGMEM = "rtkbase";

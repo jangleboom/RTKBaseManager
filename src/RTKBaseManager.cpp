@@ -131,7 +131,7 @@ bool RTKBaseManager::savedNetworkAvailable(const String& ssid)
 */
 void RTKBaseManager::startServer(AsyncWebServer *server) 
 {
-  server->on(ROOT_DIR, HTTP_GET, [](AsyncWebServerRequest *request) 
+  server->on("/", HTTP_GET, [](AsyncWebServerRequest *request) 
   {
     request->send_P(200, "text/html", INDEX_HTML, processor);
   });
@@ -178,8 +178,6 @@ void RTKBaseManager::actionWipeData(AsyncWebServerRequest *request)
       } 
      }
     } 
-
-  DBG.print(F("Data in LittleFS was wiped out!"));
   request->send_P(200, "text/html", INDEX_HTML, processor);
 }
 
@@ -559,7 +557,7 @@ bool RTKBaseManager::writeFile(fs::FS &fs, const char* path, const char* message
 
 void RTKBaseManager::listFiles() 
 {
-  File root = LittleFS.open(ROOT_DIR);
+  File root = LittleFS.open("/", "r");
   File file = root.openNextFile();
  
   while (file) 
@@ -574,27 +572,30 @@ void RTKBaseManager::listFiles()
 
 void RTKBaseManager::wipeLittleFSFiles() 
 {
-  File root = LittleFS.open(ROOT_DIR);
+  File root = LittleFS.open("/", "w");
   File file = root.openNextFile();
 
   DBG.println(F("Wiping: "));
 
-  while (file) 
-  {
-    DBG.print("remove file: ");
-    DBG.println(file.path());
-    LittleFS.remove(strdup(file.name()));
-    file = root.openNextFile();
-  }
+  // while (file) 
+  // {
+  //   DBG.print("remove file: ");
+  //   DBG.println(file.path());
+  //   LittleFS.remove(strdup(file.path()));
+  //   file = root.openNextFile();
+  // }
 
     // File root = LittleFS.open(ROOT_DIR);
     // File file;
-    // while (file = root.openNextFile()) 
-    // {
-    //     char* pathStr = strdup(file.name());
-    //     file.close();
-    //     LittleFS.remove(pathStr);
-    // }
+    while (file) 
+    {
+        const char* pathStr = strdup(file.path());
+        file.close();
+        LittleFS.remove(pathStr);
+        file = root.openNextFile();
+    }
+
+    DBG.println(F("Data in LittleFS wiped out!"));
 }
 
 bool RTKBaseManager::getLocationFromLittleFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt, const char* pathAcc) 
