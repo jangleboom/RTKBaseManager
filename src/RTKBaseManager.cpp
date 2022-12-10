@@ -56,7 +56,7 @@ bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   {
       DBG.println("Error starting mDNS, use local IP instead!");
   } else {
-    DBG.print(F("Starting mDNS, find me under <http://www."));
+    DBG.print(F("Starting mDNS, find me under <http://"));
     DBG.print(DEVICE_TYPE);
     DBG.println(F(".local>"));
   }
