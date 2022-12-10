@@ -36,7 +36,7 @@ namespace RTKBaseManager
 {
   // WiFi credentials for AP mode
   #define MAX_SSIDS 10 // Space to scan and remember SSIDs
-  const char DEVICE_TYPE[]                        PROGMEM = "rtkbasemanager";
+  const char DEVICE_TYPE[]                        PROGMEM = "rtkbase";
   const char AP_PASSWORD[]                        PROGMEM = "12345678";
   const char IP_AP[]                              PROGMEM = "192.168.4.1";
   
