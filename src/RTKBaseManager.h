@@ -36,40 +36,26 @@ namespace RTKBaseManager
 {
   // WiFi credentials for AP mode
   #define MAX_SSIDS 10 // Space to scan and remember SSIDs
-  const char DEVICE_TYPE[] PROGMEM = "rtkbase";
-  const char AP_PASSWORD[] PROGMEM = "12345678";
-  const char IP_AP[] PROGMEM = "192.168.4.1";
+  const char DEVICE_TYPE[]                        PROGMEM = "rtkbasemanager";
+  const char AP_PASSWORD[]                        PROGMEM = "12345678";
+  const char IP_AP[]                              PROGMEM = "192.168.4.1";
   
   // Parameters for LittleFS file management
-  #define FORMAT_LittleFS_IF_FAILED true
-  const char PARAM_WIFI_SSID[] PROGMEM = "ssid"; 
-  const char PARAM_WIFI_PASSWORD[] PROGMEM = "password";
-  const char PARAM_RTK_CASTER_HOST[] PROGMEM = "caster_host";
-  const char PARAM_RTK_CASTER_PORT[] PROGMEM = "caster_port";
-  const char PARAM_RTK_MOINT_POINT[] PROGMEM = "mount_point";
-  const char PARAM_RTK_MOINT_POINT_PW[] PROGMEM = "mount_point_pw";
-  const char PARAM_RTK_LOCATION_METHOD[] PROGMEM = "location_method";
-  const char PARAM_RTK_SURVEY_ENABLED[] PROGMEM = "survey_enabled";
-  const char PARAM_RTK_COORDS_ENABLED[] PROGMEM = "coords_enabled";
+  const char PARAM_WIFI_SSID[]                    PROGMEM = "ssid"; 
+  const char PARAM_WIFI_PASSWORD[]                PROGMEM = "password";
+  const char PARAM_RTK_CASTER_HOST[]              PROGMEM = "caster_host";
+  const char PARAM_RTK_CASTER_PORT[]              PROGMEM = "caster_port";
+  const char PARAM_RTK_MOINT_POINT[]              PROGMEM = "mount_point";
+  const char PARAM_RTK_MOINT_POINT_PW[]           PROGMEM = "mount_point_pw";
+  const char PARAM_RTK_LOCATION_METHOD[]          PROGMEM = "location_method";
+  const char PARAM_RTK_SURVEY_ENABLED[]           PROGMEM = "survey_enabled";
+  const char PARAM_RTK_COORDS_ENABLED[]           PROGMEM = "coords_enabled";
   const char PARAM_RTK_LOCATION_SURVEY_ACCURACY[] PROGMEM = "survey_accuracy";
-  const char PARAM_RTK_LOCATION_COORD_ACCURACY[] PROGMEM = "coord_accuracy";
-  const char PARAM_RTK_LOCATION_LONGITUDE[] PROGMEM = "longitude";
-  const char PARAM_RTK_LOCATION_LATITUDE[] PROGMEM = "latitude";
-  const char PARAM_RTK_LOCATION_ALTITUDE[] PROGMEM = "altitude";
-  // Paths for LittleFS file management
-  const char PATH_WIFI_SSID[] PROGMEM = "/ssid.txt";
-  const char PATH_WIFI_PASSWORD[] PROGMEM = "/password.txt";
-  const char PATH_RTK_CASTER_HOST[] PROGMEM = "/caster_host.txt";
-  const char PATH_RTK_CASTER_PORT[] PROGMEM = "/caster_port.txt";
-  const char PATH_RTK_MOINT_POINT[] PROGMEM = "/mount_point.txt";
-  const char PATH_RTK_MOINT_POINT_PW[] PROGMEM = "/mount_point_pw.txt";
-  const char PATH_RTK_LOCATION_METHOD[] PROGMEM = "/location_method.txt";
-  const char PATH_RTK_LOCATION_SURVEY_ACCURACY[] PROGMEM = "/survey_accuracy.txt";
-  const char PATH_RTK_LOCATION_COORD_ACCURACY[] PROGMEM = "/coord_accuracy.txt";
-  const char PATH_RTK_LOCATION_LONGITUDE[] PROGMEM = "/longitude.txt";
-  const char PATH_RTK_LOCATION_LATITUDE[] PROGMEM = "/latitude.txt";
-  const char PATH_RTK_LOCATION_ALTITUDE[] PROGMEM = "/altitude.txt";
-  const char SEP = ',';
+  const char PARAM_RTK_LOCATION_COORD_ACCURACY[]  PROGMEM = "coord_accuracy";
+  const char PARAM_RTK_LOCATION_LONGITUDE[]       PROGMEM = "longitude";
+  const char PARAM_RTK_LOCATION_LATITUDE[]        PROGMEM = "latitude";
+  const char PARAM_RTK_LOCATION_ALTITUDE[]        PROGMEM = "altitude";
+  const char SEP                                  PROGMEM = ',';
   const uint8_t LOW_PREC_IDX = 0;
   const uint8_t HIGH_PREC_IDX = 1;
 
@@ -208,6 +194,14 @@ typedef struct {
    * 
    */
   void listFiles(void);
+
+  /**
+   * @brief Get the path to a file stored in LittleFS
+   * 
+   * @param fileName  Name of stored file
+   * @return String   Path to LittleFS file
+   */
+  String getPath(const char* fileName);
 
   /**
    * @brief Delete all saved LittleFS files 

@@ -9,8 +9,8 @@
 void RTKBaseManager::setupWiFi(AsyncWebServer* server)
 {
   // Check if we have credentials for a available network
-  String lastSSID = readFile(LittleFS, PATH_WIFI_SSID);
-  String lastPassword = readFile(LittleFS, PATH_WIFI_PASSWORD);
+  String lastSSID = readFile(LittleFS, getPath(PARAM_WIFI_SSID).c_str());
+  String lastPassword = readFile(LittleFS, getPath(PARAM_WIFI_PASSWORD).c_str());
 
   if (lastSSID.isEmpty() || lastPassword.isEmpty() ) 
   {
@@ -196,7 +196,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(LittleFS, PATH_WIFI_SSID, p->value().c_str());
+        writeFile(LittleFS, getPath(PARAM_WIFI_SSID).c_str(), p->value().c_str());
       } 
     }
 
@@ -204,7 +204,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(LittleFS, PATH_WIFI_PASSWORD, p->value().c_str());
+        writeFile(LittleFS, getPath(PARAM_WIFI_PASSWORD).c_str(), p->value().c_str());
       } 
     }
 
@@ -212,7 +212,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(LittleFS, PATH_RTK_CASTER_HOST, p->value().c_str());
+        writeFile(LittleFS, getPath(PARAM_RTK_CASTER_HOST).c_str(), p->value().c_str());
       } 
     }
 
@@ -220,7 +220,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(LittleFS, PATH_RTK_CASTER_PORT, p->value().c_str());
+        writeFile(LittleFS, getPath(PARAM_RTK_CASTER_PORT).c_str(), p->value().c_str());
       } 
     }
 
@@ -228,7 +228,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(LittleFS, PATH_RTK_MOINT_POINT, p->value().c_str());
+        writeFile(LittleFS, getPath(PARAM_RTK_MOINT_POINT).c_str(), p->value().c_str());
       } 
     }
 
@@ -236,7 +236,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(LittleFS, PATH_RTK_MOINT_POINT_PW, p->value().c_str());
+        writeFile(LittleFS, getPath(PARAM_RTK_MOINT_POINT_PW).c_str(), p->value().c_str());
       } 
     }
 
@@ -248,12 +248,12 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
         if (pValue.equals("survey_enabled")) 
         {
           // Clear old coords values
-          LittleFS.remove(PATH_RTK_LOCATION_ALTITUDE);
-          LittleFS.remove(PATH_RTK_LOCATION_LATITUDE);
-          LittleFS.remove(PATH_RTK_LOCATION_LONGITUDE);
-          LittleFS.remove(PATH_RTK_LOCATION_COORD_ACCURACY);
+          LittleFS.remove(getPath(PARAM_RTK_LOCATION_ALTITUDE).c_str());
+          LittleFS.remove(getPath(PARAM_RTK_LOCATION_LATITUDE).c_str());
+          LittleFS.remove(getPath(PARAM_RTK_LOCATION_LONGITUDE).c_str());
+          LittleFS.remove(getPath(PARAM_RTK_LOCATION_COORD_ACCURACY).c_str());
         }
-        writeFile(LittleFS, PATH_RTK_LOCATION_METHOD, p->value().c_str());
+        writeFile(LittleFS, getPath(PARAM_RTK_LOCATION_METHOD).c_str(), p->value().c_str());
      } 
     }
 
@@ -261,7 +261,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0) 
       {
-        writeFile(LittleFS, PATH_RTK_LOCATION_SURVEY_ACCURACY, p->value().c_str());
+        writeFile(LittleFS, getPath(PARAM_RTK_LOCATION_SURVEY_ACCURACY).c_str(), p->value().c_str());
       } 
     }
 
@@ -269,7 +269,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     {
       if (p->value().length() > 0)
       {
-        writeFile(LittleFS, PATH_RTK_LOCATION_COORD_ACCURACY, p->value().c_str());
+        writeFile(LittleFS, getPath(PARAM_RTK_LOCATION_COORD_ACCURACY).c_str(), p->value().c_str());
       } 
     }
 
@@ -278,7 +278,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
       if (p->value().length() > 0) 
       {
         String deconstructedValAsCSV = getDeconstructedCoordAsCSV(p->value());
-        writeFile(LittleFS, PATH_RTK_LOCATION_LATITUDE, deconstructedValAsCSV.c_str());
+        writeFile(LittleFS, getPath(PARAM_RTK_LOCATION_LATITUDE).c_str(), deconstructedValAsCSV.c_str());
      } 
     }
 
@@ -287,7 +287,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
       if (p->value().length() > 0) 
       {
         String deconstructedValAsCSV = getDeconstructedCoordAsCSV(p->value());
-        writeFile(LittleFS, PATH_RTK_LOCATION_LONGITUDE, deconstructedValAsCSV.c_str());
+        writeFile(LittleFS, getPath(PARAM_RTK_LOCATION_LONGITUDE).c_str(), deconstructedValAsCSV.c_str());
      } 
     }
 
@@ -297,7 +297,7 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
       {
         String deconstructedAltAsCSV = getDeconstructedAltAsCSV(p->value());
         // int32_t elipsoid = String(p->value()).toInt()*1000;
-        writeFile(LittleFS, PATH_RTK_LOCATION_ALTITUDE, deconstructedAltAsCSV.c_str());
+        writeFile(LittleFS, getPath(PARAM_RTK_LOCATION_ALTITUDE).c_str(), deconstructedAltAsCSV.c_str());
       } 
     }
   }
@@ -348,82 +348,82 @@ String RTKBaseManager::processor(const String& var)
 {
   if (var == PARAM_WIFI_SSID) 
   {
-    String savedSSID = readFile(LittleFS, PATH_WIFI_SSID);
+    String savedSSID = readFile(LittleFS, getPath(PARAM_WIFI_SSID).c_str());
     return (savedSSID.isEmpty() ? String(PARAM_WIFI_SSID) : savedSSID);
   }
   else if (var == PARAM_WIFI_PASSWORD) 
   {
-    String savedPassword = readFile(LittleFS, PATH_WIFI_PASSWORD);
+    String savedPassword = readFile(LittleFS, getPath(PARAM_WIFI_PASSWORD).c_str());
     return (savedPassword.isEmpty() ? String(PARAM_WIFI_PASSWORD) : "*******");
   }
 
   else if (var == PARAM_RTK_CASTER_HOST) 
   {
-    String savedCaster = readFile(LittleFS, PATH_RTK_CASTER_HOST);
+    String savedCaster = readFile(LittleFS, getPath(PARAM_RTK_CASTER_HOST).c_str());
     return (savedCaster.isEmpty() ? String(PARAM_RTK_CASTER_HOST) : savedCaster);
   }
 
   else if (var == PARAM_RTK_CASTER_PORT) 
   {
-    String savedPort = readFile(LittleFS, PATH_RTK_CASTER_PORT);
+    String savedPort = readFile(LittleFS, getPath(PARAM_RTK_CASTER_PORT).c_str());
     return (savedPort.isEmpty() ? String(PARAM_RTK_CASTER_PORT) : savedPort);
   }
 
   else if (var == PARAM_RTK_MOINT_POINT) 
   {
-    String savedMointPoint = readFile(LittleFS, PATH_RTK_MOINT_POINT);
+    String savedMointPoint = readFile(LittleFS, getPath(PARAM_RTK_MOINT_POINT).c_str());
     return (savedMointPoint.isEmpty() ? String(PARAM_RTK_MOINT_POINT) : savedMointPoint);
   }
 
   else if (var == PARAM_RTK_MOINT_POINT_PW) 
   {
-    String savedMointPointPW = readFile(LittleFS, PATH_RTK_MOINT_POINT_PW);
+    String savedMointPointPW = readFile(LittleFS, getPath(PARAM_RTK_MOINT_POINT_PW).c_str());
     return (savedMointPointPW.isEmpty() ? String(PARAM_RTK_MOINT_POINT_PW) : "*******");
   }
 
   else if (var == PARAM_RTK_LOCATION_METHOD) 
   {
-    String savedLocationMethod = readFile(LittleFS, PATH_RTK_LOCATION_METHOD);
+    String savedLocationMethod = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_METHOD).c_str());
     return (savedLocationMethod.isEmpty() ? String(PARAM_RTK_SURVEY_ENABLED) : savedLocationMethod);
   }
 
   else if (var == PARAM_RTK_LOCATION_SURVEY_ACCURACY) 
   {
-    String savedSurveyAccuracy = readFile(LittleFS, PATH_RTK_LOCATION_SURVEY_ACCURACY);
+    String savedSurveyAccuracy = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_SURVEY_ACCURACY).c_str());
     return (savedSurveyAccuracy.isEmpty() ? String(PARAM_RTK_LOCATION_SURVEY_ACCURACY) : savedSurveyAccuracy);
   }
 
   else if (var == PARAM_RTK_LOCATION_COORD_ACCURACY) 
   {
-    String savedCoordAccuracy = readFile(LittleFS, PATH_RTK_LOCATION_COORD_ACCURACY);
+    String savedCoordAccuracy = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_COORD_ACCURACY).c_str());
     return (savedCoordAccuracy.isEmpty() ? "---" : savedCoordAccuracy);
   }
 
   else if (var == PARAM_RTK_LOCATION_LATITUDE) 
   {
-    String savedLatitude = readFile(LittleFS, PATH_RTK_LOCATION_LATITUDE);
+    String savedLatitude = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_LATITUDE).c_str());
     String savedLatitudeStr = getFloatingPointStringFromCSV(savedLatitude, COORD_PRECISION);
     return (savedLatitude.isEmpty() ? String(PARAM_RTK_LOCATION_LATITUDE) : savedLatitudeStr);
   }
 
   else if (var == PARAM_RTK_LOCATION_LONGITUDE) 
   {
-    String savedLongitude = readFile(LittleFS, PATH_RTK_LOCATION_LONGITUDE);
+    String savedLongitude = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_LONGITUDE).c_str());
     String savedLongitudeStr = getFloatingPointStringFromCSV(savedLongitude, COORD_PRECISION);
     return (savedLongitude.isEmpty() ? String(PARAM_RTK_LOCATION_LONGITUDE) : savedLongitudeStr);
   }
 
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) 
   {
-    String savedAltitude = readFile(LittleFS, PATH_RTK_LOCATION_ALTITUDE);
+    String savedAltitude = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_ALTITUDE).c_str());
     String savedAltitudeStr = getFloatingPointStringFromCSV(savedAltitude, ALT_PRECISION);
     // float altitude = savedAltitude.toFloat() / 1000.0;
     return (savedAltitude.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : savedAltitudeStr);
   }
   else if (var == "next_addr") 
   {
-    String savedSSID = readFile(LittleFS, PATH_WIFI_SSID);
-    String savedPW = readFile(LittleFS, PATH_WIFI_PASSWORD);
+    String savedSSID = readFile(LittleFS, getPath(PARAM_WIFI_SSID).c_str());
+    String savedPW = readFile(LittleFS, getPath(PARAM_WIFI_PASSWORD).c_str());
     if (savedSSID.isEmpty() || savedPW.isEmpty()) 
     {
       return String(IP_AP);
@@ -435,7 +435,7 @@ String RTKBaseManager::processor(const String& var)
   }
   else if (var == "next_ssid") 
   {
-    String savedSSID = readFile(LittleFS, PATH_WIFI_SSID);
+    String savedSSID = readFile(LittleFS, getPath(PARAM_WIFI_SSID).c_str());
     return (savedSSID.isEmpty() ? String(DEVICE_TYPE) : savedSSID);
   }
   return String();
@@ -565,6 +565,15 @@ void RTKBaseManager::wipeLittleFSFiles()
   DBG.println(F("Data in LittleFS wiped out!"));
 }
 
+String RTKBaseManager::getPath(const char* fileName)
+{
+  String path = "/";
+  path += fileName;
+  path += ".txt";
+
+  return path;
+}
+
 bool RTKBaseManager::getLocationFromLittleFS(location_t* location, const char* pathLat, const char* pathLon, const char* pathAlt, const char* pathAcc) 
 {
   bool success = false;
@@ -663,12 +672,12 @@ String RTKBaseManager::getValueAsStringFromCSV(const String &data, char separato
 
 void RTKBaseManager::setLocationMethodCoords() 
 {
-  writeFile(LittleFS, PATH_RTK_LOCATION_METHOD, "coords_enabled");
+  writeFile(LittleFS, getPath(PARAM_RTK_LOCATION_METHOD).c_str(), "coords_enabled");
 }
 
 void RTKBaseManager::setLocationMethodSurvey() 
 {
-  writeFile(LittleFS, PATH_RTK_LOCATION_METHOD, "survey_enabled");
+  writeFile(LittleFS, getPath(PARAM_RTK_LOCATION_METHOD).c_str(), "survey_enabled");
 }
 
 int32_t RTKBaseManager::getLowerPrecisionIntAltitudeFromFloat(float alt) 

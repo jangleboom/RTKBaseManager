@@ -186,4 +186,12 @@ test(processorWriteToLittleFS)
     assertTrue(savedValue.equals(testValue));
 }
 
+test(getPath)
+{
+    const char testValue[]  = "testValue";
+    String testValuePath    = "/testValue.txt";
+    String result           = getPath(testValue);
+
+    assertTrue(result.equals(testValuePath));
+}
 #endif /*** TESTS_RTK_BASE_MANAGER_H ***/
