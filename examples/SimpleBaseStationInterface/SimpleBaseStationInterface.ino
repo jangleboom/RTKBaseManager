@@ -28,18 +28,25 @@ void setup()
   // Uncomment if you want to format (e. g after changing partition sizes)
   // (And dont forget to comment this again after one run ;)
   //formatLittleFS();
-  
-  // wipeLittleFSFiles();  // Use this for deleting all data
+
+  //wipeLittleFSFiles();  // Use this for deleting all data
+#ifdef DEBUGGING
   listFiles();
+  delay(3000);
+#endif
   //===============================================================================
   
   DBG.print(F("Device name: ")); DBG.println(DEVICE_TYPE);
 
-  String locationMethod = readFile(LittleFS, PATH_RTK_LOCATION_METHOD);
+  String locationMethod = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_METHOD).c_str());
   DBG.print(F("Location method: ")); DBG.println(locationMethod);
   
   location_t lastLocation;
-  if (getLocationFromLittleFS(&lastLocation, PATH_RTK_LOCATION_LATITUDE, PATH_RTK_LOCATION_LONGITUDE, PATH_RTK_LOCATION_ALTITUDE, PATH_RTK_LOCATION_COORD_ACCURACY)) 
+  if (getLocationFromLittleFS(&lastLocation, \
+      getPath(PARAM_RTK_LOCATION_LATITUDE).c_str(), \
+      getPath(PARAM_RTK_LOCATION_LONGITUDE).c_str(), \
+      getPath(PARAM_RTK_LOCATION_ALTITUDE).c_str(), \
+      getPath(PARAM_RTK_LOCATION_COORD_ACCURACY).c_str() ) )
   {
     printLocation(&lastLocation);
   }
