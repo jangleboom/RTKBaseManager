@@ -8,6 +8,10 @@
 
 void RTKBaseManager::setupWiFi(AsyncWebServer* server)
 {
+  WiFi.softAPdisconnect(true); // AP  if connected
+  WiFi.disconnect(true);       // STA if connected
+  WiFi.setHostname(DEVICE_TYPE);
+
   // Check if we have credentials for a available network
   String lastSSID = readFile(LittleFS, getPath(PARAM_WIFI_SSID).c_str());
   String lastPassword = readFile(LittleFS, getPath(PARAM_WIFI_PASSWORD).c_str());
