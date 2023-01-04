@@ -204,6 +204,13 @@ typedef struct {
   String getPath(const char* fileName);
 
   /**
+   * @brief Delete file at path if exists
+   * 
+   * @param path 
+   */
+  void clearPath(const char* path);
+  
+  /**
    * @brief Delete all saved LittleFS files 
    * 
    */

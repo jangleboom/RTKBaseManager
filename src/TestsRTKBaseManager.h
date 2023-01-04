@@ -194,4 +194,19 @@ test(getPath)
 
     assertTrue(result.equals(testValuePath));
 }
+
+test(deleteFileOnLittleFS)
+{
+    String testValue = "TestValueToDelete";
+    const char PATH_TEST_VALUE[] = "/pathTestValueToDelete.txt";
+    clearPath(PATH_TEST_VALUE);
+    writeFile(LittleFS, PATH_TEST_VALUE, testValue.c_str());
+    delay(100);
+    String savedValue = readFile(LittleFS, PATH_TEST_VALUE);
+    assertTrue(savedValue.equals(testValue));
+    LittleFS.remove(PATH_TEST_VALUE);
+
+    assertFalse(LittleFS.exists(PATH_TEST_VALUE));
+}
+
 #endif /*** TESTS_RTK_BASE_MANAGER_H ***/

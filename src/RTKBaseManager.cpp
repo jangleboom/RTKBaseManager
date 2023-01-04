@@ -551,6 +551,17 @@ void RTKBaseManager::listFiles()
   root.close();
 }
 
+void RTKBaseManager::clearPath(const char* path)
+{
+  if ( LittleFS.exists(path) )
+  {
+    if ( ! LittleFS.remove(path) )
+    {
+        assert("Failed to remove LittleFS path.");
+    }
+  }
+}
+
 void RTKBaseManager::wipeLittleFSFiles() 
 {
   File root = LittleFS.open("/", FILE_WRITE);
