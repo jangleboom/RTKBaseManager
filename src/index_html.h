@@ -12,14 +12,15 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
     <style>
         body 
         {
-            background-color: #4180C8;
+            background-color: #241E4E;
+            background-image: radial-gradient(#15112C, #241E4E, #312966);
             font-family: Lato, Helvetica, Roboto, sans-serif;
-            color: GhostWhite;
+            color: #DFDFDF;
             text-align: center;
             border: 1em;
         }
 
-        .center 
+        .table 
         {
             margin-left: auto;
             margin-right: auto;
@@ -27,18 +28,33 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
 
         .button 
         {
-            background-color: #F0A03C;
+            border-radius: 4px;
             border: none;
-            color: white;
             padding: 13px 18px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
             font-size: 13px;
         }
+.blue 
+        {
+            background-color: #40798C;
+            color: #241E4E;
+        }
+        .green 
+        {
+            background-color: #399E5A;
+            color: #241E4E;
+        }
+        .red
+        {
+            background-color: #CE6C47;
+            color: #241E4E;
+        }
 
         .text_field 
         {
+            border-radius: 4px;
             border: none;
             color: black;
             text-align: center;
@@ -47,26 +63,16 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             font-size: 13px;
         }
 
-        .data_text 
-        {
-            border: none;
-            color: white;
-            text-align: left;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 13px;
-        }
-
         ::placeholder 
         {
-            color: navy;
+            color: black;
             opacity: 1;
             transition: opacity 1s;
         }
 
         :focus::placeholder 
         {
-            opacity: 0
+            opacity: 0.1;
         }
     </style>
 </head>
@@ -109,7 +115,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
     <form id="Form3" onsubmit="return confirm('Connection will be lost during reboot, please refresh this page after reconnecting!');" action='actionRebootESP32' method='post' target="hidden-form"></form>
     <input form="Form1" type="hidden" id="radio_state" value=%location_method%>
     <p>
-        <table class=center>
+        <table class="table">
             <tr>
                 <td colspan=2>
                     <h2>RTK Base Station</h2>
@@ -213,12 +219,15 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
         </table>
     </p>
     <br>
+    <br>
     <div>
-        <input type="submit" form="Form1" class="button" formaction="/actionUpdateData" value="Save" id="save_button" name="save_button" />
-        <input type="submit" form="Form3" class="button" formaction="/actionRebootESP32" value="Reboot" id="reboot_button" name="reboot_button" />
-        <input type="reset" form="Form1" class="button" value="Cancel" />
-        <input type="submit" form="Form2" class="button" formaction="/actionWipeData" value="Wipe" id="wipe_button" name="wipe_button" />
+        <input type="submit" form="Form1" class="button green" formaction="/actionUpdateData" value="Save" id="save_button" name="save_button" />
+        <input type="submit" form="Form3" class="button green" formaction="/actionRebootESP32" value="Reboot" id="reboot_button" name="reboot_button" />
+        <input type="reset" form="Form1" class="button blue" value="Cancel" />
+        <input type="submit" form="Form2" class="button red" formaction="/actionWipeData" value="Wipe" id="wipe_button" name="wipe_button" />
     </div>
+    <br>
+    <br>
 </body>
 
 </html>

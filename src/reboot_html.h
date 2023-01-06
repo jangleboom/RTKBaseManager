@@ -12,9 +12,9 @@ const char REBOOT_HTML[] PROGMEM = R"rawliteral(
     <title>RTK base setup</title>
     <style>
         body {
-            background-color: #4180C8;
+            background-color: #399E5A;
+            color: #DFDFDF;
             font-family: Lato, Helvetica, Roboto, sans-serif;
-            color: GhostWhite;
             text-align: center;
             border: 1em;
         }
