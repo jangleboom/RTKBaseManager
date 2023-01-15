@@ -8,9 +8,10 @@
 
 void RTKBaseManager::setupWiFi(AsyncWebServer* server)
 {
+  String deviceName = getDeviceName(DEVICE_TYPE);
   WiFi.softAPdisconnect(true); // AP  if connected
   WiFi.disconnect(true);       // STA if connected
-  WiFi.setHostname(DEVICE_TYPE);
+  WiFi.setHostname(deviceName.c_str());
 
   // Check if we have credentials for a available network
   String lastSSID = readFile(LittleFS, getPath(PARAM_WIFI_SSID).c_str());
@@ -18,7 +19,7 @@ void RTKBaseManager::setupWiFi(AsyncWebServer* server)
 
   if (lastSSID.isEmpty() || lastPassword.isEmpty() ) 
   {
-    setupAPMode(DEVICE_TYPE, AP_PASSWORD);
+    setupAPMode(deviceName.c_str(), AP_PASSWORD);
     delay(500);
   } 
   else
@@ -30,7 +31,7 @@ void RTKBaseManager::setupWiFi(AsyncWebServer* server)
       DBG.println(F(" to appear..."));
       vTaskDelay(1000/portTICK_RATE_MS);
     }
-    setupStationMode(lastSSID.c_str(), lastPassword.c_str(), DEVICE_TYPE);
+    setupStationMode(lastSSID.c_str(), lastPassword.c_str(), deviceName.c_str());
     delay(500);
   }
 
@@ -42,6 +43,7 @@ bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   bool success = false;
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
+
   if (WiFi.waitForConnectResult() != WL_CONNECTED) 
   {
     // TODO:  - count reboots and stop after 3 times (save in LittleFS)
@@ -58,14 +60,16 @@ bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
 
   if (!MDNS.begin(deviceName)) 
   {
-      DBG.println("Error starting mDNS, use local IP instead!");
-  } else {
+    DBG.println("Error starting mDNS, use local IP instead!");
+  } 
+  else 
+  {
     DBG.print(F("Starting mDNS, find me under <http://"));
-    DBG.print(DEVICE_TYPE);
+    DBG.print(deviceName);
     DBG.println(F(".local>"));
   }
 
-  DBG.print(F("Wifi client started: "));
+  DBG.print(F("WiFi client started: "));
   DBG.println(WiFi.getHostname());
   DBG.print(F("IP Address: "));
   DBG.println(WiFi.localIP());
@@ -87,7 +91,13 @@ bool RTKBaseManager::checkConnectionToWifiStation()
     } 
     else 
     {
-      DBG.println("WiFi connected.");
+      DBG.print(F("WiFi connected to SSID: "));
+      DBG.println(WiFi.SSID());
+      DBG.print(F("WiFi client name: "));
+      DBG.println(WiFi.getHostname());
+      DBG.print(F("IP Address: "));
+      DBG.println(WiFi.localIP());
+
       isConnectedToStation = true;
     }
   }
@@ -102,7 +112,7 @@ void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword)
     bool result = WiFi.softAP(apSsid, apPassword);
     DBG.println(result ? "Ready" : "Failed!");
     DBG.print("Access point started: ");
-    DBG.println(DEVICE_TYPE);
+    DBG.println(apSsid);
     DBG.print("IP address: ");
     DBG.println(WiFi.softAPIP());
 }
@@ -195,6 +205,16 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
   {
     AsyncWebParameter* p = request->getParam(i);
     DBG.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
+
+    if (strcmp(p->name().c_str(), PARAM_BASE_NAME) == 0) 
+    {
+      if (p->value().length() > 0) 
+      {
+        String newName = p->value();
+        newName.toLowerCase();
+        writeFile(LittleFS, getPath(PARAM_BASE_NAME).c_str(), newName.c_str());
+      } 
+    }
 
     if (strcmp(p->name().c_str(), PARAM_WIFI_SSID) == 0) 
     {
@@ -350,71 +370,77 @@ String RTKBaseManager::getFloatingPointStringFromCSV(const String& csvStr, int p
 // Replaces placeholder with stored values
 String RTKBaseManager::processor(const String& var) 
 {
-  if (var == PARAM_WIFI_SSID) 
+  if (var == PARAM_BASE_NAME) 
+  {
+    String savedBaseName = readFile(LittleFS, getPath(PARAM_BASE_NAME).c_str());
+    return (savedBaseName.isEmpty() ? "" : savedBaseName);
+  }
+
+  else if (var == PARAM_WIFI_SSID) 
   {
     String savedSSID = readFile(LittleFS, getPath(PARAM_WIFI_SSID).c_str());
-    return (savedSSID.isEmpty() ? String(PARAM_WIFI_SSID) : savedSSID);
+    return (savedSSID.isEmpty() ? "" : savedSSID);
   }
   else if (var == PARAM_WIFI_PASSWORD) 
   {
     String savedPassword = readFile(LittleFS, getPath(PARAM_WIFI_PASSWORD).c_str());
-    return (savedPassword.isEmpty() ? String(PARAM_WIFI_PASSWORD) : "*******");
+    return (savedPassword.isEmpty() ? "" : "*******");
   }
 
   else if (var == PARAM_RTK_CASTER_HOST) 
   {
     String savedCaster = readFile(LittleFS, getPath(PARAM_RTK_CASTER_HOST).c_str());
-    return (savedCaster.isEmpty() ? String(PARAM_RTK_CASTER_HOST) : savedCaster);
+    return (savedCaster.isEmpty() ? "" : savedCaster);
   }
 
   else if (var == PARAM_RTK_CASTER_PORT) 
   {
     String savedPort = readFile(LittleFS, getPath(PARAM_RTK_CASTER_PORT).c_str());
-    return (savedPort.isEmpty() ? String(PARAM_RTK_CASTER_PORT) : savedPort);
+    return (savedPort.isEmpty() ? "" : savedPort);
   }
 
   else if (var == PARAM_RTK_MOINT_POINT) 
   {
     String savedMointPoint = readFile(LittleFS, getPath(PARAM_RTK_MOINT_POINT).c_str());
-    return (savedMointPoint.isEmpty() ? String(PARAM_RTK_MOINT_POINT) : savedMointPoint);
+    return (savedMointPoint.isEmpty() ? "" : savedMointPoint);
   }
 
   else if (var == PARAM_RTK_MOINT_POINT_PW) 
   {
     String savedMointPointPW = readFile(LittleFS, getPath(PARAM_RTK_MOINT_POINT_PW).c_str());
-    return (savedMointPointPW.isEmpty() ? String(PARAM_RTK_MOINT_POINT_PW) : "*******");
+    return (savedMointPointPW.isEmpty() ? "" : "*******");
   }
 
   else if (var == PARAM_RTK_LOCATION_METHOD) 
   {
     String savedLocationMethod = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_METHOD).c_str());
-    return (savedLocationMethod.isEmpty() ? String(PARAM_RTK_SURVEY_ENABLED) : savedLocationMethod);
+    return (savedLocationMethod.isEmpty() ? "" : savedLocationMethod);
   }
 
   else if (var == PARAM_RTK_LOCATION_SURVEY_ACCURACY) 
   {
     String savedSurveyAccuracy = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_SURVEY_ACCURACY).c_str());
-    return (savedSurveyAccuracy.isEmpty() ? String(PARAM_RTK_LOCATION_SURVEY_ACCURACY) : savedSurveyAccuracy);
+    return (savedSurveyAccuracy.isEmpty() ? "" : savedSurveyAccuracy);
   }
 
   else if (var == PARAM_RTK_LOCATION_COORD_ACCURACY) 
   {
     String savedCoordAccuracy = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_COORD_ACCURACY).c_str());
-    return (savedCoordAccuracy.isEmpty() ? "---" : savedCoordAccuracy);
+    return (savedCoordAccuracy.isEmpty() ? "" : savedCoordAccuracy);
   }
 
   else if (var == PARAM_RTK_LOCATION_LATITUDE) 
   {
     String savedLatitude = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_LATITUDE).c_str());
     String savedLatitudeStr = getFloatingPointStringFromCSV(savedLatitude, COORD_PRECISION);
-    return (savedLatitude.isEmpty() ? String(PARAM_RTK_LOCATION_LATITUDE) : savedLatitudeStr);
+    return (savedLatitude.isEmpty() ? "" : savedLatitudeStr);
   }
 
   else if (var == PARAM_RTK_LOCATION_LONGITUDE) 
   {
     String savedLongitude = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_LONGITUDE).c_str());
     String savedLongitudeStr = getFloatingPointStringFromCSV(savedLongitude, COORD_PRECISION);
-    return (savedLongitude.isEmpty() ? String(PARAM_RTK_LOCATION_LONGITUDE) : savedLongitudeStr);
+    return (savedLongitude.isEmpty() ? "" : savedLongitudeStr);
   }
 
   else if (var == PARAM_RTK_LOCATION_ALTITUDE) 
@@ -422,7 +448,7 @@ String RTKBaseManager::processor(const String& var)
     String savedAltitude = readFile(LittleFS, getPath(PARAM_RTK_LOCATION_ALTITUDE).c_str());
     String savedAltitudeStr = getFloatingPointStringFromCSV(savedAltitude, ALT_PRECISION);
     // float altitude = savedAltitude.toFloat() / 1000.0;
-    return (savedAltitude.isEmpty() ? String(PARAM_RTK_LOCATION_ALTITUDE) : savedAltitudeStr);
+    return (savedAltitude.isEmpty() ? "" : savedAltitudeStr);
   }
   else if (var == "next_addr") 
   {
@@ -431,16 +457,20 @@ String RTKBaseManager::processor(const String& var)
     if (savedSSID.isEmpty() || savedPW.isEmpty()) 
     {
       return String(IP_AP);
-    } else {
-      String clientAddr = String(DEVICE_TYPE);
+    } 
+    else 
+    {
+      String clientAddr = "http://";
+      clientAddr += getDeviceName(DEVICE_TYPE);
       clientAddr += ".local";
+
       return clientAddr;
     }
   }
   else if (var == "next_ssid") 
   {
     String savedSSID = readFile(LittleFS, getPath(PARAM_WIFI_SSID).c_str());
-    return (savedSSID.isEmpty() ? String(DEVICE_TYPE) : savedSSID);
+    return (savedSSID.isEmpty() ? "" : savedSSID);
   }
   return String();
 }
@@ -724,3 +754,28 @@ float RTKBaseManager::getFloatAltitudeFromInt(int32_t alt, int8_t altHp)
     return f_alt;
 }
 
+String RTKBaseManager::getDeviceName(const String& prefix) 
+  {
+    String deviceName = readFile(LittleFS, getPath(PARAM_BASE_NAME).c_str());
+
+    if (deviceName.isEmpty())
+    {
+      String suffix = String(getChipId(), HEX);
+
+      deviceName += prefix;
+      deviceName += "-";
+      deviceName += suffix;
+    }
+
+   return deviceName; 
+  }
+
+uint32_t RTKBaseManager::getChipId() 
+  {
+    uint32_t chipId = 0;
+
+    for(int i=0; i<17; i=i+8) {
+      chipId |= ((ESP.getEfuseMac() >> (40 - i)) & 0xff) << i;
+    }
+      return chipId;
+  }
