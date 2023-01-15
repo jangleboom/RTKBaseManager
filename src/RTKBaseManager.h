@@ -36,12 +36,12 @@ namespace RTKBaseManager
 {
   // WiFi credentials for AP mode
   #define MAX_SSIDS 10 // Space to scan and remember SSIDs
-  const char DEVICE_TYPE[]                        PROGMEM = "rtkberlin";
+  const char DEVICE_TYPE[]                        PROGMEM = "rtkbase";
   const char AP_PASSWORD[]                        PROGMEM = "12345678";
   const char IP_AP[]                              PROGMEM = "192.168.4.1";
   
   // Parameters for LittleFS file management
-  const char PARAM_BASE_NAME[]                    PROGMEM = "base_name"; 
+  const char PARAM_DEVICE_NAME[]                  PROGMEM = "device_name"; 
   const char PARAM_WIFI_SSID[]                    PROGMEM = "ssid"; 
   const char PARAM_WIFI_PASSWORD[]                PROGMEM = "password";
   const char PARAM_RTK_CASTER_HOST[]              PROGMEM = "caster_host";

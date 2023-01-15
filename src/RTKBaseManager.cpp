@@ -206,13 +206,13 @@ void RTKBaseManager::actionUpdateData(AsyncWebServerRequest *request)
     AsyncWebParameter* p = request->getParam(i);
     DBG.printf("%d. POST[%s]: %s\n", i+1, p->name().c_str(), p->value().c_str());
 
-    if (strcmp(p->name().c_str(), PARAM_BASE_NAME) == 0) 
+    if (strcmp(p->name().c_str(), PARAM_DEVICE_NAME) == 0) 
     {
       if (p->value().length() > 0) 
       {
         String newName = p->value();
         newName.toLowerCase();
-        writeFile(LittleFS, getPath(PARAM_BASE_NAME).c_str(), newName.c_str());
+        writeFile(LittleFS, getPath(PARAM_DEVICE_NAME).c_str(), newName.c_str());
       } 
     }
 
@@ -370,10 +370,10 @@ String RTKBaseManager::getFloatingPointStringFromCSV(const String& csvStr, int p
 // Replaces placeholder with stored values
 String RTKBaseManager::processor(const String& var) 
 {
-  if (var == PARAM_BASE_NAME) 
+  if (var == PARAM_DEVICE_NAME) 
   {
-    String savedBaseName = readFile(LittleFS, getPath(PARAM_BASE_NAME).c_str());
-    return (savedBaseName.isEmpty() ? "" : savedBaseName);
+    String savedDeviceName = readFile(LittleFS, getPath(PARAM_DEVICE_NAME).c_str());
+    return (savedDeviceName.isEmpty() ? getDeviceName(DEVICE_TYPE) : savedDeviceName);
   }
 
   else if (var == PARAM_WIFI_SSID) 
@@ -756,7 +756,7 @@ float RTKBaseManager::getFloatAltitudeFromInt(int32_t alt, int8_t altHp)
 
 String RTKBaseManager::getDeviceName(const String& prefix) 
   {
-    String deviceName = readFile(LittleFS, getPath(PARAM_BASE_NAME).c_str());
+    String deviceName = readFile(LittleFS, getPath(PARAM_DEVICE_NAME).c_str());
 
     if (deviceName.isEmpty())
     {

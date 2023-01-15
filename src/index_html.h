@@ -83,7 +83,7 @@ function checkVariables()
     // check if variable exists
     let ssid            = "%ssid%";
     let password        = "%password%";
-    let base_name       = "%base_name%";
+    let device_name       = "%device_name%";
     let caster_host     = "%caster_host%";
     let caster_port     = "%caster_port%";
     let mount_point     = "%mount_point%";
@@ -116,15 +116,15 @@ function checkVariables()
         document.getElementsByName("password")[0].style.color = "grey";
     }
 
-    if (base_name) 
+    if (device_name) 
     {
-        document.getElementsByName("base_name")[0].placeholder = base_name;
-        document.getElementsByName("base_name")[0].style.color = "black";
+        document.getElementsByName("device_name")[0].placeholder = device_name;
+        document.getElementsByName("device_name")[0].style.color = "black";
     } 
     else 
     {
-        document.getElementsByName("base_name")[0].placeholder = "Enter a custom host name";
-        document.getElementsByName("base_name")[0].style.color = "grey";
+        document.getElementsByName("device_name")[0].placeholder = "Enter a custom host name";
+        document.getElementsByName("device_name")[0].style.color = "grey";
     }
 
     if (caster_host) 
@@ -217,7 +217,7 @@ function checkVariables()
 
     console.log(ssid);
     console.log(password);
-    console.log(base_name);
+    console.log(device_name);
     console.log(mount_point);
     console.log(mount_point_pw);
     console.log(survey_accuracy);
@@ -298,9 +298,9 @@ function enableLocationMethod()
                     <h3>RTK base setup</h3>
                 </td>
                 <tr>
-                    <td style="text-align:left;">Base name:</td>
+                    <td style="text-align:left;">Device name:</td>
                     <td>
-                        <input class="text_field" form="Form1" type="text" name="base_name" placeholder={{base_name}}>
+                        <input class="text_field" form="Form1" type="text" name="device_name" placeholder={{device_name}}>
                     </td>
                 </tr>
                 <tr>

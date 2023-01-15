@@ -11,9 +11,16 @@ const char REBOOT_HTML[] PROGMEM = R"rawliteral(
     <meta name="viewport" content="width = device-width, initial-scale = 1.0, maximum-scale = 1.0, user-scalable=0">
     <title>RTK base setup</title>
     <style>
+       :root {
+            --RUSSIAN_VIOLETT:  #241E4E;
+            --GREEN_COLOR:      #399E5A;
+            --RED_COLOR:        #CE6C47;
+            --GAINSBORO:        #DFDFDF;
+            --TEAL_BLUE:        #40798C;
+        }
         body {
-            background-color: #399E5A;
-            color: #DFDFDF;
+            background-color: var(--RUSSIAN_VIOLETT);
+            color: var(--GAINSBORO);
             font-family: Lato, Helvetica, Roboto, sans-serif;
             text-align: center;
             border: 1em;
@@ -26,7 +33,7 @@ const char REBOOT_HTML[] PROGMEM = R"rawliteral(
 
         progress {
             position: relative;
-            accent-color: #F0A03C;
+            accent-color: var(--GREEN_COLOR);
         }
     </style>
 
