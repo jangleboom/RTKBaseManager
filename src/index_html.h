@@ -167,7 +167,7 @@ function checkVariables()
     } 
     else 
     {
-        document.getElementsByName("mount_point_pw")[0].placeholder = "Enter caster mountpoint password";
+        document.getElementsByName("mount_point_pw")[0].placeholder = "Enter caster mountpoint PW";
         document.getElementsByName("mount_point_pw")[0].style.color = "grey";
     }
 
@@ -178,7 +178,7 @@ function checkVariables()
     } 
     else 
     {
-        document.getElementsByName("survey_accuracy")[0].placeholder = "Enter desired survey in m, e.g.: 0.01";
+        document.getElementsByName("survey_accuracy")[0].placeholder = "Enter desired survey in m";
         document.getElementsByName("survey_accuracy")[0].style.color = "grey";
     }
 

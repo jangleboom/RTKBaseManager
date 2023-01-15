@@ -460,8 +460,7 @@ String RTKBaseManager::processor(const String& var)
     } 
     else 
     {
-      String clientAddr = "http://";
-      clientAddr += getDeviceName(DEVICE_TYPE);
+      String clientAddr = getDeviceName(DEVICE_TYPE);
       clientAddr += ".local";
 
       return clientAddr;
@@ -470,7 +469,8 @@ String RTKBaseManager::processor(const String& var)
   else if (var == "next_ssid") 
   {
     String savedSSID = readFile(LittleFS, getPath(PARAM_WIFI_SSID).c_str());
-    return (savedSSID.isEmpty() ? "" : savedSSID);
+    String apHostName = getDeviceName(DEVICE_TYPE);
+    return (savedSSID.isEmpty() ? apHostName : savedSSID);
   }
   return String();
 }
