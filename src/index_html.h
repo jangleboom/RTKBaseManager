@@ -64,6 +64,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             display: inline-block;
             font-size: 13px;
             width: 200px;
+            color: black;
         }
 
         /* set the opacity of placeholder */
