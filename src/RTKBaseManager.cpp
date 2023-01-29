@@ -6,9 +6,14 @@
 =================================================================================
 */
 
-void RTKBaseManager::setupWiFi(AsyncWebServer* server)
+#pragma region: WIFI
+
+bool RTKBaseManager::setupWiFi(AsyncWebServer* server)
 {
+  bool success = false;
+
   String deviceName = getDeviceName(DEVICE_TYPE);
+
   WiFi.softAPdisconnect(true); // AP  if connected
   WiFi.disconnect(true);       // STA if connected
   WiFi.setHostname(deviceName.c_str());
@@ -21,6 +26,7 @@ void RTKBaseManager::setupWiFi(AsyncWebServer* server)
   {
     setupAPMode(deviceName.c_str(), AP_PASSWORD);
     delay(500);
+    success = true;
   } 
   else
   {
@@ -31,23 +37,26 @@ void RTKBaseManager::setupWiFi(AsyncWebServer* server)
       DBG.println(F(" to appear..."));
       vTaskDelay(1000/portTICK_RATE_MS);
     }
-    setupStationMode(lastSSID.c_str(), lastPassword.c_str(), deviceName.c_str());
+    success = setupStationMode(lastSSID.c_str(), lastPassword.c_str(), deviceName.c_str());
     delay(500);
   }
 
   startServer(server);
+
+  return success;
 }
 
 bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, const char* deviceName) 
 {
   bool success = false;
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
 
-  if (WiFi.waitForConnectResult() != WL_CONNECTED) 
+  WiFi.mode(WIFI_STA);
+  WiFi.setAutoReconnect(true);
+  WiFi.begin(ssid, password);
+  WiFi.waitForConnectResult();
+
+  if (! WiFi.isConnected() ) 
   {
-    // TODO:  - count reboots and stop after 3 times (save in LittleFS)
-    //        - display state
     DBG.println("WiFi Failed! Reboot in 10 s as AP!");
     success = false;
   }
@@ -55,35 +64,36 @@ bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   {
     DBG.print(F("WiFi connected to SSID: "));
     DBG.println(WiFi.SSID());
+
     success = true;
   }
 
-  if (!MDNS.begin(deviceName)) 
-  {
-    DBG.println("Error starting mDNS, use local IP instead!");
-  } 
-  else 
-  {
-    DBG.print(F("Starting mDNS, find me under <http://"));
-    DBG.print(deviceName);
-    DBG.println(F(".local>"));
-  }
-
-  DBG.print(F("WiFi client started: "));
-  DBG.println(WiFi.getHostname());
-  DBG.print(F("IP Address: "));
-  DBG.println(WiFi.localIP());
+  
 
   return success;
 }
 
+void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword) 
+{
+  DBG.print("Setting soft-AP ... ");
+  WiFi.mode(WIFI_AP);
+  bool result = WiFi.softAP(apSsid, apPassword);
+  DBG.println(result ? "Ready" : "Failed!");
+  DBG.print("Access point started: ");
+  DBG.println(apSsid);
+  DBG.print("IP address: ");
+  DBG.println(WiFi.softAPIP());
+  DBG.print(F("AP Password: "));
+  DBG.println(AP_PASSWORD);
+}
+
 bool RTKBaseManager::checkConnectionToWifiStation() 
 { 
-  bool isConnectedToStation = false;
+  bool isConnectedToStation = WiFi.isConnected();
 
   if (WiFi.getMode() == WIFI_MODE_STA)
   {
-    if (WiFi.status() != WL_CONNECTED) 
+    if ( ! isConnectedToStation) 
     {
       WiFi.disconnect();
       DBG.println("Try reconnect to access point.");
@@ -98,23 +108,22 @@ bool RTKBaseManager::checkConnectionToWifiStation()
       DBG.print(F("IP Address: "));
       DBG.println(WiFi.localIP());
 
-      isConnectedToStation = true;
+      String deviceName = getDeviceName(DEVICE_TYPE);
+
+      if ( ! MDNS.begin(deviceName.c_str()) ) 
+      {
+        DBG.println("Error starting mDNS, use local IP instead!");
+      } 
+      else 
+      {
+        DBG.print(F("Starting mDNS, find me under <http://"));
+        DBG.print(deviceName);
+        DBG.println(F(".local>"));
+      }
     }
   }
 
   return isConnectedToStation;
-}
-
-void RTKBaseManager::setupAPMode(const char* apSsid, const char* apPassword) 
-{
-    DBG.print("Setting soft-AP ... ");
-    WiFi.mode(WIFI_AP);
-    bool result = WiFi.softAP(apSsid, apPassword);
-    DBG.println(result ? "Ready" : "Failed!");
-    DBG.print("Access point started: ");
-    DBG.println(apSsid);
-    DBG.print("IP address: ");
-    DBG.println(WiFi.softAPIP());
 }
 
 bool RTKBaseManager::savedNetworkAvailable(const String& ssid) 
@@ -122,9 +131,11 @@ bool RTKBaseManager::savedNetworkAvailable(const String& ssid)
   if (ssid.isEmpty()) return false;
 
   uint8_t nNetworks = (uint8_t) WiFi.scanNetworks();
-  DBG.print(nNetworks);  DBG.println(F(" networks found."));
-    for (uint8_t i=0; i<nNetworks; i++) 
-    {
+  DBG.print(nNetworks);  
+  DBG.println(F(" networks found."));
+
+  for (uint8_t i=0; i<nNetworks; i++) 
+  {
     if (ssid.equals(String(WiFi.SSID(i)))) 
     {
       DBG.print(F("A known network with SSID found: ")); 

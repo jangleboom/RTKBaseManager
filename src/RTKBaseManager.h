@@ -76,8 +76,9 @@ typedef struct {
    * @brief Check saved credentials an decide WiFi mode
    * 
    * @param server AsyncWebServer for parameter and credential input
+   * @return bool success 
    */
-  void setupWiFi(AsyncWebServer* server);
+  bool setupWiFi(AsyncWebServer* server);
 
   /**
    * @brief Setup RTK base station in station mode to enter further settings
