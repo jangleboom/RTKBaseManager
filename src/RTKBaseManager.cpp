@@ -50,7 +50,7 @@ bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
 {
   bool success = false;
 
-  WiFi.softAPdisconnect(true)
+  WiFi.softAPdisconnect(true);
   WiFi.disconnect();
   WiFi.mode(WIFI_STA);
   WiFi.setAutoReconnect(true);
@@ -66,6 +66,17 @@ bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
   {
     DBG.print(F("WiFi connected to SSID: "));
     DBG.println(WiFi.SSID());
+
+    if (!MDNS.begin(deviceName)) 
+    {
+      DBG.println("Error starting mDNS, use local IP instead!");
+    } 
+    else 
+    {
+      DBG.print(F("Starting mDNS, find me under <http://"));
+      DBG.print(deviceName);
+      DBG.println(F(".local>"));
+    }
 
     success = true;
   }
