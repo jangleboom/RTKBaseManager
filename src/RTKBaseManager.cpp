@@ -50,6 +50,8 @@ bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
 {
   bool success = false;
 
+  WiFi.softAPdisconnect(true)
+  WiFi.disconnect();
   WiFi.mode(WIFI_STA);
   WiFi.setAutoReconnect(true);
   WiFi.begin(ssid, password);
@@ -57,7 +59,7 @@ bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
 
   if (! WiFi.isConnected() ) 
   {
-    DBG.println("WiFi Failed! Reboot in 10 s as AP!");
+    DBG.println("WiFi Failed!");
     success = false;
   }
   else 
@@ -67,8 +69,6 @@ bool RTKBaseManager::setupStationMode(const char* ssid, const char* password, co
 
     success = true;
   }
-
-  
 
   return success;
 }
@@ -93,11 +93,19 @@ bool RTKBaseManager::checkConnectionToWifiStation()
 
   if (WiFi.getMode() == WIFI_MODE_STA)
   {
-    if ( ! isConnectedToStation) 
+    if (! isConnectedToStation) 
     {
-      WiFi.disconnect();
-      DBG.println("Try reconnect to access point.");
-      isConnectedToStation = WiFi.reconnect();
+      // Check if we have credentials for a available network
+      String ssid = readFile(LittleFS, getPath(PARAM_WIFI_SSID).c_str());
+      String password = readFile(LittleFS, getPath(PARAM_WIFI_PASSWORD).c_str());
+      String deviceName = getDeviceName(DEVICE_TYPE);
+
+      if ( ! ssid.isEmpty() && ! password.isEmpty() ) 
+      {
+        DBG.println("Try reconnect to access point.");
+        isConnectedToStation = setupStationMode(ssid.c_str(), password.c_str(), deviceName.c_str());
+        DBG.printf("isConnectedToStation: %s\n", isConnectedToStation ? "yes" : "no");
+      }
     } 
     else 
     {
@@ -107,19 +115,6 @@ bool RTKBaseManager::checkConnectionToWifiStation()
       DBG.println(WiFi.getHostname());
       DBG.print(F("IP Address: "));
       DBG.println(WiFi.localIP());
-
-      String deviceName = getDeviceName(DEVICE_TYPE);
-
-      if ( ! MDNS.begin(deviceName.c_str()) ) 
-      {
-        DBG.println("Error starting mDNS, use local IP instead!");
-      } 
-      else 
-      {
-        DBG.print(F("Starting mDNS, find me under <http://"));
-        DBG.print(deviceName);
-        DBG.println(F(".local>"));
-      }
     }
   }
 
